@@ -1,0 +1,67 @@
+This is BibTeX, Version 0.99d (TeX Live 2011)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: main.aux
+The style file: IEEEtranS.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: main.bib
+Warning--I didn't find a database entry for "bstctl:etal"
+Warning--I didn't find a database entry for "bstctl:nodash"
+Warning--I didn't find a database entry for "bstctl:simpurl"
+-- IEEEtranS.bst version 1.13 (2008/09/30) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+** Sorting version - not for normal IEEE work.
+Warning--empty booktitle in end_of_moore1
+Warning--empty journal in nguyenlinux
+Warning--empty year in nguyenlinux
+Warning--empty journal in tonytdg
+Warning--empty year in tonytdg
+Warning--empty booktitle in end_of_moore2
+
+Done.
+You've used 22 entries,
+            4498 wiz_defined-function locations,
+            1012 strings with 12958 characters,
+and the built_in function-call counts, 20447 in all, are:
+= -- 1720
+> -- 724
+< -- 116
++ -- 372
+- -- 196
+* -- 1089
+:= -- 2978
+add.period$ -- 53
+call.type$ -- 22
+change.case$ -- 166
+chr.to.int$ -- 291
+cite$ -- 28
+duplicate$ -- 1279
+empty$ -- 1556
+format.name$ -- 213
+if$ -- 4577
+int.to.chr$ -- 0
+int.to.str$ -- 22
+missing$ -- 240
+newline$ -- 91
+num.names$ -- 44
+pop$ -- 730
+preamble$ -- 1
+purify$ -- 142
+quote$ -- 2
+skip$ -- 1431
+stack$ -- 0
+substring$ -- 819
+swap$ -- 938
+text.length$ -- 19
+text.prefix$ -- 0
+top$ -- 6
+type$ -- 242
+warning$ -- 6
+while$ -- 91
+width$ -- 24
+write$ -- 219
+(There were 9 warnings)

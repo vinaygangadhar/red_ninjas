@@ -1,0 +1,38 @@
+\section{Project phases}\label{sec:plan}
+
+We explain the phases of project here and expected timeline for 
+each step. Some of the phases can be carried out in parallel and will be distributed 
+among the project members.
+
+\begin{itemize}
+\item \textbf{Phase 0 [1 week]:} Choose the representative workloads/ kernels of neural network domain
+targeting different applications (image processing, speech recognition, text parsing etc.,). 
+Use the trace based modeling tool TDG (~\cite{tonytdg}) modeled
+for PENN to determine the initial performance and power estimates for each kernel.
+More accurate analysis of workloads (profiling) to be done here and see if there are any missing architectural
+pieces not considered for current PENN architecture.
+
+\item \textbf{Phase 1 [2 days]:} Based on phase 0 analysis, some important design trade-off decisions should be taken. Those steps are listed here:
+i) Low-power core: Properties (pipeline stages, memory interface and hierarchy etc.,) of low-power core which does the co-ordination.
+Compiler and software toolchain for the core (RISCV toolchain and their in-order core can be a good start). 
+ii) CGRA: Types of problem specific FUs inside the fabric.  Interface to low-power core and scratchpad memory.
+Addressing of scratchpad space and global memory. Scheduling pattern for CGRA. Scratchpad size and bit-width.
+iii) Programming model: API for PENN. Pragmas and code annotations for compilation.
+
+\item \textbf{Phase 2 [3 weeks]:} This phase involves implementation of individual modules of PENN listed in Phase 1. 
+Implementation of low power core and CGRA in Verilog and C++.
+Writing API routines for PENN and compiler support (Note: A full-fledged compiler may not be implemented but 
+a framework to generate instructions and configuration stream will be implemented.)
+Tools needed for the project are explained in Section~\ref{sec:meth}.
+
+\item \textbf{Phase 3 [1 week]:}This phase mainly involves evaluating implemented synthesized PENN architecture with
+    representative workloads chosen in Phase 0. We also use C++ simulator written for PENN to correlate the functionality of the synthesized version. 
+We plan to evaluate PENN for performance, area and power against a state-of-the-art DSA for Neural Network.
+
+\item \textbf{Phase 4 [2 weeks]:} This phase mainly involves prototyping PENN on Zynq FPGA. However, this phase will be realized only if Phase 3 is
+    completed well within course project time limit. Project report is also part of this phase.
+\end{itemize}
+
+
+
+

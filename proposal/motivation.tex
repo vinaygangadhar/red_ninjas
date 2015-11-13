@@ -1,0 +1,33 @@
+\section{Motivation}\label{sec:motivation}
+Diminishing gains of transistor scaling~\cite{end_of_moore1,end_of_moore2, end_of_moore3} has been responsible for the trend
+moving towards Domain Specific Accelerators (DSA) in past few years. 
+DSAs trade-off general purpose programmability for gains in performance, energy and area. 
+There are several DSAs proposed for various application domains~\cite{chen2014diannao,pudiannao,harp,ibm_power}.
+This lack of flexibility makes DSAs prone to obsoletion with constantly evolving 
+algorithms and standards to process data. 
+Most modern devices run varied workloads, 
+which makes it necessary to have multiple DSAs in devices, thereby making the combined system un-optimal 
+and consume a larger area. 
+General purpose processors are at the other end of the spectrum which are capable of
+running any workload but cannot get efficiency gains as DSAs.
+Reconfigurable architectures like Dyser~\cite{ieeemicro12:dyser}, Wavescalar~\cite{wavescalar}, TRIPS~\cite{isca03:TRIPS} are proposed
+in past few years which try to match the efficiency of specialized hardware engines while maintaining the programmability. 
+
+
+We propose similar programmable architecture for neural network domain
+and try to achieve efficiency of a neural network DSA while maintaining programmability. We propose a programmable engine for neural networks (PENN).
+With the proposed PENN architecture, any neural network program can be executed 
+while still getting the efficiency of custom DSA solution.
+The factors that effect the design choices in DSAs are identified and realized in the PENN
+architecture. We explain the specialization principles commonly found in DSAs and employ the same
+for PENN and derive at the architecture. Our insight is that PENN could achieve the performance of a
+DSA specific to each application while maintaining the programmability. 
+
+
+%Concurrency is provided by many tiny cores. 
+%The addition of spatial fabric for each core gives it a high degree of computation. 
+%Adding scratchpad memories enables the specialization of memory communication. 
+%A low power core enables communication between various hardware units. 
+%We compose a programmable specialization architecture from known mechanisms and compare the speed-up, power and area with neural network DSAs.(Map neural network kernels to the proposed architecture?)
+
+

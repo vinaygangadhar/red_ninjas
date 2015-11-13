@@ -1,0 +1,7 @@
+\section{Related Work}\label{sec:related}
+Neural Networks and Machine learning have a broad range of applications in media, image analysis~\cite{mnih2012learning} and speech processing~\cite{dahl2013improving}. There is enormous interest shown by the research community in accelerating Deep Neural Networks~\cite{hinton2012improving} and Convolution Neural Networks~\cite{le2013building}. DianNao~\cite{chen2014diannao}, Neural Processing Unit~\cite{esmaeilzadeh2012neural} are two of the many interesting DSAs that we have considered so far. 
+Programmable architecture is one of the major goals of our design. Dynamically Specialized Execution Resources~\cite{govindaraju2012dyser} is software - hardware co-design used for the reconfigurable hardware. GCC compiler is modified to generate the configuration parameters that are required for the reconfigurable hardware in DySER.  
+The most similar design in terms of microarchitecture is MorphoSys~\cite{singh2000morphosys}. It also embeds a low power TinyRisc core, integrated with a CGRA, DMA engine and frame buffer. Here, the frame buffer is not used for data reuse, and the CGRA is more loosely coupled with the host core. 
+Specialization Engine for Explicit-Dataflow (SEED)~\cite{nowatzki2015exploring} makes use of dataflow analysis at fine grained granularity to achieve higher performance. These algorithms can be used to analyze new algorithms to study feasibility to export them on to PENN.
+
+
