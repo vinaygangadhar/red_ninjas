@@ -1,0 +1,20 @@
+-- entering main function --
+-- loading image --
+
+Reading image file: Face.pgm
+-- loading cascade classifier --
+-- detecting faces --
+detecting faces, iter := 1
+detecting faces, iter := 2
+detecting faces, iter := 3
+detecting faces, iter := 4
+detecting faces, iter := 5
+detecting faces, iter := 6
+detecting faces, iter := 7
+detecting faces, iter := 8
+detecting faces, iter := 9
+detecting faces, iter := 10
+detecting faces, iter := 11
+detecting faces, iter := 12
+-- saving output --
+-- image saved --
