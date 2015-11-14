@@ -1,2 +1,14 @@
 \section{Methodology }\label{sec:meth}
+<<<<<<< HEAD
 
+=======
+We try to list out some of the tools we are considering for our project and also the methodologies involved with those.
+
+We plan to use existing RISCV LLVM toochain~\cite{nguyenlinux} as part of compiler framework. 
+For low power core, we are considering a three stage pipeline SODOR core as it is power efficient compared to any standard VLIW core. 
+For implementing individual modules, we want to use CHISEL~\cite{chisel2012} tool, which uses an embedded scala language to generate verilog code and C++ simulator
+framework. Also, for our initial modeling phase, we used a trace based modeling tool TDG and we will be using the same for our further analysis.   
+
+For evaluating PENN, we will be collecting performance, power and area statistics of the synthesized version and compare it with statistics 
+given in the literature of DSA papers. 
+>>>>>>> 49ddcfc99c241d091550ef080d974a6076980d94
