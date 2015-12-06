@@ -142,8 +142,8 @@ haar.o: haar.cu gpu_functions.cuh $(HEADERS)
 
 vj: main.o haar.o image.o stdio-wrapper.o rectangles.o
 	$(GCC) $(CCFLAGS) -o $@ $+ $(LDFLAGS) $(EXTRA_LDFLAGS)
-	mkdir -p ../../bin/$(OSLOWER)/$(TARGET)
-	cp $@ ../../bin/$(OSLOWER)/$(TARGET)
+	mkdir -p ./bin/$(OSLOWER)/$(TARGET)
+	cp $@ ./bin/$(OSLOWER)/$(TARGET)
 
 run: build
 	./vj

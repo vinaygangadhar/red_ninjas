@@ -35,9 +35,13 @@
 #include "image.h"
 #include <stdio.h>
 #include "stdio-wrapper.h"
+#include "cuda_util.h"
 
 /* include the gpu functions */
-#include "gpu_functions.cuh"
+//#include "gpu_functions.cuh"
+#include "nearestNeighbor.cuh"
+
+
 
 /* TODO: use matrices */
 /* classifier parameters */
@@ -56,10 +60,12 @@ static int *tree_thresh_array;
 static int *stages_thresh_array;
 static int **scaled_rectangles_array;
 
+//////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////
 
 int clock_counter = 0;
 float n_features = 0;
-
 
 int iter_counter = 0;
 
@@ -70,7 +76,8 @@ void integralImages( MyImage *src, MyIntImage *sum, MyIntImage *sqsum );
 void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int sum_col, std::vector<MyRect>& _vec);
 
 /* compute scaled image */
-void nearestNeighbor (MyImage *src, MyImage *dst);
+void nearestNeighborOnHost(MyImage *src, MyImage *dst);
+void nearestNeighborOnDevice(MyImage *src, MyImage *dst);
 
 /* rounding function */
 inline  int  myRound( float value )
@@ -99,13 +106,40 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
    * sqsum1: square integral image (int)
    **********************************/
   MyImage image1Obj;
+  MyImage imageCmpObj;
   MyIntImage sum1Obj;
   MyIntImage sqsum1Obj;
 
   /* pointers for the created structs */
   MyImage *img1 = &image1Obj;
+  MyImage *cmpimg = &imageCmpObj;
   MyIntImage *sum1 = &sum1Obj;
   MyIntImage *sqsum1 = &sqsum1Obj;
+
+  /**************************************/
+   //Timing related
+   cudaError_t error;
+   cudaEvent_t cpu_start;
+   cudaEvent_t cpu_stop;
+   float msecTotal;
+   
+   //CUDA Events 
+   error = cudaEventCreate(&cpu_start);
+   if (error != cudaSuccess)
+   {
+       fprintf(stderr, "Failed to create start event (error code %s)!\n", cudaGetErrorString(error));
+       exit(EXIT_FAILURE);
+   }
+   
+   error = cudaEventCreate(&cpu_stop);
+   if (error != cudaSuccess)
+   {
+       fprintf(stderr, "Failed to create stop event (error code %s)!\n", cudaGetErrorString(error));
+       exit(EXIT_FAILURE);
+   
+   }
+
+  /**************************************/
 
   /********************************************************
    * allCandidates is the preliminaray face candidate,
@@ -135,6 +169,8 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
   /* malloc for img1: unsigned char */
   createImage(img->width, img->height, img1);
+  createImage(img->width, img->height, cmpimg);
+  
   /* malloc for sum1: unsigned char */
   createSumImage(img->width, img->height, sum1);
   /* malloc for sqsum1: unsigned char */
@@ -145,7 +181,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
   /* iterate over the image pyramid */
   for( factor = 1; ; factor *= scaleFactor )
-    {
+  {
       /* iteration counter */
       iter_counter++;
 
@@ -160,11 +196,11 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
       /* if the actual scaled image is smaller than the original detection window, break */
       if( sz1.width < 0 || sz1.height < 0 )
-	break;
+	      break;
 
       /* if a minSize different from the original detection window is specified, continue to the next scaling */
       if( winSize.width < minSize.width || winSize.height < minSize.height )
-	continue;
+	      continue;
 
       /*************************************
        * Set the width and height of 
@@ -174,15 +210,58 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
        * see image.c for details
        ************************************/
       setImage(sz.width, sz.height, img1);
+      setImage(sz.width, sz.height, cmpimg);
+      
       setSumImage(sz.width, sz.height, sum1);
       setSumImage(sz.width, sz.height, sqsum1);
+
+      printf("\n\tIteration:= %d\n \tDownsampling-->  New Image Size:   Width: %d, Height: %d\n",
+            iter_counter, sz.width, sz.height);
 
       /***************************************
        * Compute-intensive step:
        * building image pyramid by downsampling
        * downsampling using nearest neighbor
        **************************************/
-      nearestNeighbor(img, img1);
+      error = cudaEventRecord(cpu_start, NULL);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+     
+      nearestNeighborOnDevice(img, cmpimg);
+      nearestNeighborOnHost(img, img1);
+     
+      //Compare the host and device results
+      if(!CompareResults(img1->data, cmpimg->data, img1->width * img1->height))
+         printf("\tNN GPU and Host Image doesn't match!!\n");
+
+
+      // Record the stop event
+      error = cudaEventRecord(cpu_stop, NULL);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+
+      // Wait for the stop event to complete
+      error = cudaEventSynchronize(cpu_stop);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+
+      error = cudaEventElapsedTime(&msecTotal, cpu_start, cpu_stop);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+   
+      printf("\tNearestNeighbor computation complete--> Execution time: %f ms\n", msecTotal);
 
       /***************************************************
        * Compute-intensive step:
@@ -190,6 +269,8 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
        * compute a new integral and squared integral image
        ***************************************************/
       integralImages(img1, sum1, sqsum1);
+
+      printf("\tIntegral Image Sum Calculation Done\n");
 
       /* sets images for haar classifier cascade */
       /**************************************************
@@ -202,10 +283,11 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
        * but does not do compuation based on four coners.
        * The computation is done next in ScaleImage_Invoker
        *************************************************/
+      
       setImageForCascadeClassifier( cascade, sum1, sqsum1);
 
       /* print out for each scale of the image pyramid */
-      printf("detecting faces, iter := %d\n", iter_counter);
+      //printf("detecting faces, iter := %d\n", iter_counter);
 
       /****************************************************
        * Process the current scale with the cascaded fitler.
@@ -213,14 +295,50 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
        * Optimization oppurtunity:
        * the same cascade filter is invoked each time
        ***************************************************/
+     
+      // Record the start event
+      error = cudaEventRecord(cpu_start, NULL);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+      
       ScaleImage_Invoker(cascade, factor, sum1->height, sum1->width,
 			 allCandidates);
+
+      // Record the stop event
+      error = cudaEventRecord(cpu_stop, NULL);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+
+      // Wait for the stop event to complete
+      error = cudaEventSynchronize(cpu_stop);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+
+      error = cudaEventElapsedTime(&msecTotal, cpu_start, cpu_stop);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+   
+      printf("\tScaleImage_Invoker computation complete--> Execution time: %f ms\n", msecTotal);
+
 
       /*********************************************
        * For the 5kk73 assignment,
        * here is a skeleton
        ********************************************/
       /* malloc cascade filter on GPU memory*/
+      /*
       int filter_count = 0;
       for(int i = 0; i < cascade->n_stages; i++ ){
          filter_count += stages_array[i];
@@ -229,20 +347,22 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
       int size_per_filter = 18;
       int* gpu_cascade;
       cudaMalloc((void**) &gpu_cascade, filter_count*size_per_filter*sizeof(int));
-      /* To do: you need to memcpy filter parameters to GPU */
-      /* To do: your GPU function here */
+      
       dim3 threads = dim3(64, 1);
       dim3 grid = dim3(filter_count/64, 1);
       gpu_function_1<<< grid, threads >>>();
       gpu_function_2<<< grid, threads >>>();
-      /* and more functions */
-      /* free GPU memory */
       cudaFree(gpu_cascade);
+      
+      */
+      
       /*********************************************
        * End of the GPU skeleton
        ********************************************/
 
     } /* end of the factor loop, finish all scales in pyramid*/
+
+
 
    if( minNeighbors != 0)
     {
@@ -322,6 +442,12 @@ void setImageForCascadeClassifier( myCascade* _cascade, MyIntImage* _sum, MyIntI
   cascade->pq2 = (sqsum->data + sqsum->width*(equRect.height - 1));
   cascade->pq3 = (sqsum->data + sqsum->width*(equRect.height - 1) + equRect.width - 1);
 
+  printf("\tSetting Image for Classifier--> Detection Window Corners:\n \t\tp0: %d, p1: %d, p2: %d, p3: %d\n", 
+                                                                                                               (cascade->p0) - (cascade->p0), 
+                                                                                                               (cascade->p1) - (cascade->p0), 
+                                                                                                               (cascade->p2) - (cascade->p0), 
+                                                                                                               (cascade->p3) - (cascade->p0));
+
   /****************************************
    * Load the index of the four corners 
    * of the filter rectangle
@@ -373,6 +499,9 @@ void setImageForCascadeClassifier( myCascade* _cascade, MyIntImage* _sum, MyIntI
 	
       } /* end of j loop */
     } /* end i loop */
+
+   printf("\tFour Corners of all the Haar Filter Rectangles Loaded\n");
+
 }
 
 
@@ -432,7 +561,8 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
   myCascade* cascade;
   cascade = _cascade;
 	
-  p_offset = pt.y * (cascade->sum.width) + pt.x;    //shifted widnow
+  //To find out memory index in lienar array of mem
+  p_offset = pt.y * (cascade->sum.width) + pt.x;   
   pq_offset = pt.y * (cascade->sqsum.width) + pt.x;
 
   /**************************************************************************
@@ -573,6 +703,8 @@ void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int su
    * Merge functions/loops to increase locality
    * Tiling to increase computation-to-memory ratio
    *********************************************/
+  printf("\tRunning Cascade Classifier for %d times--> x2: %d, y2: %d\n", x2 * y2, x2, y2);
+
   for( x = 0; x <= x2; x += step )
     for( y = y1; y <= y2; y += step )
     {
@@ -583,8 +715,8 @@ void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int su
 	     * Optimization Oppotunity:
 	     * The same cascade filter is used each time
 	     ********************************************/
-	    result = runCascadeClassifier( cascade, p, 0 );
-
+       result = runCascadeClassifier( cascade, p, 0 );
+         
 	    /*******************************************************
 	     * If a face is detected,
 	     * record the coordinates of the filter window
@@ -650,7 +782,7 @@ void integralImages( MyImage *src, MyIntImage *sum, MyIntImage *sqsum )
  * This function downsample an image using nearest neighbor
  * It is used to build the image pyramid
  **********************************************************/
-void nearestNeighbor (MyImage *src, MyImage *dst)
+void nearestNeighborOnHost(MyImage *src, MyImage *dst)
 {
 
   int y;
@@ -673,17 +805,17 @@ void nearestNeighbor (MyImage *src, MyImage *dst)
   int x_ratio = (int)((w1<<16)/w2) +1;
   int y_ratio = (int)((h1<<16)/h2) +1;
 
-  for (i=0;i<h2;i++)
+  for (i=0;i < h2;i++)
   {
-      t = dst_data + i*w2;       //Pointer to next row in dst image
-      y = ((i*y_ratio)>>16);
-      p = src_data + y*w1;
+      t = dst_data + i * w2;       //Pointer to next row in dst image
+      y = ((i * y_ratio)>>16);
+      p = src_data + y * w1;
       rat = 0;
       
-      for (j=0;j<w2;j++)
+      for (j=0;j < w2;j++)
 	   {
 	      x = (rat>>16);
-	      *t++ = p[x];
+	      *(t++) = p[x];
 	      rat += x_ratio;
 	   }
    }
