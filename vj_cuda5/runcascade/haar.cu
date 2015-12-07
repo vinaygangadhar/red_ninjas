@@ -26,10 +26,10 @@ void checkError() {
 }
 
 int main(int argc, char** argv) {
-    uint8_t* index_x =        (uint8_t*) malloc(3*MAX_HAAR*sizeof(uint8_t));
-    uint8_t* index_y =        (uint8_t*) malloc(3*MAX_HAAR*sizeof(uint8_t));
-    uint8_t* width =          (uint8_t*) malloc(3*MAX_HAAR*sizeof(uint8_t));
-    uint8_t* height =         (uint8_t*) malloc(3*MAX_HAAR*sizeof(uint8_t));
+    uint16_t* index_x =        (uint16_t*) malloc(3*MAX_HAAR*sizeof(uint16_t));
+    uint16_t* index_y =        (uint16_t*) malloc(3*MAX_HAAR*sizeof(uint16_t));
+    uint16_t* width =          (uint16_t*) malloc(3*MAX_HAAR*sizeof(uint16_t));
+    uint16_t* height =         (uint16_t*) malloc(3*MAX_HAAR*sizeof(uint16_t));
     uint16_t* weight =        (uint16_t*) malloc(MAX_HAAR*sizeof(uint16_t));
     uint16_t* tree_threshold =(uint16_t*) malloc(MAX_HAAR*sizeof(uint16_t));
     uint16_t* alpha1 =        (uint16_t*) malloc(MAX_HAAR*sizeof(uint16_t));
@@ -39,10 +39,10 @@ int main(int argc, char** argv) {
     uint32_t* sqsum =         (uint32_t*) malloc(55*55*sizeof(uint32_t));
     uint8_t* haar_per_stage = (uint8_t*) malloc(9*sizeof(uint8_t));
 
-    uint8_t* dindex_x;      
-    uint8_t* dindex_y; 
-    uint8_t* dwidth;   
-    uint8_t* dheight; 
+    uint16_t* dindex_x;      
+    uint16_t* dindex_y; 
+    uint16_t* dwidth;   
+    uint16_t* dheight; 
     uint16_t* dweight; 
     uint16_t* dtree_th;
     uint16_t* dalpha1; 
@@ -53,10 +53,10 @@ int main(int argc, char** argv) {
     uint8_t* dhaar_per_stg;
     bool* dbit_vector;
 
-    cudaMalloc(&dindex_x, 3*MAX_HAAR*sizeof(uint8_t));
-    cudaMalloc(&dindex_y, 3*MAX_HAAR*sizeof(uint8_t));
-    cudaMalloc(&dwidth, 3*MAX_HAAR*sizeof(uint8_t));
-    cudaMalloc(&dheight, 3*MAX_HAAR*sizeof(uint8_t));
+    cudaMalloc(&dindex_x, 3*MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dindex_y, 3*MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dwidth, 3*MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dheight, 3*MAX_HAAR*sizeof(uint16_t));
     
     cudaMalloc(&dweight, MAX_HAAR*sizeof(uint16_t));
     cudaMalloc(&dtree_th, MAX_HAAR*sizeof(uint16_t));
@@ -83,10 +83,10 @@ int main(int argc, char** argv) {
         alpha2[i] = rand();
     }
     
-    cudaMemcpy(dindex_x, index_x, 3*MAX_HAAR*sizeof(uint8_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(dindex_y, index_y, 3*MAX_HAAR*sizeof(uint8_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(dwidth, width, 3*MAX_HAAR*sizeof(uint8_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(dheight, height, 3*MAX_HAAR*sizeof(uint8_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dindex_x, index_x, 3*MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dindex_y, index_y, 3*MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dwidth, width, 3*MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dheight, height, 3*MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
     
     cudaMemcpy(dweight, weight, MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
     cudaMemcpy(dtree_th, tree_threshold, MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
