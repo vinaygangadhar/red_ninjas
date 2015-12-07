@@ -1,0 +1,13 @@
+# NV_Warning: The legacy Command Line Profiler is deprecated and will be no longer available as of the next major release of the CUDA toolkit. Please use nvprof.
+# CUDA_PROFILE_LOG_VERSION 2.0
+# CUDA_DEVICE 0 GeForce GTX 480
+# CUDA_CONTEXT 1
+# TIMESTAMPFACTOR 140217a46fa627f6
+method,gputime,cputime,occupancy
+method=[ memcpyHtoD ] gputime=[ 1.952 ] cputime=[ 10.975 ] 
+method=[ memcpyHtoD ] gputime=[ 1.760 ] cputime=[ 7.028 ] 
+method=[ memcpyDtoD ] gputime=[ 20.896 ] cputime=[ 28.513 ] 
+method=[ _Z19prefixscan_perblockPfS_i ] gputime=[ 26.304 ] cputime=[ 7.215 ] occupancy=[ 0.667 ] 
+method=[ _Z20prefixscan_allblocksPfS_i ] gputime=[ 1.856 ] cputime=[ 5.398 ] occupancy=[ 0.667 ] 
+method=[ memcpyDtoD ] gputime=[ 5.408 ] cputime=[ 13.799 ] 
+method=[ memcpyDtoH ] gputime=[ 3.200 ] cputime=[ 20.500 ] 
