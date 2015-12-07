@@ -241,8 +241,10 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
           exit(EXIT_FAILURE);
       }
      
-      nearestNeighborOnDevice(img, deviceimg);
-      nearestNeighborOnHost(img, img1);
+      //nearestNeighborOnDevice(img, deviceimg);
+      
+      nearestNeighborOnDevice(img, img1);
+      //nearestNeighborOnHost(img, img1);
     
       if(PRINT_LOG){ 
          //Compare the host and device results

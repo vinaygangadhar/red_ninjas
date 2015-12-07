@@ -41,14 +41,19 @@ void nearestNeighborOnDevice(MyImage *src, MyImage *dst)
    int imageDstSize = dst->width * dst->height;
    int imageSrcSize = src->width * src->height;
 
+   if(PRINT_LOG){
+       printf("\tSrc size: %d x %d\n", src->width, src->height);
+       printf("\tDst size: %d x %d\n", dst->width, dst->height);
+   }
+
    //Pinned memory
-   check = CUDA_CHECK_RETURN(cudaMallocHost((void**)&deviceSrcImage, imageSrcSize));
+   check = CUDA_CHECK_RETURN(cudaMalloc((void**)&deviceSrcImage, imageSrcSize));
    if( check != 0){
         std::cerr << "Error: CudaMallocHost not successfull for device source image" << std::endl;
         exit(1);
     }
    
-   check = CUDA_CHECK_RETURN(cudaMallocHost((void**)&deviceDstImage, imageDstSize));
+   check = CUDA_CHECK_RETURN(cudaMalloc((void**)&deviceDstImage, imageDstSize));
    if( check != 0){
         std::cerr << "Error: CudaMallocHost not successfull for device dest image" << std::endl;
         exit(1);

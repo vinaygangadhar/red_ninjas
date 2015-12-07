@@ -67,14 +67,14 @@ __global__ void nn_kernel(char* deviceSrc, char* deviceDst,
    //need to be scaled based on the scale factor
 
    //For each thread id based on the ratio get the nearest neighbor
-   if(global_tId < dst_elems){
-  
-      int row = (tIdy * y_ratio) >> 16;
-      int col = ( ((TB_START + tIdx) * x_ratio) >> 16 ) - 1;
+   if( (tbx * BLOCK_SIZE + tIdx) < w2){
+       if( (tby * BLOCK_SIZE + tIdy) < h2){
+           int row = ( (tby * BLOCK_SIZE + tIdy)  * y_ratio) >> 16;
+           int col = ( (tbx * BLOCK_SIZE + tIdx) * x_ratio)  >> 16 ;
 
-      deviceDst[TB_START + (tIdy * w2) + tIdx] = deviceSrc[row * w1 + col];
+           deviceDst[TB_START + (tIdy * w2) + tIdx] = deviceSrc[row * w1 + col];
+       }
    }
-
 }
 
 #endif 
