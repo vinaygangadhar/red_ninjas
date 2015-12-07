@@ -5,11 +5,34 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <iostream>
+#include <fstream>
 #include <cuda.h> //CUDA library
 
+//DEBUG FLAGS
+#define LOG 1
+#define DEVICE 1
 
 #define BLOCK_SIZE (16)             //16 x 16
 using namespace std;
+
+
+//DEBUG Varibales
+#ifdef LOG
+      static const bool PRINT_LOG = true;
+#else
+      static const bool PRINT_LOG = false;
+#endif
+
+#ifdef DEVICE
+      static const bool PRINT_GPU = true;
+#else
+      static const bool PRINT_GPU = false;
+#endif
+
+
+
+
+
 
 //CUDA Error Checker -- If return value is -1 then there is an error
 int CUDA_CHECK_RETURN(cudaError_t err_ret){
@@ -29,15 +52,22 @@ bool CompareResults(unsigned char* A, unsigned char* B, int elements){
    for(unsigned int i = 0; i < elements; i++){
        int error = abs(A[i]-B[i]);
        
-       if(error > 0){
+       if(error > 0)
          diff++;
-       }
    }
    
    if(diff > 0)
       return false;
    else
       return true;
+}
+
+// Write a 16x16 floating point matrix to file
+void WriteFile(unsigned char* data, int elements, std::fstream& ofs){
+
+   for(unsigned int i = 0; i < elements; i++){
+      ofs<<(data[i] - '0')<<" ";
+   }
 }
 
 

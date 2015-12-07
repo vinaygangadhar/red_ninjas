@@ -6,6 +6,21 @@
 
 #include "nearestNeighbor_kernel.cuh"
 
+////DEBUG Varibales
+//#ifdef LOG
+//      static const bool PRINT_LOG = true;
+//#else
+//      static const bool PRINT_LOG = false;
+//#endif
+//
+//#ifdef DEVICE
+//      static const bool PRINT_GPU = true;
+//#else
+//      static const bool PRINT_GPU = false;
+//#endif
+
+
+
 //Setting up the kernel for device
 void nearestNeighborOnDevice(MyImage *src, MyImage *dst)
 {
@@ -58,6 +73,12 @@ void nearestNeighborOnDevice(MyImage *src, MyImage *dst)
    nn_kernel<<<blocksPerGrid, threadsPerBlock>>>(deviceSrcImage, deviceDstImage, 
                                                  w1, h1, w2, h2,
                                                  x_ratio, y_ratio, imageDstSize);
+   if(PRINT_GPU){
+      std::cerr << "\t/***************GPU-LOG****************/" << std::endl;
+      std::cerr << "\t/Threads Per Block: " << threadsPerBlock.x << " x " << threadsPerBlock.y << std::endl;
+      std::cerr << "\tTBS per Grid: " << blocksPerGrid.x << " x " << blocksPerGrid.y << std::endl;
+      std::cerr << "\t/**************************************/" << std::endl;
+   }
 
    //Copy the dst image result back to host ptr
    check = CUDA_CHECK_RETURN(cudaMemcpy(dst_data, deviceDstImage, sizeof(char) * imageDstSize, cudaMemcpyDeviceToHost));      

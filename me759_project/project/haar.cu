@@ -41,7 +41,18 @@
 //#include "gpu_functions.cuh"
 #include "nearestNeighbor.cuh"
 
-
+////DEBUG Varibales
+//#ifdef LOG
+//      const bool PRINT_LOG = true;
+//#else
+//      const bool PRINT_LOG = false;
+//#endif
+//
+//#ifdef DEVICE
+//      const bool PRINT_GPU = true;
+//#else
+//      const bool PRINT_GPU = false;
+//#endif
 
 /* TODO: use matrices */
 /* classifier parameters */
@@ -91,7 +102,7 @@ inline  int  myRound( float value )
  ******************************************************/
 
 std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize, myCascade* cascade,
-				   float scaleFactor, int minNeighbors)
+				   float scaleFactor, int minNeighbors, std::fstream& ofs)
 {
 
   /* group overlaping windows */
@@ -106,13 +117,13 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
    * sqsum1: square integral image (int)
    **********************************/
   MyImage image1Obj;
-  MyImage imageCmpObj;
+  MyImage imageDeviceObj;
   MyIntImage sum1Obj;
   MyIntImage sqsum1Obj;
 
   /* pointers for the created structs */
   MyImage *img1 = &image1Obj;
-  MyImage *cmpimg = &imageCmpObj;
+  MyImage *deviceimg = &imageDeviceObj;
   MyIntImage *sum1 = &sum1Obj;
   MyIntImage *sqsum1 = &sqsum1Obj;
 
@@ -169,7 +180,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
   /* malloc for img1: unsigned char */
   createImage(img->width, img->height, img1);
-  createImage(img->width, img->height, cmpimg);
+  createImage(img->width, img->height, deviceimg);
   
   /* malloc for sum1: unsigned char */
   createSumImage(img->width, img->height, sum1);
@@ -210,7 +221,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
        * see image.c for details
        ************************************/
       setImage(sz.width, sz.height, img1);
-      setImage(sz.width, sz.height, cmpimg);
+      setImage(sz.width, sz.height, deviceimg);
       
       setSumImage(sz.width, sz.height, sum1);
       setSumImage(sz.width, sz.height, sqsum1);
@@ -230,14 +241,26 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
           exit(EXIT_FAILURE);
       }
      
-      nearestNeighborOnDevice(img, cmpimg);
+      nearestNeighborOnDevice(img, deviceimg);
       nearestNeighborOnHost(img, img1);
-     
-      //Compare the host and device results
-      if(!CompareResults(img1->data, cmpimg->data, img1->width * img1->height))
-         printf("\tNN GPU and Host Image doesn't match!!\n");
-
-
+    
+      if(PRINT_LOG){ 
+         //Compare the host and device results
+         if(!CompareResults(img1->data, deviceimg->data, img1->width * img1->height)){
+            printf("\tNN GPU and Host Image doesn't match!! -- Printing Image Log\n");
+    
+            ofs<<"\n";
+            ofs<<"\nHost Image Log: ";
+            ofs<<"Width: "<<img1->width<<" x "<<"Height: "<<img1->height<<"\n";
+            WriteFile(img1->data, img1->width * img1->height, ofs);
+        
+            ofs<<"\n";
+            ofs<<"\nDevice Image Log: ";
+            ofs<<"Width: "<<deviceimg->width<<" x "<<"Height: "<<deviceimg->height<<"\n";
+            WriteFile(deviceimg->data, deviceimg->width * deviceimg->height, ofs);
+         } 
+      }
+   
       // Record the stop event
       error = cudaEventRecord(cpu_stop, NULL);
       if (error != cudaSuccess)
@@ -370,6 +393,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     }
 
   freeImage(img1);
+  freeImage(deviceimg);
   freeSumImage(sum1);
   freeSumImage(sqsum1);
   return allCandidates;
@@ -955,7 +979,6 @@ void readTextClassifier()//(myCascade * cascade)
     } /* end of i loop */
   fclose(fp);
 }
-
 
 void releaseTextClassifier()
 {

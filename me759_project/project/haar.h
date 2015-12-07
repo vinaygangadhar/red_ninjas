@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include "image.h"
 #include <vector>
+#include <fstream>
 #include "stdio-wrapper.h"
 
 #define MAXLABELS 50
@@ -45,6 +46,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 typedef  int sumtype;
 typedef int sqsumtype;
@@ -120,7 +122,8 @@ void drawRectangle(MyImage* image, MyRect r);
 std::vector<MyRect> detectObjects( MyImage* image, MySize minSize, MySize maxSize,
 		myCascade* cascade,
 		float scale_factor,
-		int min_neighbors);
+		int min_neighbors,
+      std::fstream& ofs);
 		
 #ifdef __cplusplus
 }

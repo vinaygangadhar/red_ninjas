@@ -46,7 +46,16 @@ using namespace std;
 int main (int argc, char *argv[]) 
 {
 
-	int flag;
+   char* logFile;
+   
+   if(argc > 1){
+      logFile = argv[1];
+   }
+
+   std::fstream olog;
+   olog.open(logFile, std::fstream::in | std::fstream::out | std::fstream::app);
+	
+   int flag;
 	
 	int mode = 1;
 	int i;
@@ -62,7 +71,7 @@ int main (int argc, char *argv[])
 	MyImage imageObj;
 	MyImage *image = &imageObj;
 
-	flag = readPgm((char *)"Face.pgm", image);
+	flag = readPgm((char *)"1.pgm", image);
 	if (flag == -1)
 	{
 		printf( "Unable to open input image\n");
@@ -93,7 +102,7 @@ int main (int argc, char *argv[])
 
 	printf("\n-- Detecting faces\r\n");
 
-	result = detectObjects(image, minSize, maxSize, cascade, scaleFactor, minNeighbours);
+	result = detectObjects(image, minSize, maxSize, cascade, scaleFactor, minNeighbours, olog);
 
 	for(i = 0; i < result.size(); i++ )
 	{
@@ -109,6 +118,7 @@ int main (int argc, char *argv[])
 	/* delete image and free classifier */
 	releaseTextClassifier();
 	freeImage(image);
+   olog.close();
 
 	return 0;
 }
