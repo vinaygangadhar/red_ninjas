@@ -61,7 +61,7 @@ __global__ void nn_kernel(char* deviceSrc, char* deviceDst,
    int global_tId = blockId * (blockDim.x * blockDim.y) + (threadIdx.y * blockDim.x) + threadIdx.x;
 
    //Compute the TB start in the global scope of dst image
-   int TB_START = (tby * w2 * BLOCK_SIZE) + tbx; 
+   int TB_START = (tby * w2 * BLOCK_SIZE) + (tbx * BLOCK_SIZE); 
 
    //To access the src image, the indices
    //need to be scaled based on the scale factor
@@ -69,10 +69,10 @@ __global__ void nn_kernel(char* deviceSrc, char* deviceDst,
    //For each thread id based on the ratio get the nearest neighbor
    if(global_tId < dst_elems){
   
-      int row = (tIdy * y_ratio) >>16;
-      int col = (tIdx * x_ratio) >> 16;
+      int row = (tIdy * y_ratio) >> 16;
+      int col = ( ((TB_START + tIdx) * x_ratio) >> 16 ) - 1;
 
-      deviceDst[TB_START + (tIdy * BLOCK_SIZE) + tIdx] = deviceSrc[row * w1 + col];
+      deviceDst[TB_START + (tIdy * w2) + tIdx] = deviceSrc[row * w1 + col];
    }
 
 }
