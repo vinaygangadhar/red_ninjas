@@ -1,4 +1,4 @@
-// Main file
+// Main file of our project
 /*
  *  TU Eindhoven
  *  Eindhoven, The Netherlands
