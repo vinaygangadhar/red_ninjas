@@ -85,6 +85,7 @@ int main (int argc, char *argv[])
 
 
 	readTextClassifier();
+	readTextClassifierForGPU();
 
 	std::vector<MyRect> result;
 
@@ -105,6 +106,7 @@ int main (int argc, char *argv[])
 
 	/* delete image and free classifier */
 	releaseTextClassifier();
+	releaseTextClassifierGPU();
 	freeImage(image);
 
 	return 0;

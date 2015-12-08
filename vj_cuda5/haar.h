@@ -41,6 +41,29 @@
 #include "stdio-wrapper.h"
 
 #define MAXLABELS 50
+#define BLOCK_SIZE 1024
+
+// defines for separate kernels
+#define HAAR_KERN_0 323
+#define NUMSTG_KERN_0 9
+#define HAAR_KERN_1 323
+#define NUMSTG_KERN_1 9
+#define HAAR_KERN_2 323
+#define NUMSTG_KERN_2 9
+#define HAAR_KERN_3 323
+#define NUMSTG_KERN_3 9
+#define HAAR_KERN_4 323
+#define NUMSTG_KERN_4 9
+#define HAAR_KERN_5 323
+#define NUMSTG_KERN_5 9
+#define HAAR_KERN_6 323
+#define NUMSTG_KERN_6 9
+#define HAAR_KERN_7 323
+#define NUMSTG_KERN_7 9
+#define HAAR_KERN_8 323
+#define NUMSTG_KERN_8 9
+#define HAAR_KERN_9 323
+#define NUMSTG_KERN_9 9
 
 #ifdef __cplusplus
 extern "C" {
@@ -103,7 +126,9 @@ void setImageForCascadeClassifier( myCascade* cascade, MyIntImage* sum, MyIntIma
 int runCascadeClassifier( myCascade* cascade, MyPoint pt, int start_stage);
 
 void readTextClassifier();//(myCascade* cascade);
+void readTextClassifierForGPU();
 void releaseTextClassifier();
+void releaseTextClassifierGPU();
 
 
 //void groupRectangles(MyRect* _vec, int groupThreshold, float eps);
@@ -121,7 +146,10 @@ std::vector<MyRect> detectObjects( MyImage* image, MySize minSize, MySize maxSiz
 		myCascade* cascade,
 		float scale_factor,
 		int min_neighbors);
-		
+
+// Function to check error for execution of CUDA APIs
+void checkError();
+void compare_bits(bool* ref, bool* data, int n);
 #ifdef __cplusplus
 }
 
