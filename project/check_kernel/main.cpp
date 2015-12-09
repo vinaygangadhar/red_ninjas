@@ -104,21 +104,10 @@ int main (int argc, char *argv[])
 
 	result = detectObjects(image, minSize, maxSize, cascade, scaleFactor, minNeighbours, olog);
 
-	for(i = 0; i < result.size(); i++ )
-	{
-		MyRect r = result[i];
-		drawRectangle(image, r);
-	}
-
-	printf("\n-- Saving output --\r\n"); 
-	flag = writePgm((char *)OUTPUT_FILENAME, image); 
-
-	printf("-- Image saved --\r\n");
-
 	/* delete image and free classifier */
 	releaseTextClassifier();
 	freeImage(image);
-   olog.close();
+     olog.close();
 
 	return 0;
 }

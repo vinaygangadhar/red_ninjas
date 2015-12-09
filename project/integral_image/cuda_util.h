@@ -12,8 +12,10 @@
 #define LOG 1
 #define DEVICE 1
 
+#define MAX_IMG_SIZE (1024)
+
 #define BLOCK_SIZE (16)             //16 x 16
-#define ROWS_PER_TB (4)
+#define SHARED     (MAX_IMG_SIZE * 2 + 2)
 
 using namespace std;
 
@@ -31,19 +33,8 @@ using namespace std;
       static const bool PRINT_GPU = false;
 #endif
 
-//CUDA Error Checker -- If return value is -1 then there is an error
-int CUDA_CHECK_RETURN(cudaError_t err_ret){
-
-	int val = 0;
-    if (err_ret != cudaSuccess) {
-        fprintf(stderr, "Error %s at line %d in file %s\n", cudaGetErrorString(err_ret), __LINE__, __FILE__);   
-        val = 1;
-    }
-    return val;    
-} 																													
-
-//compare the data stored in two arrays on the host
-bool CompareResults(unsigned char* A, unsigned char* B, int elements){
+//compare the data stored in two arrays on the host -- characters
+bool CompareResultsChar(unsigned char* A, unsigned char* B, int elements){
    
    int diff = 0;   
    for(unsigned int i = 0; i < elements; i++){
@@ -57,6 +48,28 @@ bool CompareResults(unsigned char* A, unsigned char* B, int elements){
       return false;
    else
       return true;
+}
+
+
+//compare the data stored in two arrays on the host -- integers
+bool CompareResultsInt(int* hA, int* dA, int* hsq_A, int* dsq_A, int elements){
+   
+   int sum_check = 0;  
+   int sqsum_check = 0;   
+   
+   for(unsigned int i = 0; i < elements; i++){
+      
+      sum_check += (hA[i] == dA[i]) ? 0 : 1;      
+      sqsum_check += (hsq_A[i] == dsq_A[i]) ? 0 : 1;
+   
+   }
+
+   if( (sum_check != 0) || (sqsum_check != 0)){
+        return false;
+   }else{
+        return true;
+   }
+
 }
 
 // Write a 16x16 floating point matrix to file
@@ -78,7 +91,11 @@ int getSmallestPower2(int num) {
     exit(-1);                                                     
   }                                                               
   return result;                                                  
-}                                       
+}                                                                 
+
+
+
+
 
 
 #endif

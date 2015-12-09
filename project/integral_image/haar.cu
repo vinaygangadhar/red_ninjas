@@ -31,6 +31,9 @@
  * what you give them.   Happy coding!
  */
 
+#ifdef _WIN32
+#  define NOMINMAX 
+#endif
 #include "haar.h"
 #include "image.h"
 #include <stdio.h>
@@ -38,6 +41,7 @@
 
 /* include the gpu functions */
 #include "gpu_integral.cuh"
+#include "cuda_util.h"
 
 /* TODO: use matrices */
 /* classifier parameters */
@@ -64,41 +68,22 @@ float n_features = 0;
 int iter_counter = 0;
 
 /* compute integral images */
-void integralImages( MyImage *src, MyIntImage *sum, MyIntImage *sqsum );
+void integralImageOnHost( MyImage *src, MyIntImage *sum, MyIntImage *sqsum );
+
+
+/* compute nn and integral images on GPU */
+void nn_integralImageOnDevice(MyImage *src, MyImage *dst, MyIntImage *sum, MyIntImage *sqsum );
 
 /* scale down the image */
 void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int sum_col, std::vector<MyRect>& _vec);
 
 /* compute scaled image */
-void nearestNeighbor (MyImage *src, MyImage *dst);
+void nearestNeighborOnHost(MyImage *src, MyImage *dst);
 
 /* rounding function */
 inline  int  myRound( float value )
 {
   return (int)(value + (value >= 0 ? 0.5 : -0.5));
-}
-
-/*cuda return value check function*/
-#define devErrChk(func) {devAssert((func),__FILE__,__LINE__);}
-
-inline void devAssert(cudaError_t code, const char *file, int line)
-{
-  if (code != cudaSuccess)
-  {
-    printf("devAssert: %s %s %d \n", cudaGetErrorString(code), file,line);
-
-  }
-}
-
-int getSmallestPower2(int num) {
-  int result = 1;
-  while(result < num && result > 0)
-    result <<= 1;
-  if(result <= 0 || num <= 0) {
-    fprintf(stderr, "The size requested might be two large!\n");
-    exit(-1);
-  }
-  return result;
 }
 
 /*******************************************************
@@ -122,14 +107,44 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
    * sqsum1: square integral image (int)
    **********************************/
   MyImage image1Obj;
+  MyImage imageDevice1Obj;
   MyIntImage sum1Obj;
   MyIntImage sqsum1Obj;
+  MyIntImage sumDeviceObj;
+  MyIntImage sqsumDeviceObj;
+
   /* pointers for the created structs */
   MyImage *img1 = &image1Obj;
+  MyImage *deviceimg1 = &imageDevice1Obj;
   MyIntImage *sum1 = &sum1Obj;
   MyIntImage *sqsum1 = &sqsum1Obj;
+  MyIntImage *devicesum = &sumDeviceObj;
+  MyIntImage *devicesqsum = &sqsumDeviceObj;
 
-  /********************************************************
+   /**************************************/
+   //Timing related
+   cudaError_t error;
+   cudaEvent_t cpu_start;
+   cudaEvent_t cpu_stop;
+   float cpu_msecTotal;
+ 
+   //CUDA Events 
+   error = cudaEventCreate(&cpu_start);
+   if (error != cudaSuccess)
+   {
+       fprintf(stderr, "Failed to create start event (error code %s)!\n", cudaGetErrorString(error));
+       exit(EXIT_FAILURE);
+   }
+   
+   error = cudaEventCreate(&cpu_stop);
+   if (error != cudaSuccess)
+   {
+       fprintf(stderr, "Failed to create stop event (error code %s)!\n", cudaGetErrorString(error));
+       exit(EXIT_FAILURE);
+   
+   }
+
+   /********************************************************
    * allCandidates is the preliminaray face candidate,
    * which will be refined later.
    *
@@ -157,10 +172,14 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
   /* malloc for img1: unsigned char */
   createImage(img->width, img->height, img1);
+  createImage(img->width, img->height, deviceimg1);
   /* malloc for sum1: unsigned char */
   createSumImage(img->width, img->height, sum1);
+  createSumImage(img->width, img->height, devicesum);
   /* malloc for sqsum1: unsigned char */
   createSumImage(img->width, img->height, sqsum1);
+  createSumImage(img->width, img->height, devicesqsum);
+
 
   /* initial scaling factor */
   factor = 1;
@@ -196,22 +215,94 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
      * see image.c for details
      ************************************/
     setImage(sz.width, sz.height, img1);
+    setImage(sz.width, sz.height, deviceimg1);
     setSumImage(sz.width, sz.height, sum1);
     setSumImage(sz.width, sz.height, sqsum1);
+    setSumImage(sz.width, sz.height, devicesum);
+    setSumImage(sz.width, sz.height, devicesqsum);
+   
+    printf("\n\tIteration:= %d\n \tDownsampling-->  New Image Size:   Width: %d, Height: %d\n",
+            iter_counter, sz.width, sz.height);
 
+ 
     /***************************************
      * Compute-intensive step:
      * building image pyramid by downsampling
      * downsampling using nearest neighbor
      **************************************/
-    nearestNeighbor(img, img1);
+     //CPU CALL
 
-    /***************************************************
+     printf("\tNN and II on CPU Started\n");
+     
+     error = cudaEventRecord(cpu_start, NULL);
+     if (error != cudaSuccess)
+     {
+         fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
+         exit(EXIT_FAILURE);
+     }
+    
+     //NN's downsampled image is passed to II 
+     nearestNeighborOnHost(img, img1);
+     integralImageOnHost(img1, sum1, sqsum1);
+     
+     // Record the stop event
+     error = cudaEventRecord(cpu_stop, NULL);
+     if (error != cudaSuccess)
+     {
+         fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
+         exit(EXIT_FAILURE);
+     }
+
+     // Wait for the stop event to complete
+     error = cudaEventSynchronize(cpu_stop);
+     if (error != cudaSuccess)
+     {
+         fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
+         exit(EXIT_FAILURE);
+     }
+
+     error = cudaEventElapsedTime(&cpu_msecTotal, cpu_start, cpu_stop);
+     if (error != cudaSuccess)
+     {
+         fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
+         exit(EXIT_FAILURE);
+     }
+   
+     printf("\tNN and II on CPU complete--> Execution time: %f ms\n", cpu_msecTotal);
+
+
+     /***************************************************
      * Compute-intensive step:
      * At each scale of the image pyramid,
      * compute a new integral and squared integral image
      ***************************************************/
-    integralImages(img1, sum1, sqsum1);
+     //GPU CALL
+
+     nn_integralImageOnDevice(img, deviceimg1, devicesum, devicesqsum);
+
+     if(PRINT_LOG){ 
+        //Compare the host and device results
+          if(!CompareResultsChar(img1->data, deviceimg1->data, img1->width * img1->height) ){
+               printf("\tNN on GPU and Host doesn't match!! -- Printing Image Log\n");
+               
+               ofs<<"\n";
+               ofs<<"\nHost Image Log: ";
+               ofs<<"Width: "<<img1->width<<" x "<<"Height: "<<img1->height<<"\n";
+               WriteFile(img1->data, img1->width * img1->height, ofs);
+       
+               ofs<<"\n";
+               ofs<<"\nDevice Image Log: ";
+               ofs<<"Width: "<<deviceimg1->width<<" x "<<"Height: "<<deviceimg1->height<<"\n";
+               WriteFile(deviceimg1->data, deviceimg1->width * deviceimg1->height, ofs);
+          }
+
+          if( !CompareResultsInt(sum1->data, devicesum->data, sqsum1->data, devicesqsum->data, img1->width * img1->height) )
+          {
+               printf("\tII on GPU and Host doesn't match!!\n");
+          } 
+     }
+
+     printf("\n\t------------------------------------------------------------------------------------\n");
 
     /* sets images for haar classifier cascade */
     /**************************************************
@@ -226,8 +317,6 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
      *************************************************/
     setImageForCascadeClassifier( cascade, sum1, sqsum1);
 
-    /* print out for each scale of the image pyramid */
-    printf("detecting faces, iter := %d\n", iter_counter);
 
     /****************************************************
      * Process the current scale with the cascaded fitler.
@@ -268,11 +357,15 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     groupRectangles(allCandidates, minNeighbors, GROUP_EPS);
   }
 
+  //Destory the events 
+  cudaEventDestroy(cpu_start);
+  cudaEventDestroy(cpu_stop);
+  
   freeImage(img1);
   freeSumImage(sum1);
   freeSumImage(sqsum1);
+  
   return allCandidates;
-
 }
 
 /***********************************************
@@ -625,124 +718,46 @@ void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int su
  * More info:
  * http://en.wikipedia.org/wiki/Summed_area_table
  ****************************************************/
-void integralImages( MyImage *src, MyIntImage *sum, MyIntImage *sqsum )
+void integralImageOnHost( MyImage *src, MyIntImage *sum, MyIntImage *sqsum )
 {
-  //  int x, y, s, sq, t, tq;
-  //  unsigned char it;
-  //  int height = src->height;
-  //  int width = src->width;
-  //  unsigned char *data = src->data;
-  //  int * sumData = sum->data;
-  //  int * sqsumData = sqsum->data;
-  //  for( y = 0; y < height; y++)
-  //  {
-  //    s = 0;
-  //    sq = 0;
-  //    /* loop over the number of columns */
-  //    for( x = 0; x < width; x ++)
-  //    {
-  //      it = data[y*width+x];
-  //      /* sum of the current row (integer)*/
-  //      s += it; 
-  //      sq += it*it;
-  //
-  //      t = s;
-  //      tq = sq;
-  //      if (y != 0)
-  //      {
-  //        t += sumData[(y-1)*width+x];
-  //        tq += sqsumData[(y-1)*width+x];
-  //      }
-  //      sumData[y*width+x]=t;
-  //      sqsumData[y*width+x]=tq;
-  //    }
-  //  }
-  /* Modification From Here*/
-  //copy src pixels only to device in uchar// 
-  MyImage d_src;
-  d_src.height = src->height;
-  d_src.width = src->width;
-  int num_pixels = d_src.height * d_src.width;
-  devErrChk(cudaMalloc((void**)&(d_src.data), sizeof(unsigned char)*num_pixels));
-  devErrChk(cudaMemcpy(d_src.data, src->data, sizeof(unsigned char)*num_pixels, cudaMemcpyHostToDevice));
-
-  //allocate space for sum and sqsum pixels only on device//
-  MyIntImage d_sum, d_sqsum;
-  d_sum.width = sum->width;d_sum.height = sum->height; 
-  d_sqsum.width = sqsum->width; d_sqsum.height = sqsum->height;
-  devErrChk(cudaMalloc((void**)&(d_sum.data), sizeof(int)*num_pixels));
-  devErrChk(cudaMalloc((void**)&(d_sqsum.data), sizeof(int)*num_pixels));
-
-  //check sum and sqsum pixels on host  against device//
-  //  int *h_sum = (int*)malloc(sizeof(int)*num_pixels);
-  //  if (!h_sum) {printf("h_sum malloc failed/n");}
-  //  int *h_sqsum = (int*)malloc(sizeof(int)*num_pixels);
-  //  if (!h_sqsum) {printf("h_sqsum malloc failed/n");}
-
-  /*****************************************************************
-   *rowscan does row-wise inclusive prefix scan for sum and sqsum
-   *colscan does column-wise inclusive prefix scan for sum and sqsum*/
-
-  int h = d_src.height;
-  int w = d_src.width;
-  int rs_threads = getSmallestPower2(w);
-  int cs_threads = getSmallestPower2(h);
-  int rs_blocks = h;
-  int cs_blocks = w;
-  //printf("height=%d width=%d\n",h,w);
-  if (rs_threads > 1024 || cs_threads > 1024)
-  {
-    printf("Supported only for Image width, height < 1024.\n");
-    printf("Currently passed Image[w]=%d Image[h]=%d\n",w,h);
-    cudaFree(d_src.data);
-    cudaFree(d_sum.data);
-    cudaFree(d_sqsum.data);
-    //exit(0);
-  }
-  //rowscan<<<rs_blocks,rs_threads,sizeof(int)*2*(rs_threads+1)>>>(d_src.data,d_sum.data,d_sqsum.data,w);
-  rowscan<<<rs_blocks,rs_threads>>>(d_src.data,d_sum.data,d_sqsum.data,w);
-  devErrChk( cudaPeekAtLastError() );
-  devErrChk( cudaDeviceSynchronize() );
-  printf("rowscan exited %d\n",__LINE__);
-  //colscan<<<cs_blocks,cs_threads,sizeof(int)*2*(cs_threads+1)>>>(d_sum.data,d_sqsum.data,h);
-  colscan<<<cs_blocks,cs_threads>>>(d_sum.data,d_sqsum.data,h);
-  devErrChk( cudaPeekAtLastError() );
-  devErrChk( cudaDeviceSynchronize() );
-  fprintf(stderr,"colscan exited %d\n",__LINE__);
-
-  printf("MEMCPY start %d\n",__LINE__);
-  devErrChk(cudaMemcpy(sum->data, d_sum.data, sizeof(int)*num_pixels, cudaMemcpyDeviceToHost));
-  devErrChk(cudaMemcpy(sqsum->data, d_sqsum.data, sizeof(int)*num_pixels, cudaMemcpyDeviceToHost));
-  printf("MEMCPY done %d\n",__LINE__);
-  //  devErrChk(cudaMemcpy(h_sum, d_sum.data, sizeof(int)*num_pixels, cudaMemcpyDeviceToHost));
-  //  devErrChk(cudaMemcpy(h_sqsum, d_sqsum.data, sizeof(int)*num_pixels, cudaMemcpyDeviceToHost));
-  //
-  //  int sum_check = 0;
-  //  int sqsum_check = 0;
-  //  for (int i=0; i < num_pixels ; i++)
-  //
-  //  {
-  //    sum_check += (sum->data[i] == h_sum[i]) ? 0 : 1;
-  //    sqsum_check += (sqsum->data[i] == h_sqsum[i]) ? 0 : 1;
-  //  }
-  //
-  //  printf("\n********check-vals*********\n");
-  //  printf("sum_check=%d\n sqsum_check=%d\n",sum_check, sqsum_check);
-  //  printf("********check-vals-end*********\n");
-
-  cudaFree(d_src.data);
-  cudaFree(d_sum.data);
-  cudaFree(d_sqsum.data);
-  //  free(h_sum);
-  //  free(h_sqsum);
-
+    int x, y, s, sq, t, tq;
+    unsigned char it;
+    int height = src->height;
+    int width = src->width;
+    unsigned char *data = src->data;
+    int * sumData = sum->data;
+    int * sqsumData = sqsum->data;
+    for( y = 0; y < height; y++)
+    {
+      s = 0;
+      sq = 0;
+      /* loop over the number of columns */
+      for( x = 0; x < width; x ++)
+      {
+        it = data[y*width+x];
+        /* sum of the current row (integer)*/
+        s += it; 
+        sq += it*it;
+  
+        t = s;
+        tq = sq;
+        if (y != 0)
+        {
+          t += sumData[(y-1)*width+x];
+          tq += sqsumData[(y-1)*width+x];
+        }
+        sumData[y*width+x]=t;
+        sqsumData[y*width+x]=tq;
+      }
+    }
 }
 
-/***********************************************************
+
+ /***********************************************************
  * This function downsample an image using nearest neighbor
  * It is used to build the image pyramid
  **********************************************************/
-void nearestNeighbor (MyImage *src, MyImage *dst)
+void nearestNeighborOnHost(MyImage *src, MyImage *dst)
 {
 
   int y;

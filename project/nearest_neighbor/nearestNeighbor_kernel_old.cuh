@@ -47,30 +47,34 @@ __global__ void nn_kernel(char* deviceSrc, char* deviceDst,
                           int x_ratio, int y_ratio, int dst_elems)
 {
 
-     int tId = threadIdx.x;
-     int g_Idx = blockIdx.x * w2 + tId;
+   //Get the threadblock Ids
+   int tbx = blockIdx.x;               //TB index along column/width of dst image 
+   int tby = blockIdx.y;               //TB index along rowsi/height of dst image  
 
-     //Compute the TB start in the global scope of dst image
-     int TB_START_ADDR = blockIdx.x * w2;                     //Starting address of data structure  (or each row of dst) --delete
-     
-     //To access the src image, the indices
-     //need to be scaled based on the scale factor
+   //For each TB, compute the threadID                                            
+   int tIdx = threadIdx.x;             //Thread id along column of a TB      
+   int tIdy = threadIdx.y;             //Thread id along row of a TB         
 
-     //For each thread id based on the ratio get the nearest neighbor
-     //if( g_Idx < dst_elems/2){
-           
-     //Populating 2 elemnts by each thread
-     int row = (blockIdx.x * y_ratio) >> 16;
-     int col1 = (tId * x_ratio)  >> 16 ;
+   
+   //Global threadId
+   int blockId = blockIdx.y * gridDim.x + blockIdx.x; 
+   int global_tId = blockId * (blockDim.x * blockDim.y) + (threadIdx.y * blockDim.x) + threadIdx.x;
 
-     int col2 = ( (tId + blockDim.x) * x_ratio)  >> 16 ;
+   //Compute the TB start in the global scope of dst image
+   int TB_START = (tby * w2 * BLOCK_SIZE) + (tbx * BLOCK_SIZE); 
 
-     deviceDst[TB_START_ADDR + tId] = deviceSrc[row * w1 + col1];
-     
-     if( (tId + blockDim.x) < w2){
-          deviceDst[TB_START_ADDR + tId + blockDim.x] = deviceSrc[row * w1 + col2];
-     }
-    
+   //To access the src image, the indices
+   //need to be scaled based on the scale factor
+
+   //For each thread id based on the ratio get the nearest neighbor
+   if( (tbx * BLOCK_SIZE + tIdx) < w2){
+       if( (tby * BLOCK_SIZE + tIdy) < h2){
+           int row = ( (tby * BLOCK_SIZE + tIdy)  * y_ratio) >> 16;
+           int col = ( (tbx * BLOCK_SIZE + tIdx) * x_ratio)  >> 16 ;
+
+           deviceDst[TB_START + (tIdy * w2) + tIdx] = deviceSrc[row * w1 + col];
+       }
+   }
 }
 
 #endif 

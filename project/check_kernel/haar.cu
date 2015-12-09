@@ -203,11 +203,8 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
       /* size of the image scaled down (from bigger to smaller) */
       MySize sz = { ( img->width/factor ), ( img->height/factor ) };
 
-      /* difference between sizes of the scaled image and the original detection window */
-      MySize sz1 = { sz.width - winSize0.width, sz.height - winSize0.height };
-
       /* if the actual scaled image is smaller than the original detection window, break */
-      if( sz1.width < 0 || sz1.height < 0 )
+      if( sz.width < 2 || sz.height < 2 )
 	      break;
 
       /* if a minSize different from the original detection window is specified, continue to the next scaling */
@@ -230,6 +227,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
       printf("\n\tIteration:= %d\n \tDownsampling-->  New Image Size:   Width: %d, Height: %d\n",
             iter_counter, sz.width, sz.height);
 
+     
       /***************************************
        * Compute-intensive step:
        * building image pyramid by downsampling
@@ -287,112 +285,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
       }
    
       printf("\tNearestNeighbor computation complete--> Execution time: %f ms\n", msecTotal);
-
-      /***************************************************
-       * Compute-intensive step:
-       * At each scale of the image pyramid,
-       * compute a new integral and squared integral image
-       ***************************************************/
-      integralImages(img1, sum1, sqsum1);
-
-      printf("\tIntegral Image Sum Calculation Done\n");
-
-      /* sets images for haar classifier cascade */
-      /**************************************************
-       * Note:
-       * Summing pixels within a haar window is done by
-       * using four corners of the integral image:
-       * http://en.wikipedia.org/wiki/Summed_area_table
-       * 
-       * This function loads the four corners,
-       * but does not do compuation based on four coners.
-       * The computation is done next in ScaleImage_Invoker
-       *************************************************/
-      
-      setImageForCascadeClassifier( cascade, sum1, sqsum1);
-
-      /* print out for each scale of the image pyramid */
-      //printf("detecting faces, iter := %d\n", iter_counter);
-
-      /****************************************************
-       * Process the current scale with the cascaded fitler.
-       * The main computations are invoked by this function.
-       * Optimization oppurtunity:
-       * the same cascade filter is invoked each time
-       ***************************************************/
-     
-      // Record the start event
-      error = cudaEventRecord(cpu_start, NULL);
-      if (error != cudaSuccess)
-      {
-          fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
-          exit(EXIT_FAILURE);
-      }
-      
-      ScaleImage_Invoker(cascade, factor, sum1->height, sum1->width,
-			 allCandidates);
-
-      // Record the stop event
-      error = cudaEventRecord(cpu_stop, NULL);
-      if (error != cudaSuccess)
-      {
-          fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
-          exit(EXIT_FAILURE);
-      }
-
-      // Wait for the stop event to complete
-      error = cudaEventSynchronize(cpu_stop);
-      if (error != cudaSuccess)
-      {
-          fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
-          exit(EXIT_FAILURE);
-      }
-
-      error = cudaEventElapsedTime(&msecTotal, cpu_start, cpu_stop);
-      if (error != cudaSuccess)
-      {
-          fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
-          exit(EXIT_FAILURE);
-      }
-   
-      printf("\tScaleImage_Invoker computation complete--> Execution time: %f ms\n", msecTotal);
-
-
-      /*********************************************
-       * For the 5kk73 assignment,
-       * here is a skeleton
-       ********************************************/
-      /* malloc cascade filter on GPU memory*/
-      /*
-      int filter_count = 0;
-      for(int i = 0; i < cascade->n_stages; i++ ){
-         filter_count += stages_array[i];
-      }
-      
-      int size_per_filter = 18;
-      int* gpu_cascade;
-      cudaMalloc((void**) &gpu_cascade, filter_count*size_per_filter*sizeof(int));
-      
-      dim3 threads = dim3(64, 1);
-      dim3 grid = dim3(filter_count/64, 1);
-      gpu_function_1<<< grid, threads >>>();
-      gpu_function_2<<< grid, threads >>>();
-      cudaFree(gpu_cascade);
-      
-      */
-      
-      /*********************************************
-       * End of the GPU skeleton
-       ********************************************/
-
-    } /* end of the factor loop, finish all scales in pyramid*/
-
-
-
-   if( minNeighbors != 0)
-    {
-      groupRectangles(allCandidates, minNeighbors, GROUP_EPS);
-    }
+  }
 
   freeImage(img1);
   freeImage(deviceimg);
