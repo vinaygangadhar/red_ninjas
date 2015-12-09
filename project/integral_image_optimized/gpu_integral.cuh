@@ -332,5 +332,7 @@ void nn_integralImageOnDevice(MyImage *src, MyImage *dst, MyIntImage *sum, MyInt
      cudaFree(d_sum.data);
      cudaFree(d_sqsum.data);
 
+
+
 }
 

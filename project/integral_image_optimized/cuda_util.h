@@ -105,4 +105,9 @@ int getSmallestPower2(int num) {
   return result;                                                  
 }                                                                 
 
+
+
+
+
+
 #endif

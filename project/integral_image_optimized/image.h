@@ -61,16 +61,27 @@ typedef struct
 }
 MyIntImage;
 
+typedef struct 
+{
+	int width;
+	int height;
+	int16_t* data;
+	int flag;
+}
+MyIntDeviceImage;
+
 
 int readPgm(char *fileName, MyImage* image);
 int writePgm(char *fileName, MyImage* image);
 int cpyPgm(MyImage *src, MyImage *dst);
 void createImage(int width, int height, MyImage *image);
 void createSumImage(int width, int height, MyIntImage *image);
+void createSumDeviceImage(int width, int height, MyIntDeviceImage *image);
 int freeImage(MyImage* image);
 int freeSumImage(MyIntImage* image);
 void setImage(int width, int height, MyImage *image);
 void setSumImage(int width, int height, MyIntImage *image);
+void setSumDeviceImage(int width, int height, MyIntDeviceImage *image);
 
 #ifdef __cplusplus
 }

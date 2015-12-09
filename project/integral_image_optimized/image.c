@@ -264,6 +264,16 @@ void createSumImage(int width, int height, MyIntImage *image)
 	image->data = (int *)malloc(sizeof(int)*(height*width));
 }
 
+
+void createSumDeviceImage(int width, int height, MyIntDeviceImage *image)
+{
+	image->width = width;
+	image->height = height;
+	image->flag = 1;
+	image->data = (int16_t *)malloc(sizeof(int16_t)*(height*width));
+}
+
+
 int freeImage(MyImage* image)
 {
 	if (image->flag == 0)
@@ -307,3 +317,8 @@ void setSumImage(int width, int height, MyIntImage *image)
 }
 
 
+void setSumDeviceImage(int width, int height, MyIntDeviceImage *image)
+{
+	image->width = width;
+	image->height = height;
+}

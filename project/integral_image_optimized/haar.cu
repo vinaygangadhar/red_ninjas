@@ -111,8 +111,10 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
   MyIntImage sum1Obj;
   MyIntImage sqsum1Obj;
 
-  MyIntImage sumDevice1Obj;
-  MyIntImage sqsumDevice1Obj;
+  MyIntImage sumDeviceObj;
+  MyIntImage sqsumDeviceObj;
+  //MyIntDeviceImage sumDeviceObj;
+  //MyIntDeviceImage sqsumDeviceObj;
 
   /* pointers for the created structs */
   MyImage *img1 = &image1Obj;
@@ -120,8 +122,10 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
   MyIntImage *sum1 = &sum1Obj;
   MyIntImage *sqsum1 = &sqsum1Obj;
   
-  MyIntImage *devicesum1 = &sumDevice1Obj;
-  MyIntImage *devicesqsum1 = &sqsumDevice1Obj;
+  MyIntImage *devicesum = &sumDeviceObj;
+  MyIntImage *devicesqsum = &sqsumDeviceObj;
+  //MyIntDeviceImage *devicesum = &sumDeviceObj;
+  //MyIntDeviceImage *devicesqsum = &sqsumDeviceObj;
 
    /**************************************/
    //Timing related
@@ -177,10 +181,14 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
   createImage(img->width, img->height, deviceimg1);
   /* malloc for sum1: unsigned char */
   createSumImage(img->width, img->height, sum1);
-  createSumImage(img->width, img->height, devicesum1);
+
+  createSumImage(img->width, img->height, devicesum);
+  //createSumDeviceImage(img->width, img->height, devicesum);
   /* malloc for sqsum1: unsigned char */
   createSumImage(img->width, img->height, sqsum1);
-  createSumImage(img->width, img->height, devicesqsum1);
+  
+  createSumImage(img->width, img->height, devicesqsum);
+  //createSumDeviceImage(img->width, img->height, devicesqsum);
 
   /* initial scaling factor */
   factor = 1;
@@ -220,8 +228,10 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     setSumImage(sz.width, sz.height, sum1);
     setSumImage(sz.width, sz.height, sqsum1);
     
-    setSumImage(sz.width, sz.height, devicesum1);
-    setSumImage(sz.width, sz.height, devicesqsum1);
+    setSumImage(sz.width, sz.height, devicesum);
+    setSumImage(sz.width, sz.height, devicesqsum);
+    //setSumDeviceImage(sz.width, sz.height, devicesum);
+    //setSumDeviceImage(sz.width, sz.height, devicesqsum);
    
     printf("\n\tIteration:= %d\n \tDownsampling-->  New Image Size:   Width: %d, Height: %d\n",
             iter_counter, sz.width, sz.height);
@@ -280,7 +290,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
      ***************************************************/
      //GPU CALL
 
-     nn_integralImageOnDevice(img, deviceimg1, devicesum1, devicesqsum1);
+     nn_integralImageOnDevice(img, deviceimg1, devicesum, devicesqsum);
 
      if(PRINT_LOG){ 
         //Compare the host and device results
@@ -298,7 +308,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                WriteFile(deviceimg1->data, deviceimg1->width * deviceimg1->height, ofs);
           }
 
-          if( !CompareResultsInt(sum1->data, devicesum1->data, sqsum1->data, devicesqsum1->data, img1->width * img1->height) )
+          if( !CompareResultsInt(sum1->data, devicesum->data, sqsum1->data, devicesqsum->data, img1->width * img1->height) )
           {
                printf("\tII on GPU and Host doesn't match!!\n");
           } 
