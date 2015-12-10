@@ -71,20 +71,17 @@ void nearestNeighborOnDevice(MyImage *src, MyImage *dst)
    int y_ratio = (int)((h1<<16)/h2) +1;
 
    //Execution Configuration
-   //dim3 threadsPerBlock(BLOCK_SIZE, BLOCK_SIZE);  
-   //dim3 blocksPerGrid( (dst->width + BLOCK_SIZE - 1)/BLOCK_SIZE, (dst->height + BLOCK_SIZE - 1)/BLOCK_SIZE );
-     
-   int threadsPerBlock = getSmallestPower2(w2) ;  
-   int blocksPerGrid = h2;
+   dim3 threadsPerBlock(BLOCK_SIZE, BLOCK_SIZE);  
+   dim3 blocksPerGrid( (dst->width + BLOCK_SIZE - 1)/BLOCK_SIZE, (dst->height + BLOCK_SIZE - 1)/BLOCK_SIZE );
 
    //GPU CALL
-   nn_kernel<<<blocksPerGrid, threadsPerBlock/2>>>(deviceSrcImage, deviceDstImage, 
+   nn_kernel<<<blocksPerGrid, threadsPerBlock>>>(deviceSrcImage, deviceDstImage, 
                                                  w1, h1, w2, h2,
                                                  x_ratio, y_ratio, imageDstSize);
    if(PRINT_GPU){
       std::cerr << "\t/***************GPU-LOG****************/" << std::endl;
-      std::cerr << "\tThreads Per Block: " << threadsPerBlock/2 << std::endl;
-      std::cerr << "\tTBS per Grid: " << blocksPerGrid << std::endl;
+      std::cerr << "\t/Threads Per Block: " << threadsPerBlock.x << " x " << threadsPerBlock.y << std::endl;
+      std::cerr << "\tTBS per Grid: " << blocksPerGrid.x << " x " << blocksPerGrid.y << std::endl;
       std::cerr << "\t/**************************************/" << std::endl;
    }
 

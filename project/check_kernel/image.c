@@ -305,5 +305,3 @@ void setSumImage(int width, int height, MyIntImage *image)
 	image->width = width;
 	image->height = height;
 }
-
-

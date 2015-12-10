@@ -61,7 +61,6 @@ typedef struct
 }
 MyIntImage;
 
-
 int readPgm(char *fileName, MyImage* image);
 int writePgm(char *fileName, MyImage* image);
 int cpyPgm(MyImage *src, MyImage *dst);

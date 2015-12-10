@@ -28,3 +28,4 @@ add_subdirectory(prefix_scan)
 add_subdirectory(runcascade)
 add_subdirectory(integral_image)
 
+add_subdirectory(check_kernel)

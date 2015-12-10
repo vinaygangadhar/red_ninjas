@@ -37,7 +37,6 @@
 #include "stdio-wrapper.h"
 #include "haar.h"
 
-#define INPUT_FILENAME "640.pgm"
 #define OUTPUT_FILENAME "Output.pgm"
 
 using namespace std;
@@ -51,11 +50,7 @@ int main (int argc, char *argv[])
    if(argc > 2){
       logFile = argv[2];
       inFile = argv[1];
-   }else{
-      logFile = "img.log";
-      inFile = INPUT_FILENAME;
    }
-
 
    std::fstream olog;
    olog.open(logFile, std::fstream::in | std::fstream::out | std::fstream::app);
