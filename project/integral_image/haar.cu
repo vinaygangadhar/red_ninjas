@@ -95,33 +95,33 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     float scaleFactor, int minNeighbors, std::fstream& ofs)
 {
 
-  /* group overlaping windows */
-  const float GROUP_EPS = 0.4f;
-  /* pointer to input image */
-  MyImage *img = _img;
-  /***********************************
-   * create structs for images
-   * see haar.h for details 
-   * img1: normal image (unsigned char)
-   * sum1: integral image (int)
-   * sqsum1: square integral image (int)
-   **********************************/
-  MyImage image1Obj;
-  MyImage imageDevice1Obj;
-  MyIntImage sum1Obj;
-  MyIntImage sqsum1Obj;
+   /* group overlaping windows */
+   const float GROUP_EPS = 0.4f;
+   /* pointer to input image */
+   MyImage *img = _img;
+   /***********************************
+    * create structs for images
+    * see haar.h for details 
+    * img1: normal image (unsigned char)
+    * sum1: integral image (int)
+    * sqsum1: square integral image (int)
+    **********************************/
+   MyImage image1Obj;
+   MyImage imageDevice1Obj;
+   MyIntImage sum1Obj;
+   MyIntImage sqsum1Obj;
 
-  MyIntImage sumDevice1Obj;
-  MyIntImage sqsumDevice1Obj;
+   MyIntImage sumDevice1Obj;
+   MyIntImage sqsumDevice1Obj;
 
-  /* pointers for the created structs */
-  MyImage *img1 = &image1Obj;
-  MyImage *deviceimg1 = &imageDevice1Obj;
-  MyIntImage *sum1 = &sum1Obj;
-  MyIntImage *sqsum1 = &sqsum1Obj;
-  
-  MyIntImage *devicesum1 = &sumDevice1Obj;
-  MyIntImage *devicesqsum1 = &sqsumDevice1Obj;
+   /* pointers for the created structs */
+   MyImage *img1 = &image1Obj;
+   MyImage *deviceimg1 = &imageDevice1Obj;
+   MyIntImage *sum1 = &sum1Obj;
+   MyIntImage *sqsum1 = &sqsum1Obj;
+   
+   MyIntImage *devicesum1 = &sumDevice1Obj;
+   MyIntImage *devicesqsum1 = &sqsumDevice1Obj;
 
    /**************************************/
    //Timing related
@@ -157,195 +157,206 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
    * MyRect struct keeps the info of a rectangle (see haar.h)
    * The rectangle contains one face candidate 
    *****************************************************/
-  std::vector<MyRect> allCandidates;
+   std::vector<MyRect> allCandidates;
 
-  /* scaling factor */
-  float factor;
+   /* scaling factor */
+   float factor;
 
-  /* maxSize */
-  if( maxSize.height == 0 || maxSize.width == 0 )
-  {
-    maxSize.height = img->height;
-    maxSize.width = img->width;
-  }
+   /* maxSize */
+   if( maxSize.height == 0 || maxSize.width == 0 )
+   {
+     maxSize.height = img->height;
+     maxSize.width = img->width;
+   }
 
-  /* window size of the training set */
-  MySize winSize0 = cascade->orig_window_size;
+   /* window size of the training set */
+   MySize winSize0 = cascade->orig_window_size;
 
-  /* malloc for img1: unsigned char */
-  createImage(img->width, img->height, img1);
-  createImage(img->width, img->height, deviceimg1);
-  /* malloc for sum1: unsigned char */
-  createSumImage(img->width, img->height, sum1);
-  createSumImage(img->width, img->height, devicesum1);
-  /* malloc for sqsum1: unsigned char */
-  createSumImage(img->width, img->height, sqsum1);
-  createSumImage(img->width, img->height, devicesqsum1);
+   /* malloc for img1: unsigned char */
+   createImage(img->width, img->height, img1);
+   createImage(img->width, img->height, deviceimg1);
+   /* malloc for sum1: unsigned char */
+   createSumImage(img->width, img->height, sum1);
+   createSumImage(img->width, img->height, devicesum1);
+   /* malloc for sqsum1: unsigned char */
+   createSumImage(img->width, img->height, sqsum1);
+   createSumImage(img->width, img->height, devicesqsum1);
 
-  /* initial scaling factor */
-  factor = 1;
+   /* initial scaling factor */
+   factor = 1;
 
-  /* iterate over the image pyramid */
-  for( factor = 1; ; factor *= scaleFactor )
-  {
-    /* iteration counter */
-    iter_counter++;
+   /* iterate over the image pyramid */
+   for( factor = 1; ; factor *= scaleFactor )
+   {
+     /* iteration counter */
+     iter_counter++;
 
-    /* size of the image scaled up */
-    MySize winSize = { myRound(winSize0.width*factor), myRound(winSize0.height*factor) };
+     /* size of the image scaled up */
+     MySize winSize = { myRound(winSize0.width*factor), myRound(winSize0.height*factor) };
 
-    /* size of the image scaled down (from bigger to smaller) */
-    MySize sz = { ( img->width/factor ), ( img->height/factor ) };
+     /* size of the image scaled down (from bigger to smaller) */
+     MySize sz = { ( img->width/factor ), ( img->height/factor ) };
 
-    /* difference between sizes of the scaled image and the original detection window */
-    MySize sz1 = { sz.width - winSize0.width, sz.height - winSize0.height };
+     /* difference between sizes of the scaled image and the original detection window */
+     MySize sz1 = { sz.width - winSize0.width, sz.height - winSize0.height };
 
-    /* if the actual scaled image is smaller than the original detection window, break */
-    if( sz1.width < 0 || sz1.height < 0 )
-      break;
+     /* if the actual scaled image is smaller than the original detection window, break */
+     if( sz1.width < 0 || sz1.height < 0 )
+       break;
 
-    /* if a minSize different from the original detection window is specified, continue to the next scaling */
-    if( winSize.width < minSize.width || winSize.height < minSize.height )
-      continue;
+     /* if a minSize different from the original detection window is specified, continue to the next scaling */
+     if( winSize.width < minSize.width || winSize.height < minSize.height )
+       continue;
 
-    /*************************************
-     * Set the width and height of 
-     * img1: normal image (unsigned char)
-     * sum1: integral image (int)
-     * sqsum1: squared integral image (int)
-     * see image.c for details
-     ************************************/
-    setImage(sz.width, sz.height, img1);
-    setImage(sz.width, sz.height, deviceimg1);
-    setSumImage(sz.width, sz.height, sum1);
-    setSumImage(sz.width, sz.height, sqsum1);
+     /*************************************
+      * Set the width and height of 
+      * img1: normal image (unsigned char)
+      * sum1: integral image (int)
+      * sqsum1: squared integral image (int)
+      * see image.c for details
+      ************************************/
+     setImage(sz.width, sz.height, img1);
+     setImage(sz.width, sz.height, deviceimg1);
+     setSumImage(sz.width, sz.height, sum1);
+     setSumImage(sz.width, sz.height, sqsum1);
+     
+     setSumImage(sz.width, sz.height, devicesum1);
+     setSumImage(sz.width, sz.height, devicesqsum1);
     
-    setSumImage(sz.width, sz.height, devicesum1);
-    setSumImage(sz.width, sz.height, devicesqsum1);
-   
-    printf("\n\tIteration:= %d\n \tDownsampling-->  New Image Size:   Width: %d, Height: %d\n",
-            iter_counter, sz.width, sz.height);
+     printf("\n\tIteration:= %d\n \tDownsampling-->  New Image Size:   Width: %d, Height: %d\n",
+             iter_counter, sz.width, sz.height);
 
  
-    /***************************************
-     * Compute-intensive step:
-     * building image pyramid by downsampling
-     * downsampling using nearest neighbor
-     **************************************/
-     //CPU CALL
+     /***************************************
+      * Compute-intensive step:
+      * building image pyramid by downsampling
+      * downsampling using nearest neighbor
+      **************************************/
+      //CPU CALL
 
-     printf("\tNN and II on CPU Started\n");
+      printf("\tNN and II on CPU Started\n");
+      
+      error = cudaEventRecord(cpu_start, NULL);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
      
-     error = cudaEventRecord(cpu_start, NULL);
-     if (error != cudaSuccess)
-     {
-         fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
-         exit(EXIT_FAILURE);
-     }
+      //NN's downsampled image is passed to II 
+      nearestNeighborOnHost(img, img1);
+      integralImageOnHost(img1, sum1, sqsum1);
+      
+      // Record the stop event
+      error = cudaEventRecord(cpu_stop, NULL);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+
+      // Wait for the stop event to complete
+      error = cudaEventSynchronize(cpu_stop);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
+
+      error = cudaEventElapsedTime(&cpu_msecTotal, cpu_start, cpu_stop);
+      if (error != cudaSuccess)
+      {
+          fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+      }
     
-     //NN's downsampled image is passed to II 
-     nearestNeighborOnHost(img, img1);
-     integralImageOnHost(img1, sum1, sqsum1);
-     
-     // Record the stop event
-     error = cudaEventRecord(cpu_stop, NULL);
-     if (error != cudaSuccess)
-     {
-         fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
-         exit(EXIT_FAILURE);
-     }
+      printf("\tNN and II on CPU complete--> Execution time: %f ms\n", cpu_msecTotal);
 
-     // Wait for the stop event to complete
-     error = cudaEventSynchronize(cpu_stop);
-     if (error != cudaSuccess)
-     {
-         fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
-         exit(EXIT_FAILURE);
-     }
+ 
+      if(PRINT_LOG){
+         
+         printf("\tPrinting II Sum to Log File\n");
+         
+         ofs<<"\n";
+         ofs<<"\nHost Image Sum Log: ";
+         ofs<<"Width: "<<sum1->width<<" x "<<"Height: "<<sum1->height<<"\n";
+         WriteFileInt(sum1->data, sum1->width * sum1->height, ofs);
+      }
 
-     error = cudaEventElapsedTime(&cpu_msecTotal, cpu_start, cpu_stop);
-     if (error != cudaSuccess)
-     {
-         fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
-         exit(EXIT_FAILURE);
-     }
+
+      /***************************************************
+      * Compute-intensive step:
+      * At each scale of the image pyramid,
+      * compute a new integral and squared integral image
+      ***************************************************/
+      //GPU CALL
+
+      nn_integralImageOnDevice(img, deviceimg1, devicesum1, devicesqsum1);
+
+      if(PRINT_LOG){ 
+         //Compare the host and device results
+           if(!CompareResultsChar(img1->data, deviceimg1->data, img1->width * img1->height) ){
+                printf("\tNN on GPU and Host doesn't match!! -- Printing Image Log\n");
+                
+                ofs<<"\n";
+                ofs<<"\nHost Image Log: ";
+                ofs<<"Width: "<<img1->width<<" x "<<"Height: "<<img1->height<<"\n";
+                WriteFileChar(img1->data, img1->width * img1->height, ofs);
+        
+                ofs<<"\n";
+                ofs<<"\nDevice Image Log: ";
+                ofs<<"Width: "<<deviceimg1->width<<" x "<<"Height: "<<deviceimg1->height<<"\n";
+                WriteFileChar(deviceimg1->data, deviceimg1->width * deviceimg1->height, ofs);
+           }
+
+           if( !CompareResultsInt(sum1->data, devicesum1->data, sqsum1->data, devicesqsum1->data, img1->width * img1->height) )
+           {
+                printf("\tII on GPU and Host doesn't match!!\n");
+           } 
+      }
+      
+      printf("\n\t------------------------------------------------------------------------------------\n");
+
+     /* sets images for haar classifier cascade */
+     /**************************************************
+      * Note:
+      * Summing pixels within a haar window is done by
+      * using four corners of the integral image:
+      * http://en.wikipedia.org/wiki/Summed_area_table
+      * 
+      * This function loads the four corners,
+      * but does not do compuation based on four coners.
+      * The computation is done next in ScaleImage_Invoker
+      *************************************************/
+     setImageForCascadeClassifier( cascade, sum1, sqsum1);
+
+
+     /****************************************************
+      * Process the current scale with the cascaded fitler.
+      * The main computations are invoked by this function.
+      * Optimization oppurtunity:
+      * the same cascade filter is invoked each time
+      ***************************************************/
+     ScaleImage_Invoker(cascade, factor, sum1->height, sum1->width,
+         allCandidates);
+
+   } /* end of the factor loop, finish all scales in pyramid*/
+
+   if( minNeighbors != 0)
+   {
+     groupRectangles(allCandidates, minNeighbors, GROUP_EPS);
+   }
+
+   //Destory the events 
+   cudaEventDestroy(cpu_start);
+   cudaEventDestroy(cpu_stop);
    
-     printf("\tNN and II on CPU complete--> Execution time: %f ms\n", cpu_msecTotal);
-
-
-     /***************************************************
-     * Compute-intensive step:
-     * At each scale of the image pyramid,
-     * compute a new integral and squared integral image
-     ***************************************************/
-     //GPU CALL
-
-     nn_integralImageOnDevice(img, deviceimg1, devicesum1, devicesqsum1);
-
-     if(PRINT_LOG){ 
-        //Compare the host and device results
-          if(!CompareResultsChar(img1->data, deviceimg1->data, img1->width * img1->height) ){
-               printf("\tNN on GPU and Host doesn't match!! -- Printing Image Log\n");
-               
-               ofs<<"\n";
-               ofs<<"\nHost Image Log: ";
-               ofs<<"Width: "<<img1->width<<" x "<<"Height: "<<img1->height<<"\n";
-               WriteFile(img1->data, img1->width * img1->height, ofs);
-       
-               ofs<<"\n";
-               ofs<<"\nDevice Image Log: ";
-               ofs<<"Width: "<<deviceimg1->width<<" x "<<"Height: "<<deviceimg1->height<<"\n";
-               WriteFile(deviceimg1->data, deviceimg1->width * deviceimg1->height, ofs);
-          }
-
-          if( !CompareResultsInt(sum1->data, devicesum1->data, sqsum1->data, devicesqsum1->data, img1->width * img1->height) )
-          {
-               printf("\tII on GPU and Host doesn't match!!\n");
-          } 
-     }
-
-     printf("\n\t------------------------------------------------------------------------------------\n");
-
-    /* sets images for haar classifier cascade */
-    /**************************************************
-     * Note:
-     * Summing pixels within a haar window is done by
-     * using four corners of the integral image:
-     * http://en.wikipedia.org/wiki/Summed_area_table
-     * 
-     * This function loads the four corners,
-     * but does not do compuation based on four coners.
-     * The computation is done next in ScaleImage_Invoker
-     *************************************************/
-    setImageForCascadeClassifier( cascade, sum1, sqsum1);
-
-
-    /****************************************************
-     * Process the current scale with the cascaded fitler.
-     * The main computations are invoked by this function.
-     * Optimization oppurtunity:
-     * the same cascade filter is invoked each time
-     ***************************************************/
-    ScaleImage_Invoker(cascade, factor, sum1->height, sum1->width,
-        allCandidates);
-
-  } /* end of the factor loop, finish all scales in pyramid*/
-
-  if( minNeighbors != 0)
-  {
-    groupRectangles(allCandidates, minNeighbors, GROUP_EPS);
-  }
-
-  //Destory the events 
-  cudaEventDestroy(cpu_start);
-  cudaEventDestroy(cpu_stop);
-  
-  freeImage(img1);
-  freeImage(deviceimg1);
-  freeSumImage(sum1);
-  freeSumImage(sqsum1);
-  
-  return allCandidates;
+   freeImage(img1);
+   freeImage(deviceimg1);
+   freeSumImage(sum1);
+   freeSumImage(sqsum1);
+   
+   return allCandidates;
 }
 
 /***********************************************

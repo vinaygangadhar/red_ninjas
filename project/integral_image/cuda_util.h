@@ -85,12 +85,21 @@ bool CompareResultsInt(int* hA, int* dA, int* hsq_A, int* dsq_A, int elements){
 }
 
 // Write a 16x16 floating point matrix to file
-void WriteFile(unsigned char* data, int elements, std::fstream& ofs){
+void WriteFileChar(unsigned char* data, int elements, std::fstream& ofs){
 
    for(unsigned int i = 0; i < elements; i++){
       ofs<<(data[i] - '0')<<" ";
    }
 }
+
+//Write contens of int data structure
+void WriteFileInt(int* data, int elements, std::fstream& ofs){
+
+   for(unsigned int i = 0; i < elements; i++){
+      ofs<<data[i]<<" ";
+   }
+}
+
 
 
 //Get smallest power 2 of a number
