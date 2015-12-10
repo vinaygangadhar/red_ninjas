@@ -1,0 +1,322 @@
+
+-- Entering main function --
+
+Reading image file: 640.pgm
+-- Image Loaded- Width: 640, Height: 480
+-- Loading cascade classifier
+
+-- Cascade Classifier Info: 
+ 	Stages: 25
+ 	Total Filters: 2913
+ 	Window Size: Width: 24, Height: 24
+
+-- Detecting faces
+
+	Iteration:= 1
+ 	Downsampling-->  New Image Size:   Width: 640, Height: 480
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 2.469568 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 640 x 480
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.418048 m
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.058720 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.240096 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.053664 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.352480 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.770528 ms, Total Inclusive time: 3.411840 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 2
+ 	Downsampling-->  New Image Size:   Width: 533, Height: 399
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.688448 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 533 x 399
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.345824 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.048864 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.209952 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.044608 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.303424 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.649248 ms, Total Inclusive time: 2.201472 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 3
+ 	Downsampling-->  New Image Size:   Width: 444, Height: 333
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.485632 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 444 x 333
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.137408 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.042240 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.168256 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.037408 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.247904 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.385312 ms, Total Inclusive time: 1.605280 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 4
+ 	Downsampling-->  New Image Size:   Width: 370, Height: 277
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.337952 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 370 x 277
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.113920 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.034304 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.142208 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.029760 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.206272 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.320192 ms, Total Inclusive time: 1.201920 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 5
+ 	Downsampling-->  New Image Size:   Width: 308, Height: 231
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.232672 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 308 x 231
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.107648 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.025824 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.089504 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.023584 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.138912 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.246560 ms, Total Inclusive time: 0.864704 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 6
+ 	Downsampling-->  New Image Size:   Width: 257, Height: 192
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.163264 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 257 x 192
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.087520 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.021472 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.072576 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.019104 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.113152 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.200672 ms, Total Inclusive time: 0.676928 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 7
+ 	Downsampling-->  New Image Size:   Width: 214, Height: 160
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.114304 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 214 x 160
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.056896 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.020704 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.058784 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.017632 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.097120 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.154016 ms, Total Inclusive time: 0.581088 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 8
+ 	Downsampling-->  New Image Size:   Width: 178, Height: 133
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.080192 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 178 x 133
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.042496 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.018976 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.058432 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.016640 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.094048 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.136544 ms, Total Inclusive time: 0.524512 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 9
+ 	Downsampling-->  New Image Size:   Width: 148, Height: 111
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.057312 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 148 x 111
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.040896 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.017728 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.032384 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.015072 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.065184 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.106080 ms, Total Inclusive time: 0.452224 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 10
+ 	Downsampling-->  New Image Size:   Width: 124, Height: 93
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.040960 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 124 x 93
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.030624 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.016416 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.031872 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.015136 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.063424 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.094048 ms, Total Inclusive time: 0.421600 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 11
+ 	Downsampling-->  New Image Size:   Width: 103, Height: 77
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.029120 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 103 x 77
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.029920 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.015968 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.031872 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.014272 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.062112 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.092032 ms, Total Inclusive time: 0.394816 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 12
+ 	Downsampling-->  New Image Size:   Width: 86, Height: 64
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.021152 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 86 x 64
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.020512 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.015360 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.024928 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.013632 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.053920 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.074432 ms, Total Inclusive time: 0.359232 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 13
+ 	Downsampling-->  New Image Size:   Width: 71, Height: 53
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.015328 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 71 x 53
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.020224 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.015744 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.018624 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.013408 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.047776 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.068000 ms, Total Inclusive time: 0.343808 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 14
+ 	Downsampling-->  New Image Size:   Width: 59, Height: 44
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.010272 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 59 x 44
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.017344 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.015488 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.019040 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.013280 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.047808 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.065152 ms, Total Inclusive time: 0.335968 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 15
+ 	Downsampling-->  New Image Size:   Width: 49, Height: 37
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.007744 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 49 x 37
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.016544 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.014400 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.018720 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.013248 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.046368 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.062912 ms, Total Inclusive time: 0.342912 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 16
+ 	Downsampling-->  New Image Size:   Width: 41, Height: 31
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.006016 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 41 x 31
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.016960 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.014976 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.016768 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.012832 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.044576 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.061536 ms, Total Inclusive time: 0.334848 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 17
+ 	Downsampling-->  New Image Size:   Width: 34, Height: 25
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.004832 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 34 x 25
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.016928 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.014720 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 0.016576 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 0.012800 ms
+	2 Matrix Transposes  + RowScan Only Exclusive Time: 0.044096 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.061024 ms, Total Inclusive time: 0.328480 ms
+
+	------------------------------------------------------------------------------------
+
+-- Saving output --
+-- Image saved --

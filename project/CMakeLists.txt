@@ -27,5 +27,6 @@ add_subdirectory(nearest_neighbor)
 add_subdirectory(prefix_scan)
 add_subdirectory(runcascade)
 add_subdirectory(integral_image)
-
 add_subdirectory(check_kernel)
+
+add_subdirectory(nn_integral_image)
