@@ -1,0 +1,271 @@
+
+-- Entering main function --
+
+Reading image file: 640.pgm
+-- Image Loaded- Width: 640, Height: 480
+-- Loading cascade classifier
+
+-- Cascade Classifier Info: 
+ 	Stages: 25
+ 	Total Filters: 2913
+ 	Window Size: Width: 24, Height: 24
+
+-- Detecting faces
+
+	Iteration:= 1
+ 	Downsampling-->  New Image Size:   Width: 640, Height: 480
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 2.511264 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 640 x 480
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.421280 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.480640 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.901920 ms, Total Inclusive time: 3.252640 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 2
+ 	Downsampling-->  New Image Size:   Width: 533, Height: 399
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.696416 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 533 x 399
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.348768 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.377120 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.725888 ms, Total Inclusive time: 1.811712 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 3
+ 	Downsampling-->  New Image Size:   Width: 444, Height: 333
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.481952 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 444 x 333
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.139232 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.296000 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.435232 ms, Total Inclusive time: 1.265152 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 4
+ 	Downsampling-->  New Image Size:   Width: 370, Height: 277
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.334624 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 370 x 277
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.115072 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.237408 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.352480 ms, Total Inclusive time: 1.000128 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 5
+ 	Downsampling-->  New Image Size:   Width: 308, Height: 231
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.232768 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 308 x 231
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.108704 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.143104 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.251808 ms, Total Inclusive time: 0.747648 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 6
+ 	Downsampling-->  New Image Size:   Width: 257, Height: 192
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.163424 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 257 x 192
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.086784 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.121184 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.207968 ms, Total Inclusive time: 0.612448 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 7
+ 	Downsampling-->  New Image Size:   Width: 214, Height: 160
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.118944 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 214 x 160
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.064640 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.093056 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.157696 ms, Total Inclusive time: 0.499424 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 8
+ 	Downsampling-->  New Image Size:   Width: 178, Height: 133
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.080864 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 178 x 133
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.041280 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.081952 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.123232 ms, Total Inclusive time: 0.419424 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 9
+ 	Downsampling-->  New Image Size:   Width: 148, Height: 111
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.057024 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 148 x 111
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.039776 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.053632 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.093408 ms, Total Inclusive time: 0.356640 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 10
+ 	Downsampling-->  New Image Size:   Width: 124, Height: 93
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.041056 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 124 x 93
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.029504 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.045440 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.074944 ms, Total Inclusive time: 0.305216 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 11
+ 	Downsampling-->  New Image Size:   Width: 103, Height: 77
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.028992 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 103 x 77
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.029056 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.042752 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.071808 ms, Total Inclusive time: 0.286912 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 12
+ 	Downsampling-->  New Image Size:   Width: 86, Height: 64
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.021024 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 86 x 64
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.019680 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.045152 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.064832 ms, Total Inclusive time: 0.265920 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 13
+ 	Downsampling-->  New Image Size:   Width: 71, Height: 53
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.014976 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 71 x 53
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.019328 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.024288 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.043616 ms, Total Inclusive time: 0.249312 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 14
+ 	Downsampling-->  New Image Size:   Width: 59, Height: 44
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.010240 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 59 x 44
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.016416 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.022752 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.039168 ms, Total Inclusive time: 0.239712 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 15
+ 	Downsampling-->  New Image Size:   Width: 49, Height: 37
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.007680 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 49 x 37
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.016352 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.022272 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.038624 ms, Total Inclusive time: 0.236704 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 16
+ 	Downsampling-->  New Image Size:   Width: 41, Height: 31
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.006336 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 41 x 31
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.016256 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.019584 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.035840 ms, Total Inclusive time: 0.231392 ms
+
+	------------------------------------------------------------------------------------
+
+	Iteration:= 17
+ 	Downsampling-->  New Image Size:   Width: 34, Height: 25
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.005728 ms
+	Printing II Sum to Log File
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 34 x 25
+	II: Rowscan Done on GPU-223: Exclusive Time: 0.016000 ms
+	II: Columnscan Done on GPU-273: Exclusive Time: 0.018880 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.034880 ms, Total Inclusive time: 0.223136 ms
+
+	------------------------------------------------------------------------------------
+
+-- Saving output --
+-- Image saved --

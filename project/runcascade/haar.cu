@@ -58,15 +58,15 @@ static int *stages_thresh_array;
 static int **scaled_rectangles_array;
 
 static int *hstages_array;
-static int *hindex_x;
-static int *hindex_y;
-static int *hwidth;
-static int *hheight;
-static int *hweights_array;
-static int *halpha1_array;
-static int *halpha2_array;
-static int *htree_thresh_array;
-static int *hstages_thresh_array;
+static uint16_t *hindex_x;
+static uint16_t *hindex_y;
+static uint16_t *hwidth;
+static uint16_t *hheight;
+static int16_t *hweights_array;
+static int16_t *halpha1_array;
+static int16_t *halpha2_array;
+static int16_t *htree_thresh_array;
+static int16_t *hstages_thresh_array;
 static bool *bit_vector;
 
 int clock_counter = 0;
@@ -155,65 +155,67 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     /****************************************************
       Setting up the data for GPU Kernels
      ***************************************************/
-       
+
     uint16_t* dindex_x;
     uint16_t* dindex_y;
     uint16_t* dwidth;
     uint16_t* dheight;
-    uint16_t* dweights_array;
-    uint16_t* dalpha1_array;
-    uint16_t* dalpha2_array;
-    uint16_t* dtree_thresh_array;
-    uint16_t* dstages_thresh_array;
-    uint32_t* dsum;
-    uint32_t* dsqsum; 
-    uint8_t* dhaar_per_stg;
+    int16_t* dweights_array;
+    int16_t* dalpha1_array;
+    int16_t* dalpha2_array;
+    int16_t* dtree_thresh_array;
+    int16_t* dstages_thresh_array;
+    int32_t* dsum;
+    int32_t* dsqsum; 
+    int* dhaar_per_stg;
     bool* dbit_vector;
 
-    cudaMalloc(&dindex_x, 3*MAX_HAAR*sizeof(uint16_t));
+    bit_vector = (bool*) malloc(img->width*img->height*sizeof(bool));
+
+    cudaMalloc(&dindex_x, 3*TOTAL_HAAR*sizeof(uint16_t));
     checkError();
-    cudaMalloc(&dindex_y, 3*MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dindex_y, 3*TOTAL_HAAR*sizeof(uint16_t));
     checkError();
-    cudaMalloc(&dwidth, 3*MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dwidth, 3*TOTAL_HAAR*sizeof(uint16_t));
     checkError();
-    cudaMalloc(&dheight, 3*MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dheight, 3*TOTAL_HAAR*sizeof(uint16_t));
     checkError();
 
-    cudaMalloc(&dweights_array, MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dweights_array, 3*TOTAL_HAAR*sizeof(int16_t));
     checkError();
-    cudaMalloc(&dtree_thresh_array, MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dtree_thresh_array, TOTAL_HAAR*sizeof(int16_t));
     checkError();
-    cudaMalloc(&dalpha1_array, MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dalpha1_array, TOTAL_HAAR*sizeof(int16_t));
     checkError();
-    cudaMalloc(&dalpha2_array, MAX_HAAR*sizeof(uint16_t));
+    cudaMalloc(&dalpha2_array, TOTAL_HAAR*sizeof(int16_t));
     checkError();
-    cudaMalloc(&dstages_thresh_array, MAX_STAGE*sizeof(uint16_t));
+    cudaMalloc(&dstages_thresh_array, TOTAL_STAGES*sizeof(int16_t));
+    checkError();
+    cudaMalloc(&dhaar_per_stg, cascade->n_stages*sizeof(int));
     checkError();
 
-    cudaMemcpy(dindex_x, hindex_x, 3*MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dindex_x, hindex_x, 3*TOTAL_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dindex_y, hindex_y, 3*MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dindex_y, hindex_y, 3*TOTAL_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dwidth, hwidth, 3*MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dwidth, hwidth, 3*TOTAL_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dheight, hheight, 3*MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dheight, hheight, 3*TOTAL_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMalloc(&dhaar_per_stg, cascade->n_stages*sizeof(uint8_t));
+
+    cudaMemcpy(dweights_array, hweights_array, 3*TOTAL_HAAR*sizeof(int16_t), cudaMemcpyHostToDevice);
     checkError();
-        
-    cudaMemcpy(dweights_array, hweights_array, MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dtree_thresh_array, htree_thresh_array, TOTAL_HAAR*sizeof(int16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dtree_thresh_array, htree_thresh_array, MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dalpha1_array, halpha1_array, TOTAL_HAAR*sizeof(int16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dalpha1_array, halpha1_array, MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dalpha2_array, halpha2_array, TOTAL_HAAR*sizeof(int16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dalpha2_array, halpha2_array, MAX_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dstages_thresh_array, hstages_thresh_array, TOTAL_STAGES*sizeof(int16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dstages_thresh_array, hstages_thresh_array, MAX_STAGE*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(dhaar_per_stg, hstages_array, cascade->n_stages*sizeof(int), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dhaar_per_stg, hstages_array, cascade->n_stages*sizeof(uint8_t), cudaMemcpyHostToDevice);
-    checkError();
-        
+
     /* initial scaling factor */
     factor = 1;
 
@@ -289,39 +291,243 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
          ***************************************************/
         int bitvec_width = img1->width-cascade->orig_window_size.width;
         int bitvec_height = img1->height-cascade->orig_window_size.height;
-        bit_vector = (bool*) malloc(bitvec_width*bitvec_height*sizeof(bool));
-        
+
         ScaleImage_Invoker(cascade, factor, sum1->height, sum1->width,
                 allCandidates);
 
+        printf("Done with ScaleImage Invoker\n");
+        fflush(stdout);
         /****************************************************
           Setting up the data for GPU Kernels
          ***************************************************/
-        cudaMalloc(&dsum, img1->width*img1->height*sizeof(uint32_t));
+        cudaMalloc(&dsum, img1->width*img1->height*sizeof(int32_t));
         checkError();
-        cudaMalloc(&dsqsum, img1->width*img1->height*sizeof(uint32_t));
+        cudaMalloc(&dsqsum, img1->width*img1->height*sizeof(int32_t));
         checkError();
         cudaMalloc(&dbit_vector, bitvec_width*bitvec_height*sizeof(bool));
         checkError();
         bool* hbit_vector = (bool*) malloc(bitvec_width*bitvec_height*sizeof(bool));
-        
-        cudaMemcpy(dsum, sum1, sum1->width*sum1->height*sizeof(uint32_t), cudaMemcpyHostToDevice);
+
+        int i;
+        for(i=0; i<(bitvec_width*bitvec_height); i++) {
+            hbit_vector[i] = true;
+        }
+        cudaMemcpy(dsum, sum1->data, sum1->width*sum1->height*sizeof(int32_t), cudaMemcpyHostToDevice);
         checkError();
-        cudaMemcpy(dsqsum, sqsum1, sqsum1->width*sqsum1->height*sizeof(uint32_t), cudaMemcpyHostToDevice);
+        cudaMemcpy(dsqsum, sqsum1->data, sqsum1->width*sqsum1->height*sizeof(int32_t), cudaMemcpyHostToDevice);
         checkError();
-        
+        cudaMemcpy(dbit_vector, hbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyHostToDevice);
+        checkError();
         // Kernel 0
         dim3 numThreads(32, 32);
-        int numBlocks = ((img1->width)*(img1->height)+(BLOCK_SIZE-1))/BLOCK_SIZE;
-        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x, dindex_y, dwidth, dheight, dweights_array, dtree_thresh_array, dalpha1_array, dalpha2_array, dstages_thresh_array, dsum, dsqsum, dhaar_per_stg, HAAR_KERN_0, NUMSTG_KERN_0, dbit_vector); 
+        dim3 numBlocks((bitvec_width+31)/32, (bitvec_height+31)/32);
+
+        printf("Entering kernel\n");
+        fflush(stdout);
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x, dindex_y, dwidth, dheight, 
+                dweights_array, dtree_thresh_array, dalpha1_array, dalpha2_array, 
+                dstages_thresh_array, dsum, dsqsum, dhaar_per_stg, HAAR_KERN_0, 
+                NUMSTG_KERN_0, img1->width, img1->height, dbit_vector); 
         checkError();
 
         cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
         checkError();
+        printf("Done with Kernel 0\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
 
+        int haar_prev_stage = HAAR_KERN_0;
+        int num_prev_stage = NUMSTG_KERN_0;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, dalpha2_array+haar_prev_stage, 
+                dstages_thresh_array+num_prev_stage, dsum, dsqsum, dhaar_per_stg+num_prev_stage, HAAR_KERN_1, 
+                NUMSTG_KERN_1, img1->width, img1->height, dbit_vector); 
+        checkError();
+
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+        printf("Done with Kernel 1\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_1;
+        num_prev_stage += NUMSTG_KERN_1;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_2, NUMSTG_KERN_2, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 2\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_2;
+        num_prev_stage += NUMSTG_KERN_2;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_3, NUMSTG_KERN_3, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 3\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_3;
+        num_prev_stage += NUMSTG_KERN_3;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_4, NUMSTG_KERN_4, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 4\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_4;
+        num_prev_stage += NUMSTG_KERN_4;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_5, NUMSTG_KERN_5, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 5\n-----------------------------------------------------------\n");
         compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
         
+        haar_prev_stage += HAAR_KERN_5;
+        num_prev_stage += NUMSTG_KERN_5;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_6, NUMSTG_KERN_6, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 6\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_6;
+        num_prev_stage += NUMSTG_KERN_6;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_7, NUMSTG_KERN_7, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 7\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_7;
+        num_prev_stage += NUMSTG_KERN_7;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_8, NUMSTG_KERN_8, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 8\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_8;
+        num_prev_stage += NUMSTG_KERN_8;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_9, NUMSTG_KERN_9, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 9\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_9;
+        num_prev_stage += NUMSTG_KERN_9;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_10, NUMSTG_KERN_10, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 10\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        haar_prev_stage += HAAR_KERN_10;
+        num_prev_stage += NUMSTG_KERN_10;
+
+        haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
+                dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_11, NUMSTG_KERN_11, 
+                img1->width, img1->height, dbit_vector); 
+        checkError();
+        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        checkError();
+
+        printf("Done with Kernel 11\n-----------------------------------------------------------\n");
+        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+
+        cudaFree(dsum);
+        cudaFree(dsqsum);
+        cudaFree(dbit_vector);
+
     } /* end of the factor loop, finish all scales in pyramid*/
+
+    cudaFree(dindex_x);
+    cudaFree(dindex_y);
+    cudaFree(dwidth);
+    cudaFree(dheight);
+    cudaFree(dweights_array);
+    cudaFree(dalpha1_array);
+    cudaFree(dalpha2_array);
+    cudaFree(dtree_thresh_array);
+    cudaFree(dstages_thresh_array);
+    cudaFree(dsum);
+    cudaFree(dsqsum); 
+    cudaFree(dhaar_per_stg);
 
     if( minNeighbors != 0)
     {
@@ -350,13 +556,16 @@ void compare_bits(bool* ref, bool* data, int n) {
     int i;
     int counter = 0;
     for(i=0; i<n; i++) {
+        if(ref[i] == true) {
+            printf("True: %d = %d\n", ref[i], data[i]);
+        }
         if(ref[i] != data[i]) {
-            printf("Failed\n");
+            printf("%d: Failed: %d != %d\n", i, ref[i], data[i]);
             counter++;
         }
     }
     if(counter == 0) {
-        printf("Test Passed\n");
+        printf("Test Passed\n-----------------------------------------------------\n");
     }
 }
 
@@ -498,13 +707,28 @@ inline int evalWeakClassifier(int variance_norm_factor, int p_offset, int tree_i
             - *(scaled_rectangles_array[r_index + 2] + p_offset)
             + *(scaled_rectangles_array[r_index + 3] + p_offset))
         * weights_array[w_index];
-
+   
+    /*
+    if(p_offset == 648) {
+        printf("CPU: %d - %d - %d + %d = %d\nweight0 = %d, sum = %d\n", *(scaled_rectangles_array[r_index] + p_offset),
+                    *(scaled_rectangles_array[r_index+1] + p_offset),
+                    *(scaled_rectangles_array[r_index+2] + p_offset),
+                    *(scaled_rectangles_array[r_index+3] + p_offset), sum, weights_array[w_index], sum);
+    }*/
 
     sum += (*(scaled_rectangles_array[r_index+4] + p_offset)
             - *(scaled_rectangles_array[r_index + 5] + p_offset)
             - *(scaled_rectangles_array[r_index + 6] + p_offset)
             + *(scaled_rectangles_array[r_index + 7] + p_offset))
         * weights_array[w_index + 1];
+ 
+    /*
+    if(p_offset == 648) {
+        printf("CPU: %d - %d - %d + %d = %d\nweight0 = %d, sum = %d\n", *(scaled_rectangles_array[r_index+4] + p_offset),
+                    *(scaled_rectangles_array[r_index+5] + p_offset),
+                    *(scaled_rectangles_array[r_index+6] + p_offset),
+                    *(scaled_rectangles_array[r_index+7] + p_offset), sum, weights_array[w_index+1], sum);
+    }*/
 
     if ((scaled_rectangles_array[r_index+8] != NULL)){
         sum += (*(scaled_rectangles_array[r_index+8] + p_offset)
@@ -513,12 +737,10 @@ inline int evalWeakClassifier(int variance_norm_factor, int p_offset, int tree_i
                 + *(scaled_rectangles_array[r_index + 11] + p_offset))
             * weights_array[w_index + 2];
     }
-
     if(sum >= t)
         return alpha2_array[tree_index];
     else
         return alpha1_array[tree_index];
-
 }
 
 
@@ -550,6 +772,8 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
     variance_norm_factor =  (cascade->pq0[pq_offset] - cascade->pq1[pq_offset] - cascade->pq2[pq_offset] + cascade->pq3[pq_offset]);
     mean = (cascade->p0[p_offset] - cascade->p1[p_offset] - cascade->p2[p_offset] + cascade->p3[p_offset]);
 
+    //printf("CPU Row %d: Col %d: var: %d - %d - %d + %d = %d\nCol %d: mean: %d - %d - %d + %d = %d\n", pt.y, pt.x, cascade->pq0[pq_offset], cascade->pq1[pq_offset], cascade->pq2[pq_offset], cascade->pq3[pq_offset], variance_norm_factor, pt.x, cascade->p0[p_offset], cascade->p1[p_offset], cascade->p2[p_offset], cascade->p3[p_offset], mean);
+
     variance_norm_factor = (variance_norm_factor * cascade->inv_window_area);
     variance_norm_factor =  variance_norm_factor - mean*mean;
 
@@ -567,6 +791,7 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
     else
         variance_norm_factor = 1;
 
+    //printf("CPU: Row: %d, Col: %d, ID: %d: Variance = %d\n", pt.y, pt.x, p_offset, variance_norm_factor);
     /**************************************************
      * The major computation happens here.
      * For each scale in the image pyramid,
@@ -584,7 +809,7 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
      * except that filter results need to be merged,
      * and compared with a per-stage threshold.
      *************************************************/
-    for( i = start_stage; i < cascade->n_stages; i++ )
+    for( i = start_stage; i < 24; i++) //cascade->n_stages; i++ ) Change here- Sharmila
     {
 
         /****************************************************
@@ -599,6 +824,10 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
 
         for( j = 0; j < stages_array[i]; j++ )
         {
+            /*
+            if(p_offset == 648) {
+                printf("CPU p_offset = %d Stage = %d, Haar =%d\n", p_offset, i, j);
+            }*/
             /**************************************************
              * Send the shifted window to a haar filter.
              **************************************************/
@@ -621,8 +850,12 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
         if( stage_sum <  0.4 * stages_thresh_array[i] ){
             return -i;
         } /* end of the per-stage thresholding */
+        else {
+            printf("CPU: Stage %d: Threshold = %d\n", i, stages_thresh_array[i]);
+        }
     } /* end of i loop */
 
+    printf("True: Vec ID = %d, Stage = %d, CPU: Row = %d, Col = %d: stage_sum = %ld < %d\n", pt.y*(cascade->sum.width-cascade->orig_window_size.width)+pt.x, i, pt.y, pt.x, stage_sum, (int)(0.4*stages_thresh_array[i]));
     return 1;
 }
 
@@ -678,6 +911,10 @@ void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int su
      * Merge functions/loops to increase locality
      * Tiling to increase computation-to-memory ratio
      *********************************************/
+    int i;
+    for(i=0; i<(x2*y2); i++) {
+        bit_vector[i] = true;
+    }
     for( x = 0; x <= x2; x += step )
         for( y = y1; y <= y2; y += step )
         {
@@ -702,16 +939,20 @@ void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int su
              * e.g., an array, to store the coordinates of face,
              * which can be later memcpy from GPU to CPU to do push_back
              *******************************************************/
-            int index = y*sum_col+x;
+            int index = y*x2+x;
             if( result > 0 )
             {
+                printf("Result is greater than zero\n");
                 MyRect r = {myRound(x*factor), myRound(y*factor), winSize.width, winSize.height};
-                bit_vector[index] = 1;
                 vec->push_back(r);
+                printf("Pushed back the result into vector\n");
+                //bit_vector[index] = true;
             }
             else
-                bit_vector[index] = 0;
+                bit_vector[index] = false;
         }
+    printf("Completed scale image invoker\n");
+    fflush(stdout);
 }
 
 /*****************************************************
@@ -811,9 +1052,9 @@ void readTextClassifierForGPU()//(myCascade * cascade)
     FILE *finfo = fopen("info.txt", "r");
 
     /**************************************************
-    /* how many stages are in the cascaded filter? 
-    /* the first line of info.txt is the number of stages 
-    /* (in the 5kk73 example, there are 25 stages)
+     * how many stages are in the cascaded filter? 
+     * the first line of info.txt is the number of stages 
+     * (in the 5kk73 example, there are 25 stages)
      **************************************************/
     if ( fgets (mystring , 12 , finfo) != NULL )
     {
@@ -837,6 +1078,7 @@ void readTextClassifierForGPU()//(myCascade * cascade)
     }
     fclose(finfo);
 
+    printf("Total number of haar features = %d\n", total_nodes);
 
     /* TODO: use matrices where appropriate */
     /***********************************************
@@ -847,15 +1089,15 @@ void readTextClassifierForGPU()//(myCascade * cascade)
     //rectangles_array = (int *)malloc(sizeof(int)*total_nodes*12);
     //scaled_rectangles_array = (int **)malloc(sizeof(int*)*total_nodes*12);
 
-    hindex_x = (int *)malloc(sizeof(int)*total_nodes*3);
-    hindex_y = (int *)malloc(sizeof(int)*total_nodes*3);
-    hwidth = (int *)malloc(sizeof(int)*total_nodes*3);
-    hheight = (int *)malloc(sizeof(int)*total_nodes*3);
-    hweights_array = (int *)malloc(sizeof(int)*total_nodes*3);
-    halpha1_array = (int*)malloc(sizeof(int)*total_nodes);
-    halpha2_array = (int*)malloc(sizeof(int)*total_nodes);
-    htree_thresh_array = (int*)malloc(sizeof(int)*total_nodes);
-    hstages_thresh_array = (int*)malloc(sizeof(int)*stages);
+    hindex_x = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
+    hindex_y = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
+    hwidth = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
+    hheight = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
+    hweights_array = (int16_t *)malloc(sizeof(int16_t)*total_nodes*3);
+    halpha1_array = (int16_t*)malloc(sizeof(int16_t)*total_nodes);
+    halpha2_array = (int16_t*)malloc(sizeof(int16_t)*total_nodes);
+    htree_thresh_array = (int16_t*)malloc(sizeof(int16_t)*total_nodes);
+    hstages_thresh_array = (int16_t*)malloc(sizeof(int16_t)*stages);
     FILE *fp = fopen("class.txt", "r");
 
     /******************************************
@@ -1107,7 +1349,7 @@ void releaseTextClassifierGPU()
     free(halpha1_array);
     free(halpha2_array);
     free(hstages_thresh_array);
-    free(htree_thresh_array);
+    free(bit_vector);
 }
 
 /* End of file. */

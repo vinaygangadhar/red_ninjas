@@ -45,25 +45,29 @@
 
 // defines for separate kernels
 #define HAAR_KERN_0 323
-#define NUMSTG_KERN_0 9
-#define HAAR_KERN_1 323
-#define NUMSTG_KERN_1 9
-#define HAAR_KERN_2 323
-#define NUMSTG_KERN_2 9
-#define HAAR_KERN_3 323
-#define NUMSTG_KERN_3 9
-#define HAAR_KERN_4 323
-#define NUMSTG_KERN_4 9
-#define HAAR_KERN_5 323
-#define NUMSTG_KERN_5 9
-#define HAAR_KERN_6 323
-#define NUMSTG_KERN_6 9
-#define HAAR_KERN_7 323
-#define NUMSTG_KERN_7 9
-#define HAAR_KERN_8 323
-#define NUMSTG_KERN_8 9
-#define HAAR_KERN_9 323
-#define NUMSTG_KERN_9 9
+#define NUMSTG_KERN_0 8
+#define HAAR_KERN_1 273
+#define NUMSTG_KERN_1 3
+#define HAAR_KERN_2 242
+#define NUMSTG_KERN_2 2
+#define HAAR_KERN_3 271
+#define NUMSTG_KERN_3 2
+#define HAAR_KERN_4 296
+#define NUMSTG_KERN_4 2
+#define HAAR_KERN_5 324
+#define NUMSTG_KERN_5 2
+#define HAAR_KERN_6 196
+#define NUMSTG_KERN_6 1
+#define HAAR_KERN_7 197
+#define NUMSTG_KERN_7 1
+#define HAAR_KERN_8 181
+#define NUMSTG_KERN_8 1
+#define HAAR_KERN_9 199
+#define NUMSTG_KERN_9 1
+#define HAAR_KERN_10 211
+#define NUMSTG_KERN_10 1
+#define HAAR_KERN_11 200
+#define NUMSTG_KERN_11 1
 
 #ifdef __cplusplus
 extern "C" {
