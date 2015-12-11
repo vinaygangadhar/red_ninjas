@@ -1,0 +1,75 @@
+Number of stages = 25
+-----------------------------------
+0th Kernel:
+Number of stages = 8
+Number of filters = 323
+9 
+16 
+27 
+32 
+52 
+53 
+62 
+72 
+-----------------------------------
+1st Kernel:
+Number of stages = 3
+Number of filters = 273
+83 
+91 
+99 
+-----------------------------------
+2nd Kernel:
+Number of stages = 2
+Number of filters = 242
+115 
+127 
+-----------------------------------
+3rd Kernel:
+Number of stages = 2
+Number of filters = 271
+135 
+136 
+-----------------------------------
+4th Kernel:
+Number of stages = 2
+Number of filters = 296
+137 
+159 
+-----------------------------------
+5th Kernel:
+Number of stages = 2
+Number of filters = 324
+155 
+169 
+-----------------------------------
+6th Kernel:
+Number of stages = 1
+Number of filters = 196
+196 
+-----------------------------------
+7th Kernel:
+Number of stages = 1
+Number of filters = 197
+197 
+-----------------------------------
+8th Kernel:
+Number of stages = 1
+Number of filters = 181
+181 
+-----------------------------------
+9th Kernel:
+Number of stages = 1
+Number of filters = 199
+199 
+-----------------------------------
+10th Kernel:
+Number of stages = 1
+Number of filters = 211
+211 
+-----------------------------------
+11th Kernel:
+Number of stages = 1
+Number of filters = 200
+200 
+-----------------------------------
