@@ -261,7 +261,7 @@ void createSumImage(int width, int height, MyIntImage *image)
 	image->width = width;
 	image->height = height;
 	image->flag = 1;
-	image->data = (int *)malloc(sizeof(int)*(height*width));
+	image->data = (int32_t *)malloc(sizeof(int32_t)*(height*width));
 }
 
 int freeImage(MyImage* image)

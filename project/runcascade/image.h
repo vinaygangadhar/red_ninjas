@@ -56,7 +56,7 @@ typedef struct
 {
 	int width;
 	int height;
-	int* data;
+	int32_t* data;
 	int flag;
 }
 MyIntImage;
