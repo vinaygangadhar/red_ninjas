@@ -192,7 +192,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     checkError();
     cudaMalloc(&dstages_thresh_array, TOTAL_STAGES*sizeof(int16_t));
     checkError();
-    cudaMalloc(&dhaar_per_stg, cascade->n_stages*sizeof(int));
+    cudaMalloc(&dhaar_per_stg, TOTAL_STAGES*sizeof(int));
     checkError();
 
     cudaMemcpy(dindex_x, hindex_x, 3*TOTAL_HAAR*sizeof(uint16_t), cudaMemcpyHostToDevice);
@@ -214,7 +214,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     checkError();
     cudaMemcpy(dstages_thresh_array, hstages_thresh_array, TOTAL_STAGES*sizeof(int16_t), cudaMemcpyHostToDevice);
     checkError();
-    cudaMemcpy(dhaar_per_stg, hstages_array, cascade->n_stages*sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(dhaar_per_stg, hstages_array, TOTAL_STAGES*sizeof(int), cudaMemcpyHostToDevice);
     checkError();
 
     /* initial scaling factor */
@@ -292,7 +292,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         // Starting the timer
         cudaEventRecord(startEvent_cpu, 0);
 
-        setImageForCascadeClassifier( cascade, sum1, sqsum1);
+        setImageForCascadeClassifier(cascade, sum1, sqsum1);
 
         /* print out for each scale of the image pyramid */
 
@@ -644,8 +644,8 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     cudaFree(dalpha2_array);
     cudaFree(dtree_thresh_array);
     cudaFree(dstages_thresh_array);
-    cudaFree(dsum);
-    cudaFree(dsqsum); 
+    //cudaFree(dsum);
+    //cudaFree(dsqsum); 
     cudaFree(dhaar_per_stg);
 
     if( minNeighbors != 0)
@@ -1205,8 +1205,6 @@ void readTextClassifierForGPU()//(myCascade * cascade)
      * Note that, to increase parallelism,
      * some arrays need to be splitted or duplicated
      **********************************************/
-    //rectangles_array = (int *)malloc(sizeof(int)*total_nodes*12);
-    //scaled_rectangles_array = (int **)malloc(sizeof(int*)*total_nodes*12);
 
     hindex_x = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
     hindex_y = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);

@@ -5,7 +5,7 @@
 
 #define TOTAL_HAAR 2913
 #define TOTAL_STAGES 25
-#define MAX_HAAR 325
+#define MAX_HAAR 326
 #define WINDOW_WIDTH 24
 #define WINDOW_HEIGHT 24
 #define MAX_STAGE 7
@@ -20,9 +20,9 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
     int col = blockIdx.x*blockDim.x + threadIdx.x;
     int offset = row*image_width + col;
 
-    volatile __shared__ int16_t index0_1[MAX_HAAR], index0_2[MAX_HAAR], index0_3[MAX_HAAR], index0_4[MAX_HAAR];
-    volatile __shared__ int16_t index1_1[MAX_HAAR], index1_2[MAX_HAAR], index1_3[MAX_HAAR], index1_4[MAX_HAAR];
-    volatile __shared__ int16_t index2_1[MAX_HAAR], index2_2[MAX_HAAR], index2_3[MAX_HAAR], index2_4[MAX_HAAR];
+    volatile __shared__ int32_t index0_1[MAX_HAAR], index0_2[MAX_HAAR], index0_3[MAX_HAAR], index0_4[MAX_HAAR];
+    volatile __shared__ int32_t index1_1[MAX_HAAR], index1_2[MAX_HAAR], index1_3[MAX_HAAR], index1_4[MAX_HAAR];
+    volatile __shared__ int32_t index2_1[MAX_HAAR], index2_2[MAX_HAAR], index2_3[MAX_HAAR], index2_4[MAX_HAAR];
 
     volatile __shared__ int16_t sweight[3*MAX_HAAR];
     volatile __shared__ int16_t stree_threshold[MAX_HAAR];
