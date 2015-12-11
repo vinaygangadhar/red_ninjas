@@ -1,0 +1,91 @@
+-- entering main function --
+-- loading image --
+
+Reading image file: Face.pgm
+-- loading cascade classifier --
+Total number of haar features = 2913
+-- detecting faces --
+detecting faces, iter := 1
+Event:Time for CPU to complete execution: 180.145767 ms
+Event:Time for GPU to complete execution: 105.743202 ms
+GPU data: Factor = 1.000000: Number of faces = 0
+----------------------------------------
+detecting faces, iter := 2
+Event:Time for CPU to complete execution: 119.567741 ms
+Event:Time for GPU to complete execution: 70.840355 ms
+GPU data: Factor = 1.200000: Number of faces = 0
+----------------------------------------
+detecting faces, iter := 3
+Event:Time for CPU to complete execution: 82.384483 ms
+Event:Time for GPU to complete execution: 46.682529 ms
+GPU data: Factor = 1.440000: Number of faces = 0
+----------------------------------------
+detecting faces, iter := 4
+Event:Time for CPU to complete execution: 57.222721 ms
+Event:Time for GPU to complete execution: 36.461086 ms
+GPU data: Factor = 1.728000: Number of faces = 0
+----------------------------------------
+detecting faces, iter := 5
+Event:Time for CPU to complete execution: 40.553951 ms
+Event:Time for GPU to complete execution: 24.282784 ms
+GPU data: Factor = 2.073600: Number of faces = 2
+----------------------------------------
+detecting faces, iter := 6
+Event:Time for CPU to complete execution: 29.586912 ms
+Event:Time for GPU to complete execution: 18.161247 ms
+GPU data: Factor = 2.488320: Number of faces = 6
+----------------------------------------
+detecting faces, iter := 7
+Event:Time for CPU to complete execution: 22.504255 ms
+Event:Time for GPU to complete execution: 12.418112 ms
+GPU data: Factor = 2.985985: Number of faces = 21
+----------------------------------------
+detecting faces, iter := 8
+Event:Time for CPU to complete execution: 16.151808 ms
+Event:Time for GPU to complete execution: 11.210400 ms
+GPU data: Factor = 3.583182: Number of faces = 38
+----------------------------------------
+detecting faces, iter := 9
+Event:Time for CPU to complete execution: 9.515168 ms
+Event:Time for GPU to complete execution: 6.384768 ms
+GPU data: Factor = 4.299818: Number of faces = 40
+----------------------------------------
+detecting faces, iter := 10
+Event:Time for CPU to complete execution: 6.836256 ms
+Event:Time for GPU to complete execution: 6.305536 ms
+GPU data: Factor = 5.159782: Number of faces = 43
+----------------------------------------
+detecting faces, iter := 11
+Event:Time for CPU to complete execution: 5.103520 ms
+Event:Time for GPU to complete execution: 6.300224 ms
+GPU data: Factor = 6.191739: Number of faces = 48
+----------------------------------------
+detecting faces, iter := 12
+Event:Time for CPU to complete execution: 2.988000 ms
+Event:Time for GPU to complete execution: 6.255136 ms
+GPU data: Factor = 7.430087: Number of faces = 50
+----------------------------------------
+detecting faces, iter := 13
+Event:Time for CPU to complete execution: 2.044192 ms
+Event:Time for GPU to complete execution: 4.820160 ms
+GPU data: Factor = 8.916104: Number of faces = 54
+----------------------------------------
+detecting faces, iter := 14
+Event:Time for CPU to complete execution: 0.780256 ms
+Event:Time for GPU to complete execution: 3.529088 ms
+GPU data: Factor = 10.699326: Number of faces = 54
+----------------------------------------
+detecting faces, iter := 15
+Event:Time for CPU to complete execution: 0.412992 ms
+Event:Time for GPU to complete execution: 2.871840 ms
+GPU data: Factor = 12.839191: Number of faces = 54
+----------------------------------------
+detecting faces, iter := 16
+Event:Time for CPU to complete execution: 0.296640 ms
+Event:Time for GPU to complete execution: 2.570688 ms
+GPU data: Factor = 15.407030: Number of faces = 54
+----------------------------------------
+GPU data: Number of faces = 6
+Size of result = 6
+-- saving output --
+-- image saved --
