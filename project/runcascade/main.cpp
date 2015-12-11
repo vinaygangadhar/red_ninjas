@@ -93,6 +93,8 @@ int main (int argc, char *argv[])
 
 	result = detectObjects(image, minSize, maxSize, cascade, scaleFactor, minNeighbours);
 
+    printf("Size of result = %d\n", result.size());
+
 	for(i = 0; i < result.size(); i++ )
 	{
 		MyRect r = result[i];

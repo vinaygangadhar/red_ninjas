@@ -131,6 +131,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
      * The rectangle contains one face candidate 
      *****************************************************/
     std::vector<MyRect> allCandidates;
+    std::vector<MyRect> faces; // For data from GPU
 
     /* scaling factor */
     float factor;
@@ -220,7 +221,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     factor = 1;
 
     /* iterate over the image pyramid */
-    for( factor = 1; factor <= 1; factor *= scaleFactor )
+    for( factor = 1; ; factor *= scaleFactor )
     {
         /* iteration counter */
         iter_counter++;
@@ -278,10 +279,22 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
          * but does not do compuation based on four coners.
          * The computation is done next in ScaleImage_Invoker
          *************************************************/
+        printf("detecting faces, iter := %d\n", iter_counter);
+
+        /*-------------------------------------------------------------------
+          Starting timer for Runcascade Kernels comparison
+          -------------------------------------------------------------------*/
+        // Calculate CPU time
+        cudaEvent_t startEvent_cpu, stopEvent_cpu;
+        cudaEventCreate(&startEvent_cpu);
+        cudaEventCreate(&stopEvent_cpu);
+
+        // Starting the timer
+        cudaEventRecord(startEvent_cpu, 0);
+
         setImageForCascadeClassifier( cascade, sum1, sqsum1);
 
         /* print out for each scale of the image pyramid */
-        printf("detecting faces, iter := %d\n", iter_counter);
 
         /****************************************************
          * Process the current scale with the cascaded fitler.
@@ -289,14 +302,26 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
          * Optimization oppurtunity:
          * the same cascade filter is invoked each time
          ***************************************************/
+        ScaleImage_Invoker(cascade, factor, sum1->height, sum1->width,
+                allCandidates);
+        cudaEventRecord(stopEvent_cpu, 0);
+        cudaEventSynchronize(stopEvent_cpu);
+        // Stopping the timer
+
+        float elapsedTime_cpu;
+        cudaEventElapsedTime(&elapsedTime_cpu, startEvent_cpu, stopEvent_cpu);
+        /*--------------------------------------------------------------------------------------------*/
+
+        printf("Event:Time for CPU to complete execution: %f ms\n", elapsedTime_cpu);
+
         int bitvec_width = img1->width-cascade->orig_window_size.width;
         int bitvec_height = img1->height-cascade->orig_window_size.height;
 
-        ScaleImage_Invoker(cascade, factor, sum1->height, sum1->width,
-                allCandidates);
-
-        printf("Done with ScaleImage Invoker\n");
-        fflush(stdout);
+        /*
+           printf("Within detect objects. Size of result = %d\n", allCandidates.size());
+           printf("Done with ScaleImage Invoker\n");
+           fflush(stdout);
+         */
         /****************************************************
           Setting up the data for GPU Kernels
          ***************************************************/
@@ -322,33 +347,55 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         dim3 numThreads(32, 32);
         dim3 numBlocks((bitvec_width+31)/32, (bitvec_height+31)/32);
 
-        printf("Entering kernel\n");
-        fflush(stdout);
+        //printf("Entering kernel\n");
+
+        /*-------------------------------------------------------------------
+          Starting timer for Runcascade Kernels comparison
+          -------------------------------------------------------------------*/
+        // Calculate GPU time
+        cudaEvent_t startEvent_gpu, stopEvent_gpu;
+        cudaEventCreate(&startEvent_gpu);
+        cudaEventCreate(&stopEvent_gpu);
+
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
+
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x, dindex_y, dwidth, dheight, 
                 dweights_array, dtree_thresh_array, dalpha1_array, dalpha2_array, 
                 dstages_thresh_array, dsum, dsqsum, dhaar_per_stg, HAAR_KERN_0, 
                 NUMSTG_KERN_0, img1->width, img1->height, dbit_vector); 
         checkError();
 
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 0\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
         checkError();
-        printf("Done with Kernel 0\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
 
         int haar_prev_stage = HAAR_KERN_0;
         int num_prev_stage = NUMSTG_KERN_0;
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
-                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, dalpha2_array+haar_prev_stage, 
-                dstages_thresh_array+num_prev_stage, dsum, dsqsum, dhaar_per_stg+num_prev_stage, HAAR_KERN_1, 
-                NUMSTG_KERN_1, img1->width, img1->height, dbit_vector); 
+                dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
+                dalpha2_array+haar_prev_stage, dstages_thresh_array+num_prev_stage, dsum, dsqsum, 
+                dhaar_per_stg+num_prev_stage, HAAR_KERN_1, NUMSTG_KERN_1, 
+                img1->width, img1->height, dbit_vector); 
         checkError();
 
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 1\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
         checkError();
-        printf("Done with Kernel 1\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
 
         haar_prev_stage += HAAR_KERN_1;
         num_prev_stage += NUMSTG_KERN_1;
@@ -360,11 +407,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_2, NUMSTG_KERN_2, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-        checkError();
 
-        printf("Done with Kernel 2\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 2\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
+        checkError();
 
         haar_prev_stage += HAAR_KERN_2;
         num_prev_stage += NUMSTG_KERN_2;
@@ -376,11 +428,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_3, NUMSTG_KERN_3, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-        checkError();
 
-        printf("Done with Kernel 3\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 3\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
+        checkError();
 
         haar_prev_stage += HAAR_KERN_3;
         num_prev_stage += NUMSTG_KERN_3;
@@ -392,11 +449,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_4, NUMSTG_KERN_4, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-        checkError();
 
-        printf("Done with Kernel 4\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 4\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
+        checkError();
 
         haar_prev_stage += HAAR_KERN_4;
         num_prev_stage += NUMSTG_KERN_4;
@@ -408,12 +470,17 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_5, NUMSTG_KERN_5, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 5\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
         checkError();
 
-        printf("Done with Kernel 5\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-        
         haar_prev_stage += HAAR_KERN_5;
         num_prev_stage += NUMSTG_KERN_5;
 
@@ -424,11 +491,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_6, NUMSTG_KERN_6, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-        checkError();
 
-        printf("Done with Kernel 6\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 6\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
+        checkError();
 
         haar_prev_stage += HAAR_KERN_6;
         num_prev_stage += NUMSTG_KERN_6;
@@ -440,11 +512,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_7, NUMSTG_KERN_7, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-        checkError();
 
-        printf("Done with Kernel 7\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 7\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
+        checkError();
 
         haar_prev_stage += HAAR_KERN_7;
         num_prev_stage += NUMSTG_KERN_7;
@@ -456,11 +533,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_8, NUMSTG_KERN_8, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-        checkError();
 
-        printf("Done with Kernel 8\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 8\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
+        checkError();
 
         haar_prev_stage += HAAR_KERN_8;
         num_prev_stage += NUMSTG_KERN_8;
@@ -472,11 +554,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_9, NUMSTG_KERN_9, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-        checkError();
 
-        printf("Done with Kernel 9\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 9\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
+        checkError();
 
         haar_prev_stage += HAAR_KERN_9;
         num_prev_stage += NUMSTG_KERN_9;
@@ -488,11 +575,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 dhaar_per_stg+num_prev_stage, HAAR_KERN_10, NUMSTG_KERN_10, 
                 img1->width, img1->height, dbit_vector); 
         checkError();
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-        checkError();
 
-        printf("Done with Kernel 10\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        /*
+           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
+           checkError();
+           printf("Done with Kernel 10\n-----------------------------------------------------------\n");
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        cudaDeviceSynchronize();
+        checkError();
 
         haar_prev_stage += HAAR_KERN_10;
         num_prev_stage += NUMSTG_KERN_10;
@@ -507,12 +599,39 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
         checkError();
 
-        printf("Done with Kernel 11\n-----------------------------------------------------------\n");
-        compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+        cudaDeviceSynchronize();
+        checkError();
 
+        /*
+           printf("Factor %f: Done with all the Kernels\n-----------------------------------------------------------\n", factor);
+           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
+         */
+
+        int x, y;
+        for(y=0; y<bitvec_height; y++) {
+            for(x=0; x<bitvec_width; x++) {
+                if(hbit_vector[y*bitvec_width+x] == true) {
+                    MyRect r = {myRound(x*factor), myRound(y*factor), winSize.width, winSize.height};
+                    faces.push_back(r);
+                }
+            }
+        }
+        
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        float elapsedTime_gpu;
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+        /*--------------------------------------------------------------------------------------------*/
+
+        printf("Event:Time for GPU to complete execution: %f ms\n", elapsedTime_gpu);
+
+        printf("GPU data: Factor = %f: Number of faces = %d\n----------------------------------------\n", factor, faces.size());
         cudaFree(dsum);
         cudaFree(dsqsum);
         cudaFree(dbit_vector);
+        free(hbit_vector);
 
     } /* end of the factor loop, finish all scales in pyramid*/
 
@@ -531,13 +650,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
     if( minNeighbors != 0)
     {
-        groupRectangles(allCandidates, minNeighbors, GROUP_EPS);
+        //groupRectangles(allCandidates, minNeighbors, GROUP_EPS);
+        groupRectangles(faces, minNeighbors, GROUP_EPS);
     }
 
+    printf("GPU data: Number of faces = %d\n", faces.size());
     freeImage(img1);
     freeSumImage(sum1);
     freeSumImage(sqsum1);
-    return allCandidates;
+    //return allCandidates;
+    return faces;
 
 }
 
@@ -707,28 +829,28 @@ inline int evalWeakClassifier(int variance_norm_factor, int p_offset, int tree_i
             - *(scaled_rectangles_array[r_index + 2] + p_offset)
             + *(scaled_rectangles_array[r_index + 3] + p_offset))
         * weights_array[w_index];
-   
-    /*
-    if(p_offset == 648) {
-        printf("CPU: %d - %d - %d + %d = %d\nweight0 = %d, sum = %d\n", *(scaled_rectangles_array[r_index] + p_offset),
-                    *(scaled_rectangles_array[r_index+1] + p_offset),
-                    *(scaled_rectangles_array[r_index+2] + p_offset),
-                    *(scaled_rectangles_array[r_index+3] + p_offset), sum, weights_array[w_index], sum);
-    }*/
+
+    /* 
+       if(p_offset == 648) {
+       printf("CPU: %d - %d - %d + %d = %d\nweight0 = %d, sum = %d\n", *(scaled_rectangles_array[r_index] + p_offset),
+     *(scaled_rectangles_array[r_index+1] + p_offset),
+     *(scaled_rectangles_array[r_index+2] + p_offset),
+     *(scaled_rectangles_array[r_index+3] + p_offset), sum, weights_array[w_index], sum);
+     }*/
 
     sum += (*(scaled_rectangles_array[r_index+4] + p_offset)
             - *(scaled_rectangles_array[r_index + 5] + p_offset)
             - *(scaled_rectangles_array[r_index + 6] + p_offset)
             + *(scaled_rectangles_array[r_index + 7] + p_offset))
         * weights_array[w_index + 1];
- 
+
     /*
-    if(p_offset == 648) {
-        printf("CPU: %d - %d - %d + %d = %d\nweight0 = %d, sum = %d\n", *(scaled_rectangles_array[r_index+4] + p_offset),
-                    *(scaled_rectangles_array[r_index+5] + p_offset),
-                    *(scaled_rectangles_array[r_index+6] + p_offset),
-                    *(scaled_rectangles_array[r_index+7] + p_offset), sum, weights_array[w_index+1], sum);
-    }*/
+       if(p_offset == 648) {
+       printf("CPU: %d - %d - %d + %d = %d\nweight0 = %d, sum = %d\n", *(scaled_rectangles_array[r_index+4] + p_offset),
+     *(scaled_rectangles_array[r_index+5] + p_offset),
+     *(scaled_rectangles_array[r_index+6] + p_offset),
+     *(scaled_rectangles_array[r_index+7] + p_offset), sum, weights_array[w_index+1], sum);
+     }*/
 
     if ((scaled_rectangles_array[r_index+8] != NULL)){
         sum += (*(scaled_rectangles_array[r_index+8] + p_offset)
@@ -809,7 +931,7 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
      * except that filter results need to be merged,
      * and compared with a per-stage threshold.
      *************************************************/
-    for( i = start_stage; i < 24; i++) //cascade->n_stages; i++ ) Change here- Sharmila
+    for( i = start_stage; i < 25; i++) //cascade->n_stages; i++ ) Change here- Sharmila
     {
 
         /****************************************************
@@ -825,9 +947,9 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
         for( j = 0; j < stages_array[i]; j++ )
         {
             /*
-            if(p_offset == 648) {
-                printf("CPU p_offset = %d Stage = %d, Haar =%d\n", p_offset, i, j);
-            }*/
+               if(p_offset == 648) {
+               printf("CPU p_offset = %d Stage = %d, Haar =%d\n", p_offset, i, j);
+               }*/
             /**************************************************
              * Send the shifted window to a haar filter.
              **************************************************/
@@ -850,12 +972,9 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
         if( stage_sum <  0.4 * stages_thresh_array[i] ){
             return -i;
         } /* end of the per-stage thresholding */
-        else {
-            printf("CPU: Stage %d: Threshold = %d\n", i, stages_thresh_array[i]);
-        }
     } /* end of i loop */
 
-    printf("True: Vec ID = %d, Stage = %d, CPU: Row = %d, Col = %d: stage_sum = %ld < %d\n", pt.y*(cascade->sum.width-cascade->orig_window_size.width)+pt.x, i, pt.y, pt.x, stage_sum, (int)(0.4*stages_thresh_array[i]));
+    //printf("True: Vec ID = %d, Stage = %d, CPU: Row = %d, Col = %d: stage_sum = %ld < %d\n", pt.y*(cascade->sum.width-cascade->orig_window_size.width)+pt.x, i, pt.y, pt.x, stage_sum, (int)(0.4*stages_thresh_array[i]));
     return 1;
 }
 
@@ -942,17 +1061,17 @@ void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int su
             int index = y*x2+x;
             if( result > 0 )
             {
-                printf("Result is greater than zero\n");
+                //printf("Result is greater than zero\n");
                 MyRect r = {myRound(x*factor), myRound(y*factor), winSize.width, winSize.height};
                 vec->push_back(r);
-                printf("Pushed back the result into vector\n");
+                //printf("Pushed back the result into vector\n");
                 //bit_vector[index] = true;
             }
             else
                 bit_vector[index] = false;
         }
-    printf("Completed scale image invoker\n");
-    fflush(stdout);
+    //printf("Completed scale image invoker\n");
+    //fflush(stdout);
 }
 
 /*****************************************************

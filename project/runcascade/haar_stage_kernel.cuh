@@ -76,7 +76,7 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
     __syncthreads();
 
     // Execute remaining section only if row and col are valid
-    if((row <= (image_height-WINDOW_HEIGHT)) && (col <= (image_width-WINDOW_WIDTH))) {
+    if((row < (image_height-WINDOW_HEIGHT)) && (col < (image_width-WINDOW_WIDTH))) {
         int sum = 0, result;
         int stage_sum = 0;
         int i, j;
@@ -106,7 +106,8 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
                 result = sum_data[index0_1[num_haars]+offset] - sum_data[index0_2[num_haars]+offset] -
                     sum_data[index0_3[num_haars]+offset] + sum_data[index0_4[num_haars]+offset];
                 sum = result*sweight[3*num_haars];
-              /* 
+              
+                /*
                 if(row == 16 && col == 8) {
                     printf("GPU Stage %d, Haar %d: %d - %d - %d + %d = %d\nweight0 = %d, sum = %d\n", i, j, sum_data[index0_1[num_haars]+offset], 
                             sum_data[index0_2[num_haars]+offset], sum_data[index0_3[num_haars]+offset],
