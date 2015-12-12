@@ -81,6 +81,9 @@ int iter_counter = 0;
 /* compute integral images */
 void integralImageOnHost( MyImage *src, MyIntImage *sum, MyIntImage *sqsum );
 
+/* compute nn and integral images on GPU */
+void nn_integralImageOnDevice(MyImage *src, MyIntImage *sum, MyIntImage *sqsum );
+
 /* scale down the image */
 void ScaleImage_Invoker( myCascade* _cascade, float _factor, int sum_row, int sum_col, std::vector<MyRect>& _vec);
 
@@ -127,20 +130,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     cudaError_t error;
     cudaEvent_t cpu_start;
     cudaEvent_t cpu_stop;
+    cudaEvent_t gpu_inc_start;
+    cudaEvent_t gpu_inc_stop;
     cudaEvent_t gpu_cpy_start;
     cudaEvent_t gpu_cpy_stop;
 
-    float gpu_cpyTime;
     float gpu_cpyTotal;
-
-    float gpu_kernTime;
-    float cpu_kernTime;
-    float cpu_stageTotal;
-    float gpu_stageTotal;
-   
-    float cpu_msecTotal;
+    float gpu_cpyOverall;
     float gpu_msecTotal;
-
+    float cpu_msecTotal;
+    
     //CUDA Events 
     error = cudaEventCreate(&cpu_start);
     if (error != cudaSuccess)
@@ -150,6 +149,21 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     }
     
     error = cudaEventCreate(&cpu_stop);
+    if (error != cudaSuccess)
+    {
+        fprintf(stderr, "Failed to create stop event (error code %s)!\n", cudaGetErrorString(error));
+        exit(EXIT_FAILURE);
+    
+    }
+
+    error = cudaEventCreate(&gpu_inc_start);
+    if (error != cudaSuccess)
+    {
+        fprintf(stderr, "Failed to create start event (error code %s)!\n", cudaGetErrorString(error));
+        exit(EXIT_FAILURE);
+    }
+    
+    error = cudaEventCreate(&gpu_inc_stop);
     if (error != cudaSuccess)
     {
         fprintf(stderr, "Failed to create stop event (error code %s)!\n", cudaGetErrorString(error));
@@ -231,9 +245,9 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     cudaEventRecord(gpu_cpy_stop, 0);
     cudaEventSynchronize(gpu_cpy_stop);
 
-    cudaEventElapsedTime(&gpu_cpyTime, gpu_cpy_start, gpu_cpy_stop);
-    gpu_cpyTotal = gpu_cpyTime;
-    printf("\n\tHost to Device Src Image Copy Time: %f ms\n", gpu_cpyTime);
+    cudaEventElapsedTime(&gpu_cpyTotal, gpu_cpy_start, gpu_cpy_stop);
+    gpu_cpyOverall = gpu_cpyTotal;
+    printf("\n\tNN_II: Src Image Copy Time: %f ms\n", gpu_cpyTotal);
 
     /****************************************************
       Setting up the data for GPU Kernels -- HAAR
@@ -277,9 +291,9 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     cudaEventRecord(gpu_cpy_stop, 0);
     cudaEventSynchronize(gpu_cpy_stop);
 
-    cudaEventElapsedTime(&gpu_cpyTime, gpu_cpy_start, gpu_cpy_stop);
-    gpu_cpyTotal += gpu_cpyTime;
-    printf("\tClassifier Info Copy Time: %f ms\n", gpu_cpyTime);
+    cudaEventElapsedTime(&gpu_cpyTotal, gpu_cpy_start, gpu_cpy_stop);
+    gpu_cpyOverall += gpu_cpyTotal;
+    printf("\tCC: Classifier Info Copy Time: %f ms\n", gpu_cpyTotal);
 
     /****************************************************
       Setting up DONE 
@@ -342,6 +356,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                   iter_counter, sz.width, sz.height);
    
         //CPU CALL
+
         printf("\tNN and II on CPU Started\n");
         
         error = cudaEventRecord(cpu_start, NULL);
@@ -371,15 +386,14 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
             exit(EXIT_FAILURE);
         }
 
-        error = cudaEventElapsedTime(&cpu_kernTime, cpu_start, cpu_stop);
+        error = cudaEventElapsedTime(&cpu_msecTotal, cpu_start, cpu_stop);
         if (error != cudaSuccess)
         {
             fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
             exit(EXIT_FAILURE);
         }
-
-        cpu_stageTotal = cpu_kernTime;
-        printf("\tNN and II on CPU complete--> Execution time: %f ms\n", cpu_kernTime);
+    
+        printf("\tNN and II on CPU complete--> Execution time: %f ms\n", cpu_msecTotal);
 
         /***************************************************
         * Compute-intensive step:
@@ -388,14 +402,11 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         ***************************************************/
         //GPU CALL
 
-        float kernelTime = nn_integralImageOnDevice(img, deviceimg.data, 
-                                                      devicesum1.data, devicesqsum1.data,
-                                                      transpose_dsum1.data, transpose_dsqsum1.data,
-                                                      devicesum1.width, devicesum1.height
-                                                    );
+        nn_integralImageOnDevice(img, deviceimg.data, 
+                                 devicesum1.data, devicesqsum1.data,
+                                 transpose_dsum1.data, transpose_dsqsum1.data,
+                                 devicesum1.width, devicesum1.height);
 
-        gpu_kernTime = kernelTime;
-        gpu_stageTotal = gpu_kernTime;
         ///////////////////////////////////////////////////////////
         ///// RUNCASCADE KERNEL RELATED //////////////////////////
         ///////////////////////////////////////////////////////////
@@ -456,15 +467,14 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
             exit(EXIT_FAILURE);
         }
 
-        error = cudaEventElapsedTime(&cpu_kernTime, cpu_start, cpu_stop);
+        error = cudaEventElapsedTime(&cpu_msecTotal, cpu_start, cpu_stop);
         if (error != cudaSuccess)
         {
             fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
             exit(EXIT_FAILURE);
         }
     
-        cpu_stageTotal += cpu_kernTime;
-        printf("\tCascade Classifier on CPU Complete--> Execution time: %f ms\n", cpu_kernTime);
+        printf("\tCascade Classifier on CPU Complete--> Execution time: %f ms\n", cpu_msecTotal);
        
         /*--------------------------------------------------------------------------------------------*/
 
@@ -476,13 +486,13 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         int bitvec_width = img1->width - cascade->orig_window_size.width;
         int bitvec_height = img1->height - cascade->orig_window_size.height;
   
+        int check;
+     
         //Allocate host bit vector
         bool* hbit_vector;
          
         createBitVector(&hbit_vector, bitvec_width, bitvec_height);
         //hbit_vector = (bool*) malloc(bitvec_width * bitvec_height * sizeof(bool));
-         
-        int check;
 
         bool* dbit_vector;
         check = CUDA_CHECK_RETURN(cudaMalloc((void**)&dbit_vector, bitvec_width * bitvec_height * sizeof(bool)), __FILE__, __LINE__);
@@ -497,20 +507,15 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         }
        
         //Copy the Host bitvector to Device bit vector
-        cudaEventRecord(gpu_cpy_start, 0);
-       
-        cudaMemcpy(dbit_vector, hbit_vector, bitvec_width * bitvec_height * sizeof(bool), cudaMemcpyHostToDevice);
-         
-        cudaEventRecord(gpu_cpy_stop, 0);
-        cudaEventSynchronize(gpu_cpy_stop);
+        check = CUDA_CHECK_RETURN( cudaMemcpy(dbit_vector, hbit_vector, bitvec_width * bitvec_height * sizeof(bool), cudaMemcpyHostToDevice), __FILE__, __LINE__);
+        if( check != 0){
+           std::cerr << "Error: CudaMemCpy not successfull for device bit vector" << std::endl;
+           exit(1);
+        }
 
-        cudaEventElapsedTime(&gpu_cpyTime, gpu_cpy_start, gpu_cpy_stop);
 
-        gpu_stageTotal += gpu_cpyTime;
-        printf("\n\tCC: To Device BitVector Copy Time: %f ms", gpu_cpyTotal);
-        
         //Call the Classifier on GPU Now
-        kernelTime = cascadeClassifierOnDevice(img1,  
+        cascadeClassifierOnDevice(img1,  
                                    bitvec_width, bitvec_height,
                                    dindex_x, dindex_y, dwidth, dheight, 
                                    dweights_array, dtree_thresh_array, 
@@ -522,21 +527,13 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                                  );
         
 
-        gpu_stageTotal += kernelTime;
-
         //CUDA MemCPy back to host vector
-        cudaEventRecord(gpu_cpy_start, 0);
-       
-        cudaMemcpy(hbit_vector, dbit_vector, bitvec_width * bitvec_height * sizeof(bool), cudaMemcpyDeviceToHost);
-         
-        cudaEventRecord(gpu_cpy_stop, 0);
-        cudaEventSynchronize(gpu_cpy_stop);
+        check = CUDA_CHECK_RETURN( cudaMemcpy(hbit_vector, dbit_vector, bitvec_width * bitvec_height * sizeof(bool), cudaMemcpyDeviceToHost), __FILE__, __LINE__ );
+        if( check != 0){
+           std::cerr << "Error: CudaMemCpy not successfull for device to host bit vector" << std::endl;
+           exit(1);
+        }
 
-        cudaEventElapsedTime(&gpu_cpyTime, gpu_cpy_start, gpu_cpy_stop);
-        gpu_stageTotal += gpu_cpyTime;
-
-        printf("\tCC: To Host BitVector Copy Time: %f ms\n", gpu_cpyTime);
-        
         //Recgnize the rectangles and push to Faces Structure
         int x, y;
         for(y = 0;  y < bitvec_height; y++) {
@@ -548,12 +545,11 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
             }
         }
         
-        printf("\n\tStage Complete--> CPU Time: %f ms, GPU Time: %f ms\n", cpu_stageTotal, gpu_stageTotal);
         /*--------------------------------------------------------------------------------------------*/
 
-        printf("\tGPU detection--> Scaling Factor: %f, Number of faces: %d\n", factor, faces.size());
+        //printf("Event:Time for GPU to complete execution: %f ms\n", elapsedTime_gpu);
+        //printf("GPU data: Factor = %f: Number of faces = %d\n----------------------------------------\n", factor, faces.size());
        
-        printf("\n\t--------------------------------------------------------------------------------------------\n");
          ////////////////////////////////////////////////
         //Freee resources for each downsample iteration//
         ///////////////////////////////////////////////
@@ -566,10 +562,6 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         nniiFree(devicesum1.data, devicesqsum1.data,
                  transpose_dsum1.data, transpose_dsqsum1.data);
 
-      
-        //Add the overall time of each stage
-        gpu_msecTotal += gpu_stageTotal;
-        cpu_msecTotal += cpu_stageTotal;
     } /* end of the factor loop, finish all scales in pyramid*/
 
 
@@ -579,8 +571,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         groupRectangles(faces, minNeighbors, GROUP_EPS);
     }
 
-    printf("\n-- GPU Face Detection Done--> Number of faces: %d\n", faces.size());
-    printf("\n-- Overall Timing: Total CPU Time: %f ms, Total GPU Time: %f ms\n", cpu_msecTotal, gpu_msecTotal);
+    printf("\n\tGPU data: Number of faces = %d\n", faces.size());
 
     freeImagePinned(img1);
     freeSumImage(sum1);
@@ -589,21 +580,25 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
      //////////////////////////
     //Free all GPU resources //
     //////////////////////////
-   
-    haarFreeOnDevice(dindex_x, dindex_y, 
-                      dwidth, dheight,
-                      dweights_array, dalpha1_array, 
-                      dalpha2_array, dtree_thresh_array, 
-                      dstages_thresh_array, dstages_array
-                     );
+    
+    cudaFree(dindex_x);
+    cudaFree(dindex_y);
+    cudaFree(dwidth);
+    cudaFree(dheight);
+    cudaFree(dweights_array);
+    cudaFree(dalpha1_array);
+    cudaFree(dalpha2_array);
+    cudaFree(dtree_thresh_array);
+    cudaFree(dstages_thresh_array);
+    cudaFree(dstages_array);
 
     nniiFreeImg(deviceimg.data);
 
     //Destroy all CUDA Events
     cudaEventDestroy(cpu_start);
     cudaEventDestroy(cpu_stop);
-    cudaEventDestroy(gpu_cpy_start);
-    cudaEventDestroy(gpu_cpy_stop);
+    cudaEventDestroy(gpu_inc_start);
+    cudaEventDestroy(gpu_inc_start);
 
     //return allCandidates;
     return faces;

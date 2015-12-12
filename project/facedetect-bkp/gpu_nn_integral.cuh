@@ -61,16 +61,21 @@ void nniiAllocateOnDevice(int32_t** d_sum, int32_t** d_sqsum,
 //Copy the src image to device
 void nniiCopyImgToDevice(unsigned char* srcimg, unsigned char* dstimg, int srcSize){
 
+   int check;
    //Copy source contents to a src on device
-   cudaMemcpy(dstimg, srcimg, sizeof(unsigned char) * srcSize, cudaMemcpyHostToDevice);
+   
+   check = CUDA_CHECK_RETURN(cudaMemcpy(dstimg, srcimg, sizeof(unsigned char) * srcSize, cudaMemcpyHostToDevice), __FILE__, __LINE__);
+   //if( check != 0){
+   //   std::cerr << "Error: CudaMemCpy not successfull for device source image" << std::endl;
+   //   exit(1);
+   //}
 }
 
 //Setting up the kernel for device -- 32bit version
-float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg, 
-                                 int32_t *d_sum, int32_t *d_sqsum,
-                                 int32_t *transpose_dsum, int32_t *transpose_dsqsum,
-                                 int dstWidth, int dstHeight
-                              )
+void nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg, 
+                              int32_t *d_sum, int32_t *d_sqsum,
+                              int32_t *transpose_dsum, int32_t *transpose_dsqsum,
+                              int dstWidth, int dstHeight)
 {
      /**************************************/
      //Timing related
@@ -79,6 +84,7 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
      cudaEvent_t gpu_exc_stop;
      float exc_msecTotal;
    
+     float mt2plusrs_excmsecTotal;
      float gpu_excmsecTotal;
     
      //CUDA Events 
@@ -148,14 +154,20 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
       //////////////////////////
      // ORIG ROW SCAN KERNEL //
      /////////////////////////
+     int check;
 
      //--Exclusive Timing Only Start
+
+     error = cudaEventRecord(gpu_exc_start, NULL);
+     if (error != cudaSuccess)
+     {
+         fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
+         exit(EXIT_FAILURE);
+     }
 
      //*******************************************//
      //Neareast Neighbor and Row Scan Kernel Call //
      //*******************************************//
-     
-     cudaEventRecord(gpu_exc_start, NULL);
      rowscan_nn_kernel<<<blocksPerGrid_rs, (threadsPerBlock_rs / 2)>>>(
                                                                         deviceimg,
                                                                         d_sum, d_sqsum, 
@@ -164,15 +176,40 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
                                                                         threadsPerBlock_rs
                                                                        );
      
-     cudaPeekAtLastError();
-     cudaDeviceSynchronize();
+     check = CUDA_CHECK_RETURN( cudaPeekAtLastError(), __FILE__, __LINE__ );
+     if( check != 0){
+           std::cerr << "Error: CudaPeek on Row Scan not successfull for device dest image" << std::endl;
+           exit(1);
+     }
+     
+     check = CUDA_CHECK_RETURN( cudaDeviceSynchronize(), __FILE__, __LINE__ );
+     if( check != 0){
+           std::cerr << "Error: CudaSynchronize not successfull for device dest image" << std::endl;
+           exit(1);
+     }    
 
      // Record the stop event
-     cudaEventRecord(gpu_exc_stop, NULL);
-     
+     error = cudaEventRecord(gpu_exc_stop, NULL);
+     if (error != cudaSuccess)
+     {
+         fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
+         exit(EXIT_FAILURE);
+     }
+
      // Wait for the stop event to complete
-     cudaEventSynchronize(gpu_exc_stop);
-     cudaEventElapsedTime(&exc_msecTotal, gpu_exc_start, gpu_exc_stop);
+     error = cudaEventSynchronize(gpu_exc_stop);
+     if (error != cudaSuccess)
+     {
+         fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
+         exit(EXIT_FAILURE);
+     }
+
+     error = cudaEventElapsedTime(&exc_msecTotal, gpu_exc_start, gpu_exc_stop);
+     if (error != cudaSuccess)
+     {
+         fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
+         exit(EXIT_FAILURE);
+     }
 
      printf("\tNN: Rowscan Done on GPU-->: Exclusive Time: %f ms\n", exc_msecTotal);
      gpu_excmsecTotal = exc_msecTotal;
@@ -191,56 +228,116 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
      dim3 blocks(tx,ty);
      dim3 grid(bx,by);
 
-      //**********************************//
+     error = cudaEventRecord(gpu_exc_start, NULL);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+ 
+     //**********************************//
      // matrix transpose 1  Kernel Call //
      //********************************//
-     
-     error = cudaEventRecord(gpu_exc_start, NULL);
      transpose_kernel<<<grid,blocks>>>(d_sum, transpose_dsum,  
                                        d_sqsum, transpose_dsqsum, 
                                        dst_w, dst_h);
      
-     cudaPeekAtLastError();
-     cudaDeviceSynchronize();
-       
+     check = CUDA_CHECK_RETURN( cudaPeekAtLastError(), __FILE__, __LINE__ );
+     if( check != 0){
+          std::cerr << "Error: CudaPeek on Row Scan not successfull for device dest image" << std::endl;
+          exit(1);
+     }
+
+     check = CUDA_CHECK_RETURN( cudaDeviceSynchronize(), __FILE__, __LINE__ );
+     if( check != 0){
+          std::cerr << "Error: CudaSynchronize not successfull for device dest image" << std::endl;
+          exit(1);
+     }    
 
      // Record the stop event
-     cudaEventRecord(gpu_exc_stop, NULL);
-    
+     error = cudaEventRecord(gpu_exc_stop, NULL);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
      // Wait for the stop event to complete
-     cudaEventSynchronize(gpu_exc_stop);
-     cudaEventElapsedTime(&exc_msecTotal, gpu_exc_start, gpu_exc_stop);
-    
+     error = cudaEventSynchronize(gpu_exc_stop);
+     if (error != cudaSuccess)
+     {
+        fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
+     error = cudaEventElapsedTime(&exc_msecTotal, gpu_exc_start, gpu_exc_stop);
+     if (error != cudaSuccess)
+     {
+        fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
      printf("\tII: Matrix Transpose1 Done on GPU--> Exclusive Time: %f ms\n", exc_msecTotal);
      gpu_excmsecTotal += exc_msecTotal;
+     mt2plusrs_excmsecTotal = exc_msecTotal;
 
       
      /////////////////////////////////////
      // ROW SCAN ONLY (w/o NN) KERNEL  //
      ////////////////////////////////////
 
-     
+     error = cudaEventRecord(gpu_exc_start, NULL);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
       //***************************//
      // row scan only Kernel Call //
      //**************************//
-     
-     cudaEventRecord(gpu_exc_start, NULL);
      rowscan_only_kernel<<<blocksPerGrid_cs, (threadsPerBlock_cs / 2)>>>(transpose_dsum, 
                                                                   transpose_dsqsum, 
                                                                   dst_h, threadsPerBlock_cs);
      
-     cudaPeekAtLastError();
-     cudaDeviceSynchronize();
-        
+     check = CUDA_CHECK_RETURN( cudaPeekAtLastError(), __FILE__, __LINE__ );
+     if( check != 0){
+          std::cerr << "Error: CudaPeek on Row Scan not successfull for device dest image" << std::endl;
+          exit(1);
+     }
+
+     check = CUDA_CHECK_RETURN( cudaDeviceSynchronize(), __FILE__, __LINE__ );
+     if( check != 0){
+          std::cerr << "Error: CudaSynchronize not successfull for device dest image" << std::endl;
+          exit(1);
+     }    
+
      // Record the stop event
-     cudaEventRecord(gpu_exc_stop, NULL);
-    
+     error = cudaEventRecord(gpu_exc_stop, NULL);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
      // Wait for the stop event to complete
-     cudaEventSynchronize(gpu_exc_stop);
-     cudaEventElapsedTime(&exc_msecTotal, gpu_exc_start, gpu_exc_stop);
-     
-     printf("\tII: RowScan Only Done on GPU--> Exclusive Time: %f ms\n", exc_msecTotal);
+     error = cudaEventSynchronize(gpu_exc_stop);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
+     error = cudaEventElapsedTime(&exc_msecTotal, gpu_exc_start, gpu_exc_stop);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
+     printf("\tII: RowScan Only on GPU Done--> Exclusive Time: %f ms\n", exc_msecTotal);
      gpu_excmsecTotal += exc_msecTotal;
+     mt2plusrs_excmsecTotal += exc_msecTotal;
      
       /////////////////////////////////
      //  MATRIX TRANSPOSE 2 KERNEL  //
@@ -252,8 +349,13 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
      dim3 blocks2(tx,ty);
      dim3 grid2(bx,by);
      
-     cudaEventRecord(gpu_exc_start, NULL);
-    
+     error = cudaEventRecord(gpu_exc_start, NULL);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to record start event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
      //**********************************//
      // matrix transpose 2  Kernel Call //
      //********************************//
@@ -261,28 +363,52 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
                                           transpose_dsqsum, d_sqsum, 
                                           dst_h, dst_w);
 
-     cudaPeekAtLastError();
-     cudaDeviceSynchronize();
+     check = CUDA_CHECK_RETURN( cudaPeekAtLastError(), __FILE__, __LINE__ );
+     if( check != 0){
+          std::cerr << "Error: CudaPeek on Row Scan not successfull for device dest image" << std::endl;
+          exit(1);
+     }
+
+     check = CUDA_CHECK_RETURN( cudaDeviceSynchronize(), __FILE__, __LINE__ );
+     if( check != 0){
+          std::cerr << "Error: CudaSynchronize not successfull for device dest image" << std::endl;
+          exit(1);
+     }    
 
      // Record the stop event
-     cudaEventRecord(gpu_exc_stop, NULL);
-    
+     error = cudaEventRecord(gpu_exc_stop, NULL);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to record stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
      // Wait for the stop event to complete
-     cudaEventSynchronize(gpu_exc_stop);
-     cudaEventElapsedTime(&exc_msecTotal, gpu_exc_start, gpu_exc_stop);
+     error = cudaEventSynchronize(gpu_exc_stop);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to synchronize on the stop event (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
 
-     printf("\tII: Matrix Transpose2 Done on GPU- Exclusive Time: %f ms\n", exc_msecTotal);
+     error = cudaEventElapsedTime(&exc_msecTotal, gpu_exc_start, gpu_exc_stop);
+     if (error != cudaSuccess)
+     {
+          fprintf(stderr, "Failed to get time elapsed between events (error code %s)!\n", cudaGetErrorString(error));
+          exit(EXIT_FAILURE);
+     }
+
+     printf("\tII:Matrix Transpose2 Done on GPU- Exclusive Time: %f ms\n", exc_msecTotal);
      gpu_excmsecTotal += exc_msecTotal;
+     mt2plusrs_excmsecTotal += exc_msecTotal;
      
+     
+     //printf("\t2 Matrix Transposes  + RowScan Only Exclusive Time: %f ms\n", mt2plusrs_excmsecTotal);
      printf("\tNN and II on GPU complete--> Combined Exclusive Time: %f ms\n", gpu_excmsecTotal);
-
 
      //Destroy Events
      cudaEventDestroy(gpu_exc_start);
      cudaEventDestroy(gpu_exc_stop);
-
-
-     return  gpu_excmsecTotal;
      
 }
 
