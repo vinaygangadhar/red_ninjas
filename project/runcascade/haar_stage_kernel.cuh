@@ -46,6 +46,25 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
         index1_4[tid] = image_width*haar_index_y[3*tid+1] + haar_index_x[3*tid+1] + 
             image_width*height[3*tid+1] + width[3*tid+1];
 
+        /*
+        if(index0_1[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index0_2[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index0_3[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index0_4[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH ||
+                index1_1[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index1_2[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index1_3[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index1_4[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH) {
+            printf("One of the indices is greater than %d for Haar %d. Img width = %d\n", image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH, tid, image_width);
+        }*/
+
+        /*
+        if(tid == 59 || tid == 198 || tid == 200 || tid == 226) {
+            printf("%d: x0 %d, y0 %d, wid0 %d, height0 %d\nx1 %d, y1 %d, wid1 %d, height1 %d\n",
+                    tid, haar_index_x[3*tid], haar_index_y[3*tid], width[3*tid], height[3*tid], 
+                    haar_index_x[3*tid+1], haar_index_y[3*tid+1], width[3*tid+1], height[3*tid+1]);
+        }*/
+
         // This should be done only when third rectangle is present
         // Optimizing by setting only index2_1 to -1
         if(haar_index_x[3*tid+2]==0 && haar_index_y[3*tid+2]==0 && 
@@ -59,6 +78,15 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
                 image_width*height[3*tid+2];
             index2_4[tid] = image_width*haar_index_y[3*tid+2] + haar_index_x[3*tid+2] + 
                 image_width*height[3*tid+2] + width[3*tid+2];
+
+            /*
+            if(index2_1[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index2_2[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index2_3[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
+                index2_4[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH) {
+                printf("Index 2: One of the indices is greater than %d for Haar %d. Img width = %d\n", image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH, tid, image_width);
+            }*/
+ 
         }
 
         sweight[3*tid] = weight[3*tid];
@@ -88,11 +116,11 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
         i2 = offset + WINDOW_WIDTH - 1;
         i3 = offset + image_width*(WINDOW_HEIGHT-1);
         i4 = i3 + WINDOW_WIDTH - 1;
-        long int var = sqsum_data[offset] - sqsum_data[i2] - sqsum_data[i3] + sqsum_data[i4];
-        long int mean = sum_data[offset] - sum_data[i2] - sum_data[i3] + sum_data[i4];
+        int var = sqsum_data[offset] - sqsum_data[i2] - sqsum_data[i3] + sqsum_data[i4];
+        int mean = sum_data[offset] - sum_data[i2] - sum_data[i3] + sum_data[i4];
 
         variance = var*WINDOW_WIDTH*WINDOW_HEIGHT - mean*mean;
-        if((long int)variance <= 0) {
+        if((int)variance <= 0) {
             variance = 1.0f;
         }
         variance = sqrtf(variance);
@@ -101,7 +129,7 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
         for(i=0; i<num_stages; i++) {
             stage_sum = 0;
             for(j=0; j<haar_per_stage[i]; j++) {
-                t = (long int)variance * stree_threshold[num_haars];
+                t = (int)variance * stree_threshold[num_haars];
 
                 result = sum_data[index0_1[num_haars]+offset] - sum_data[index0_2[num_haars]+offset] -
                     sum_data[index0_3[num_haars]+offset] + sum_data[index0_4[num_haars]+offset];
