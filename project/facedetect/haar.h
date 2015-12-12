@@ -36,17 +36,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include "image.h"
 #include <vector>
-#include <fstream>
 #include "stdio-wrapper.h"
 
 #define MAXLABELS 50
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 typedef  int sumtype;
 typedef int sqsumtype;
@@ -96,8 +94,6 @@ typedef struct myCascade
 
 } myCascade;
 
-
-
 /* sets images for haar classifier cascade */
 void setImageForCascadeClassifier( myCascade* cascade, MyIntImage* sum, MyIntImage* sqsum);
 
@@ -105,7 +101,9 @@ void setImageForCascadeClassifier( myCascade* cascade, MyIntImage* sum, MyIntIma
 int runCascadeClassifier( myCascade* cascade, MyPoint pt, int start_stage);
 
 void readTextClassifier();//(myCascade* cascade);
+void readTextClassifierForGPU();
 void releaseTextClassifier();
+void releaseTextClassifierGPU();
 
 
 //void groupRectangles(MyRect* _vec, int groupThreshold, float eps);
@@ -114,17 +112,12 @@ void groupRectangles(std::vector<MyRect>& _vec, int groupThreshold, float eps);
 /* draw white bounding boxes around detected faces */
 void drawRectangle(MyImage* image, MyRect r);
 
-//void detectObjects( MyImage* image, MySize minSize, MySize maxSize,
-//		myCascade* cascade, MyRect *result,
-//		float scale_factor,
-//		int min_neighbors);
-
 std::vector<MyRect> detectObjects( MyImage* image, MySize minSize, MySize maxSize,
 		myCascade* cascade,
 		float scale_factor,
 		int min_neighbors,
       std::fstream& ofs);
-		
+
 #ifdef __cplusplus
 }
 

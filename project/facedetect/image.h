@@ -56,7 +56,7 @@ typedef struct
 {
 	int width;
 	int height;
-	int* data;
+	int32_t* data;
 	int flag;
 }
 MyIntImage;
@@ -70,6 +70,10 @@ int freeImage(MyImage* image);
 int freeSumImage(MyIntImage* image);
 void setImage(int width, int height, MyImage *image);
 void setSumImage(int width, int height, MyIntImage *image);
+
+//Optimization Functions for Optim.cuh
+void createImagePinned(int width, int height, MyImage *image);
+
 
 #ifdef __cplusplus
 }

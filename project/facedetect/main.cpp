@@ -33,10 +33,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
+#include <iostream>
 #include "image.h"
 #include "stdio-wrapper.h"
 #include "haar.h"
 
+#define INPUT_FILENAME "640.pgm"
 #define OUTPUT_FILENAME "Output.pgm"
 
 using namespace std;
@@ -50,6 +53,9 @@ int main (int argc, char *argv[])
    if(argc > 2){
       logFile = argv[2];
       inFile = argv[1];
+   }else{
+      logFile = "img.log";
+      inFile = INPUT_FILENAME;
    }
 
    std::fstream olog;
@@ -94,20 +100,34 @@ int main (int argc, char *argv[])
 	cascade->orig_window_size.width = 24;
 
 	printf("\n-- Cascade Classifier Info: \n \tStages: %d\n \tTotal Filters: %d\n \tWindow Size: Width: %d, Height: %d\r\n", cascade->n_stages, cascade->total_nodes, 
-                                                                                                                                cascade->orig_window_size.width, cascade->orig_window_size.height);
+                                                                                                                                  cascade->orig_window_size.width, cascade->orig_window_size.height);
 
 	readTextClassifier();
-
-	std::vector<MyRect> result;
+	readTextClassifierForGPU();
+	
+   std::vector<MyRect> result;
 
 	printf("\n-- Detecting faces\r\n");
 
 	result = detectObjects(image, minSize, maxSize, cascade, scaleFactor, minNeighbours, olog);
 
+	for(i = 0; i < result.size(); i++ )
+	{
+		MyRect r = result[i];
+		drawRectangle(image, r);
+	}
+
+	printf("\n-- Saving output --\r\n"); 
+	flag = writePgm((char *)OUTPUT_FILENAME, image); 
+
+	printf("-- Image saved --\r\n");
+
 	/* delete image and free classifier */
 	releaseTextClassifier();
-	freeImage(image);
-     olog.close();
+	releaseTextClassifierGPU();
+   
+   freeImage(image);
+   olog.close();
 
 	return 0;
 }

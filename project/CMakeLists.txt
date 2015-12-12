@@ -7,8 +7,8 @@ project(me759_homework)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_BUILD_TYPE RELEASE)
-#set(CMAKE_BUILD_TYPE DEBUG)
+#set(CMAKE_BUILD_TYPE RELEASE)
+set(CMAKE_BUILD_TYPE DEBUG)
 
 ##Look for CUDA package and related by calling macros in Parallelutils
 include (ParallelUtils.cmake)
@@ -27,6 +27,7 @@ add_subdirectory(nearest_neighbor)
 add_subdirectory(prefix_scan)
 add_subdirectory(runcascade)
 add_subdirectory(integral_image)
-add_subdirectory(check_kernel)
-
 add_subdirectory(nn_integral_image)
+
+add_subdirectory(facedetect-bkp)
+add_subdirectory(facedetect)
