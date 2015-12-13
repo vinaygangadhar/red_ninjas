@@ -5,20 +5,15 @@
 
 #define TOTAL_HAAR 2913
 #define TOTAL_STAGES 25
-#define MAX_HAAR 326
+#define MAX_HAAR 324
 #define WINDOW_WIDTH 24
 #define WINDOW_HEIGHT 24
-#define MAX_STAGE 7
+#define MAX_STAGE 8
 
 __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_y, uint16_t* width, 
         uint16_t* height, int16_t* weight, int16_t* tree_threshold, int16_t* alpha1, int16_t* alpha2, 
         int16_t* threshold_per_stage, int32_t* sum_data, int32_t* sqsum_data, int* haar_per_stage, 
         int16_t haar_num, int16_t num_stages, int image_width, int image_height, bool* bit_vector) {
-
-    int tid = threadIdx.y*blockDim.x + threadIdx.x;
-    int row = blockIdx.y*blockDim.y + threadIdx.y;
-    int col = blockIdx.x*blockDim.x + threadIdx.x;
-    int offset = row*image_width + col;
 
     volatile __shared__ int32_t index0_1[MAX_HAAR], index0_2[MAX_HAAR], index0_3[MAX_HAAR], index0_4[MAX_HAAR];
     volatile __shared__ int32_t index1_1[MAX_HAAR], index1_2[MAX_HAAR], index1_3[MAX_HAAR], index1_4[MAX_HAAR];
@@ -29,6 +24,11 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
     volatile __shared__ int16_t salpha1[MAX_HAAR];
     volatile __shared__ int16_t salpha2[MAX_HAAR];
     volatile __shared__ int16_t sthreshold[MAX_STAGE];
+
+    int tid = threadIdx.y*blockDim.x + threadIdx.x;
+    int row = blockIdx.y*blockDim.y + threadIdx.y;
+    int col = blockIdx.x*blockDim.x + threadIdx.x;
+    int offset = row*image_width + col;
 
     // Index values+offset should be less than (image_height * image_width)
     if(tid < haar_num) { //some branch divergence
@@ -56,13 +56,6 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
                 index1_3[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH || 
                 index1_4[tid] > image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH) {
             printf("One of the indices is greater than %d for Haar %d. Img width = %d\n", image_width*(WINDOW_HEIGHT)+WINDOW_WIDTH, tid, image_width);
-        }*/
-
-        /*
-        if(tid == 59 || tid == 198 || tid == 200 || tid == 226) {
-            printf("%d: x0 %d, y0 %d, wid0 %d, height0 %d\nx1 %d, y1 %d, wid1 %d, height1 %d\n",
-                    tid, haar_index_x[3*tid], haar_index_y[3*tid], width[3*tid], height[3*tid], 
-                    haar_index_x[3*tid+1], haar_index_y[3*tid+1], width[3*tid+1], height[3*tid+1]);
         }*/
 
         // This should be done only when third rectangle is present
@@ -104,7 +97,7 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
     __syncthreads();
 
     // Execute remaining section only if row and col are valid
-    if((row < (image_height-WINDOW_HEIGHT)) && (col < (image_width-WINDOW_WIDTH))) {
+    if((row < (image_height-WINDOW_HEIGHT)) && (col < (image_width-WINDOW_WIDTH)) && (bit_vector[row*(image_width-WINDOW_WIDTH)+col]==true)) {
         int sum = 0, result;
         int stage_sum = 0;
         int i, j;
@@ -135,23 +128,9 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
                     sum_data[index0_3[num_haars]+offset] + sum_data[index0_4[num_haars]+offset];
                 sum = result*sweight[3*num_haars];
               
-                /*
-                if(row == 16 && col == 8) {
-                    printf("GPU Stage %d, Haar %d: %d - %d - %d + %d = %d\nweight0 = %d, sum = %d\n", i, j, sum_data[index0_1[num_haars]+offset], 
-                            sum_data[index0_2[num_haars]+offset], sum_data[index0_3[num_haars]+offset],
-                            sum_data[index0_4[num_haars]+offset], result, sweight[num_haars], sum);
-                }*/
-
                 result = sum_data[index1_1[num_haars]+offset] - sum_data[index1_2[num_haars]+offset] -
                     sum_data[index1_3[num_haars]+offset] + sum_data[index1_4[num_haars]+offset];
                 sum += result*sweight[3*num_haars+1];
-
-                /*
-                if(row == 16 && col == 8) {
-                    printf("GPU Stage %d, Haar %d: %d - %d - %d + %d = %d\nweight1 = %d, sum = %d\n", i, j, sum_data[index1_1[num_haars]+offset], 
-                            sum_data[index1_2[num_haars]+offset], sum_data[index1_3[num_haars]+offset],
-                            sum_data[index1_4[num_haars]+offset], result, sweight[3*num_haars+1], sum);
-                }*/
 
                 // Branch Divergence for Haar features that do not have 3rd rectangle
                 if(index2_1[num_haars] == -1)  {

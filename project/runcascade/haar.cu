@@ -217,6 +217,13 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     cudaMemcpy(dhaar_per_stg, hstages_array, TOTAL_STAGES*sizeof(int), cudaMemcpyHostToDevice);
     checkError();
 
+    /*
+    for(int i =0; i<3*TOTAL_HAAR; i++) {
+        printf("Weight[%d] = %d\n", i, hweights_array[i]);
+    }
+    printf("-------------------------\n");
+    */
+
     /* initial scaling factor */
     factor = 1;
 
@@ -288,6 +295,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         cudaEvent_t startEvent_cpu, stopEvent_cpu;
         cudaEventCreate(&startEvent_cpu);
         cudaEventCreate(&stopEvent_cpu);
+        float elapsedTime_cpu;
 
         // Starting the timer
         cudaEventRecord(startEvent_cpu, 0);
@@ -308,7 +316,6 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         cudaEventSynchronize(stopEvent_cpu);
         // Stopping the timer
 
-        float elapsedTime_cpu;
         cudaEventElapsedTime(&elapsedTime_cpu, startEvent_cpu, stopEvent_cpu);
         /*--------------------------------------------------------------------------------------------*/
 
@@ -347,18 +354,19 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         dim3 numThreads(32, 32);
         dim3 numBlocks((bitvec_width+31)/32, (bitvec_height+31)/32);
 
-        //printf("Entering kernel\n");
-
+        printf("Entering kernel\n");
+        cudaFuncSetCacheConfig(haar_stage_kernel0, cudaFuncCachePreferShared);
+        checkError();
         /*-------------------------------------------------------------------
           Starting timer for Runcascade Kernels comparison
           -------------------------------------------------------------------*/
         // Calculate GPU time
-        cudaEvent_t startEvent_gpu, stopEvent_gpu;
+   /*     cudaEvent_t startEvent_gpu, stopEvent_gpu;
         cudaEventCreate(&startEvent_gpu);
         cudaEventCreate(&stopEvent_gpu);
 
         // Starting the timer
-        cudaEventRecord(startEvent_gpu, 0);
+        cudaEventRecord(startEvent_gpu, 0);*/
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x, dindex_y, dwidth, dheight, 
                 dweights_array, dtree_thresh_array, dalpha1_array, dalpha2_array, 
@@ -379,6 +387,14 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         int haar_prev_stage = HAAR_KERN_0;
         int num_prev_stage = NUMSTG_KERN_0;
 
+        // Calculate GPU time
+        cudaEvent_t startEvent_gpu, stopEvent_gpu;
+        cudaEventCreate(&startEvent_gpu);
+        cudaEventCreate(&stopEvent_gpu);
+
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
+
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
                 dtree_thresh_array+haar_prev_stage, dalpha1_array+haar_prev_stage, 
@@ -396,6 +412,18 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
         cudaDeviceSynchronize();
         checkError();
+
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        float elapsedTime_gpu;
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+        /*--------------------------------------------------------------------------------------------*/
+
+        printf("Event:Time for GPU to complete execution: %f ms\n", elapsedTime_gpu);
+
+        printf("GPU data: Factor = %f: Number of faces = %d\n----------------------------------------\n", factor, faces.size());
 
         haar_prev_stage += HAAR_KERN_1;
         num_prev_stage += NUMSTG_KERN_1;
@@ -616,18 +644,20 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 }
             }
         }
-        
+       
+        /*
         cudaEventRecord(stopEvent_gpu, 0);
         cudaEventSynchronize(stopEvent_gpu);
         // Stopping the timer
 
         float elapsedTime_gpu;
-        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu); */
         /*--------------------------------------------------------------------------------------------*/
 
-        printf("Event:Time for GPU to complete execution: %f ms\n", elapsedTime_gpu);
+        //printf("Event:Time for GPU to complete execution: %f ms\n", elapsedTime_gpu);
 
-        printf("GPU data: Factor = %f: Number of faces = %d\n----------------------------------------\n", factor, faces.size());
+        //printf("GPU data: Factor = %f: Number of faces = %d\n----------------------------------------\n", factor, faces.size());
+        
         cudaFree(dsum);
         cudaFree(dsqsum);
         cudaFree(dbit_vector);
