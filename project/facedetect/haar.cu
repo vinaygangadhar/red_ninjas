@@ -692,9 +692,11 @@ void setImageForCascadeClassifier( myCascade* _cascade, MyIntImage* _sum, MyIntI
             /* loop over the number of rectangles */
             for( k = 0; k < nr; k++ )
             {
+                //Haar Feature indices  
                 tr.x = rectangles_array[r_index + k*4];
-                tr.width = rectangles_array[r_index + 2 + k*4];
                 tr.y = rectangles_array[r_index + 1 + k*4];
+                
+                tr.width = rectangles_array[r_index + 2 + k*4];
                 tr.height = rectangles_array[r_index + 3 + k*4];
 
                 if (k < 2)
@@ -865,10 +867,6 @@ int runCascadeClassifier( myCascade* _cascade, MyPoint pt, int start_stage )
 
         for( j = 0; j < stages_array[i]; j++ )
         {
-            /*
-               if(p_offset == 648) {
-               printf("CPU p_offset = %d Stage = %d, Haar =%d\n", p_offset, i, j);
-               }*/
             /**************************************************
              * Send the shifted window to a haar filter.
              **************************************************/

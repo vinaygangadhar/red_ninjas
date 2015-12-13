@@ -21,12 +21,12 @@
 #define HAAR_BLOCK_SIZE 32
 #define NUM_RECT  3
 
-//#define TOTAL_HAAR 2913
-//#define TOTAL_STAGES 25
-//#define MAX_HAAR 325
-//#define WINDOW_WIDTH 24
-//#define WINDOW_HEIGHT 24
-//#define MAX_STAGE 7
+#define TOTAL_HAAR 2913
+#define TOTAL_STAGES 25
+#define MAX_HAAR 325
+#define WINDOW_WIDTH 24
+#define WINDOW_HEIGHT 24
+#define MAX_STAGE 7
 
 // defines for separate kernels
 #define HAAR_KERN_0 323
