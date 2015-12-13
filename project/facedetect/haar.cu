@@ -507,7 +507,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         cudaEventElapsedTime(&gpu_cpyTime, gpu_cpy_start, gpu_cpy_stop);
 
         gpu_stageTotal += gpu_cpyTime;
-        printf("\n\tCC: To Device BitVector Copy Time: %f ms", gpu_cpyTotal);
+        printf("\n\tCC: To Device BitVector Copy Time: %f ms", gpu_cpyTime);
         
         //Call the Classifier on GPU Now
         kernelTime = cascadeClassifierOnDevice(img1,  

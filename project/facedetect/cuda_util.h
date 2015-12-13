@@ -26,7 +26,7 @@
 #define MAX_HAAR 325
 #define WINDOW_WIDTH 24
 #define WINDOW_HEIGHT 24
-#define MAX_STAGE 7
+#define MAX_STAGE 8
 
 // defines for separate kernels
 #define HAAR_KERN_0 323

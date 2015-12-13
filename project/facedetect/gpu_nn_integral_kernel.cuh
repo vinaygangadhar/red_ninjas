@@ -177,4 +177,86 @@ __global__ void rowscan_only_kernel(int32_t* sum, int32_t* sqsum,
    }                                                                                
 }
 
+//Column Scan                                                                         
+__global__ void column_scan_kernel(int* sum, int* sqsum, int dst_h, int tb_elems)     
+{                                                                                     
+   volatile __shared__ int column[SHARED];                                             
+                                                                                      
+   int tId = threadIdx.x;                                                              
+   int g_Idx = tId * gridDim.x + blockIdx.x;    //To index into memory data structure  
+                                                                                       
+   int offset = 1;                                                                     
+   int offset_gIdx = g_Idx + blockDim.x * gridDim.x; //To index into offset element    
+   int sq_start = tb_elems + 1;                                                        
+   int offset_tId = tId + blockDim.x;                                                  
+                                                                                       
+   column[tId] = sum[g_Idx] ;                                                          
+   column[offset_tId] = (offset_tId < dst_h) ? sum[offset_gIdx] : 0;                   
+   column[sq_start + tId] =  sqsum[g_Idx];                                             
+   column[sq_start + offset_tId] =  (offset_tId < dst_h) ? sqsum[offset_gIdx] : 0;     
+                                                                                       
+   //Upsweep                                                                           
+   for (int stage_threads = tb_elems>>1; stage_threads > 0; stage_threads >>= 1)       
+   {                                                                                   
+      __syncthreads();                                                                
+                                                                                    
+      if (tId < stage_threads)                                                        
+      {                                                                               
+                                                                                      
+        int ai = offset * (2*tId+1) - 1;    //neighbor mate thread                    
+        int bi = offset * (2*tId+2) - 1;   //Each thread                              
+                                                                                      
+        column[bi] += column[ai];                                                     
+        column[sq_start + bi] += column[sq_start + ai];
+      }
+                                 
+      offset <<= 1;                                                                   
+   }                                                                                 
+                                                                                    
+   if (tId == 0)                                                                     
+   {                                                                                 
+     column[tb_elems] = column[tb_elems-1];                                          
+     column[tb_elems - 1] = 0;                                                       
+     column[sq_start + tb_elems] = column[sq_start + tb_elems - 1];                  
+     column[sq_start + tb_elems - 1] = 0;                                            
+   }                                                                                 
+                                                                                     
+   //DownSweep                                                                       
+   for (int stage_threads = 1; stage_threads < tb_elems; stage_threads *= 2 )        
+   {                                                                                 
+                                                                                     
+     offset >>= 1;                                                                   
+                                                                                     
+     __syncthreads();                                                                
+                                                                                     
+     if (tId < stage_threads)                                                        
+     {                                                                               
+                                                                                     
+       int ai = offset * (2*tId+1) - 1;       //Mate thread                          
+       int bi = offset * (2*tId+2) - 1;       //Each thread                          
+                                                                                     
+       int dummy = column[ai];                                                       
+       column[ai] = column[bi];                                                      
+       column[bi] += dummy;                                                          
+      int dummy_sq = column[sq_start + ai];                          
+      column[sq_start + ai] = column[sq_start + bi];                 
+      column[sq_start + bi] += dummy_sq;                             
+    }                                                                
+  }                                                                  
+                                                                     
+   __syncthreads();                                                   
+                                                                      
+   sum[g_Idx] = column[tId + 1];                                      
+   sqsum[g_Idx] = column[sq_start + tId + 1];                         
+                                                                      
+   if (offset_tId < dst_h)                                            
+   {                                                                  
+     sum[offset_gIdx] = column[offset_tId + 1];                       
+     sqsum[offset_gIdx] = column[sq_start + offset_tId + 1];          
+   }                                                                  
+                                                                     
+}
+
+
+
 #endif

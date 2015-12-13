@@ -155,6 +155,8 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
      //Neareast Neighbor and Row Scan Kernel Call //
      //*******************************************//
      
+     cudaFuncSetCacheConfig(rowscan_nn_kernel, cudaFuncCachePreferShared); 
+
      cudaEventRecord(gpu_exc_start, NULL);
      rowscan_nn_kernel<<<blocksPerGrid_rs, (threadsPerBlock_rs / 2)>>>(
                                                                         deviceimg,
@@ -195,6 +197,8 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
      // matrix transpose 1  Kernel Call //
      //********************************//
      
+     cudaFuncSetCacheConfig(transpose_kernel, cudaFuncCachePreferShared); 
+     
      error = cudaEventRecord(gpu_exc_start, NULL);
      transpose_kernel<<<grid,blocks>>>(d_sum, transpose_dsum,  
                                        d_sqsum, transpose_dsqsum, 
@@ -223,6 +227,8 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
       //***************************//
      // row scan only Kernel Call //
      //**************************//
+     
+     cudaFuncSetCacheConfig(rowscan_only_kernel, cudaFuncCachePreferShared); 
      
      cudaEventRecord(gpu_exc_start, NULL);
      rowscan_only_kernel<<<blocksPerGrid_cs, (threadsPerBlock_cs / 2)>>>(transpose_dsum, 

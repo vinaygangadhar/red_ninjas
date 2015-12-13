@@ -35,44 +35,45 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
 
    // Index values + offset should be less than (image_height * image_width)
    if(tId < haar_num) { //some branch divergence
-       index0_1[tId] = image_width * haar_index_y[3 * tId] + haar_index_x[3 * tId];
-       index0_2[tId] = image_width * haar_index_y[3 * tId] + haar_index_x[3 * tId] + width[3 * tId];
-       index0_3[tId] = image_width * haar_index_y[3 * tId] + haar_index_x[3 * tId] + 
-                        image_width*height[3*tId];
-       index0_4[tId] = image_width*haar_index_y[3 * tId] + haar_index_x[3 * tId] +  
-                        image_width * height[3 * tId] + width[3 * tId];
+       
+      index0_1[tId] = image_width * haar_index_y[3 * tId] + haar_index_x[3 * tId];
+      index0_2[tId] = image_width * haar_index_y[3 * tId] + haar_index_x[3 * tId] + width[3 * tId];
+      index0_3[tId] = image_width * haar_index_y[3 * tId] + haar_index_x[3 * tId] + 
+                       image_width*height[3*tId];
+      index0_4[tId] = image_width*haar_index_y[3 * tId] + haar_index_x[3 * tId] +  
+                       image_width * height[3 * tId] + width[3 * tId];
 
-       index1_1[tId] = image_width*haar_index_y[3 * tId + 1] + haar_index_x[3 * tId + 1];
-       index1_2[tId] = image_width*haar_index_y[3 * tId + 1] + haar_index_x[3 * tId + 1] + width[3 * tId + 1];
-       index1_3[tId] = image_width*haar_index_y[3 * tId + 1] + haar_index_x[3 * tId + 1] + 
-                        image_width * height[3 * tId + 1];
-       index1_4[tId] = image_width*haar_index_y[3 * tId + 1] + haar_index_x[3 * tId + 1] + 
-                        image_width * height[3 * tId + 1] + width[3 * tId + 1];
+      index1_1[tId] = image_width*haar_index_y[3 * tId + 1] + haar_index_x[3 * tId + 1];
+      index1_2[tId] = image_width*haar_index_y[3 * tId + 1] + haar_index_x[3 * tId + 1] + width[3 * tId + 1];
+      index1_3[tId] = image_width*haar_index_y[3 * tId + 1] + haar_index_x[3 * tId + 1] + 
+                       image_width * height[3 * tId + 1];
+      index1_4[tId] = image_width*haar_index_y[3 * tId + 1] + haar_index_x[3 * tId + 1] + 
+                       image_width * height[3 * tId + 1] + width[3 * tId + 1];
 
      
-       // This should be done only when third rectangle is present
-       // Optimizing by setting only index2_1 to -1
-       if( (haar_index_x[3 * tId + 2] == 0) && (haar_index_y[3 * tId + 2] ==0) && 
-             (width[3 * tId + 2] == 0) && (height[3 * tId + 2] == 0) ) 
-       {
-           index2_1[tId] = -1;
-       }else 
-       {
-           index2_1[tId] = image_width * haar_index_y[3 * tId + 2] + haar_index_x[3 * tId + 2];
-           index2_2[tId] = image_width * haar_index_y[3 * tId + 2] + haar_index_x[3 * tId + 2] + width[3 * tId + 2];
-           index2_3[tId] = image_width * haar_index_y[3 * tId + 2] + haar_index_x[3 * tId + 2] +
-                              image_width * height[3 * tId + 2];
-           index2_4[tId] = image_width * haar_index_y[3 * tId + 2] + haar_index_x[3 * tId + 2] +
-                              image_width * height[3 * tId + 2] + width[3 * tId + 2];
-       }
+      // This should be done only when third rectangle is present
+      // Optimizing by setting only index2_1 to -1
+      if( (haar_index_x[3 * tId + 2] == 0) && (haar_index_y[3 * tId + 2] ==0) && 
+            (width[3 * tId + 2] == 0) && (height[3 * tId + 2] == 0) ) 
+      {
+          index2_1[tId] = -1;
+      }else 
+      {
+          index2_1[tId] = image_width * haar_index_y[3 * tId + 2] + haar_index_x[3 * tId + 2];
+          index2_2[tId] = image_width * haar_index_y[3 * tId + 2] + haar_index_x[3 * tId + 2] + width[3 * tId + 2];
+          index2_3[tId] = image_width * haar_index_y[3 * tId + 2] + haar_index_x[3 * tId + 2] +
+                             image_width * height[3 * tId + 2];
+          index2_4[tId] = image_width * haar_index_y[3 * tId + 2] + haar_index_x[3 * tId + 2] +
+                             image_width * height[3 * tId + 2] + width[3 * tId + 2];
+      }
 
-       sweight[3 * tId] = weight[3 * tId];
-       sweight[3 * tId + 1] = weight[3 * tId + 1];
-       sweight[3 * tId + 2] = weight[3 * tId + 2];
+      sweight[3 * tId] = weight[3 * tId];
+      sweight[3 * tId + 1] = weight[3 * tId + 1];
+      sweight[3 * tId + 2] = weight[3 * tId + 2];
 
-       stree_threshold[tId] = tree_threshold[tId];
-       salpha1[tId] = alpha1[tId];
-       salpha2[tId] = alpha2[tId];
+      stree_threshold[tId] = tree_threshold[tId];
+      salpha1[tId] = alpha1[tId];
+      salpha2[tId] = alpha2[tId];
    }
 
    if(tId < num_stages) {
@@ -81,7 +82,9 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
    __syncthreads();
 
    // Execute remaining section only if row and col are valid
-   if((row < (image_height - WINDOW_HEIGHT)) && (col < (image_width - WINDOW_WIDTH))) {
+   if( (row < (image_height - WINDOW_HEIGHT)) && (col < (image_width - WINDOW_WIDTH)) &&
+            (bit_vector[row * (image_width - WINDOW_WIDTH) + col] == true) ) {
+
        int sum = 0, result;
        int stage_sum = 0;
        int i, j;

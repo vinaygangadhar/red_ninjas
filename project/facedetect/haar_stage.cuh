@@ -162,6 +162,7 @@ float cascadeClassifierOnDevice(MyImage* img1,
    dim3 numBlocks((bitvec_width + HAAR_BLOCK_SIZE - 1) / HAAR_BLOCK_SIZE, 
                    (bitvec_height + HAAR_BLOCK_SIZE - 1) / HAAR_BLOCK_SIZE);
 
+   cudaFuncSetCacheConfig(haar_stage_kernel0, cudaFuncCachePreferShared); 
 
    printf("\n\tCascade Classifier on GPU Started\n");
 
