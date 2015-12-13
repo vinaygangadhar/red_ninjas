@@ -31,3 +31,5 @@ add_subdirectory(nn_integral_image)
 
 add_subdirectory(facedetect-bkp)
 add_subdirectory(facedetect)
+
+add_subdirectory(device_info)
