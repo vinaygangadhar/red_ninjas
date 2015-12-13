@@ -39,7 +39,7 @@ int freeImagePinned(MyImage* image)
 }
 
 //bit vector creation on host
-void createBitVector(bool** hvector, int width, int height){
+void createBitVectorPinned(bool** hvector, int width, int height){
 
    int check;
    check = CUDA_CHECK_RETURN(cudaMallocHost((void**)hvector, sizeof(bool) * width * height), __FILE__, __LINE__);
@@ -50,7 +50,7 @@ void createBitVector(bool** hvector, int width, int height){
 }
 
 //Free the bit vector
-void freeBitVector(bool* hvector){
+void freeBitVectorPinned(bool* hvector){
    
    cudaFreeHost(hvector);
 }

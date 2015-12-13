@@ -82,9 +82,9 @@ __global__ void haar_stage_kernel0(uint16_t* haar_index_x, uint16_t* haar_index_
    __syncthreads();
 
    // Execute remaining section only if row and col are valid
-   if( (row < (image_height - WINDOW_HEIGHT)) && (col < (image_width - WINDOW_WIDTH)) &&
-          (bit_vector[row * (image_width - WINDOW_WIDTH) + col] == true) ) 
-   //if( (row < (image_height - WINDOW_HEIGHT)) && (col < (image_width - WINDOW_WIDTH)) )
+   //if( (row < (image_height - WINDOW_HEIGHT)) && (col < (image_width - WINDOW_WIDTH)) &&
+     //     (bit_vector[row * (image_width - WINDOW_WIDTH) + col] == true) ) 
+   if( (row < (image_height - WINDOW_HEIGHT)) && (col < (image_width - WINDOW_WIDTH)) )
    {
 
        int sum = 0, result;

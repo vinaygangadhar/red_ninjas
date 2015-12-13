@@ -102,9 +102,11 @@ int runCascadeClassifier( myCascade* cascade, MyPoint pt, int start_stage);
 
 void readTextClassifier();//(myCascade* cascade);
 void readTextClassifierForGPU();
+void readTextClassifierForGPUPinned();
+
 void releaseTextClassifier();
 void releaseTextClassifierGPU();
-
+void releaseTextClassifierGPUPinned();
 
 //void groupRectangles(MyRect* _vec, int groupThreshold, float eps);
 void groupRectangles(std::vector<MyRect>& _vec, int groupThreshold, float eps);
