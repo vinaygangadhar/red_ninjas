@@ -1,0 +1,23 @@
+CUDA runtime version:    7000
+CUDA driver version:     7050
+
+Device Number:           0
+Device Name:             GeForce GTX 480
+Compute Capability:      2.0
+Global Memory:           1535MB (1610285056)
+Total Const Memory:      64KB (65536)
+Shared Memory per Block: 48KB (49152)
+Shared Memory per MP:    48KB (49152)
+L2 Cache Size:           768KB (786432)
+Global L1 Cache:         yes
+Local L1 Cache:          yes
+Registers per Block      32768
+Registers per SM         32768
+SM Count:                15
+max threads per SM:      1536
+Max threads per block:   1024
+Max thread dims:         (1024,1024,64)
+Max grid size:           (65535,65535,65535)
+Concurrent Kernels:      yes
+Num copy engines:        1
+

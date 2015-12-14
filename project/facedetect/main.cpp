@@ -103,7 +103,8 @@ int main (int argc, char *argv[])
                                                                                                                                   cascade->orig_window_size.width, cascade->orig_window_size.height);
 
 	readTextClassifier();
-	readTextClassifierForGPU();
+	//readTextClassifierForGPU();
+   readTextClassifierForGPUPinned();
 	
    std::vector<MyRect> result;
 
@@ -124,7 +125,8 @@ int main (int argc, char *argv[])
 
 	/* delete image and free classifier */
 	releaseTextClassifier();
-	releaseTextClassifierGPU();
+	//releaseTextClassifierGPU();
+	releaseTextClassifierGPUPinned();
    
    freeImage(image);
    olog.close();

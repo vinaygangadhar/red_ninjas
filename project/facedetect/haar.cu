@@ -130,16 +130,16 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     cudaEvent_t gpu_cpy_start;
     cudaEvent_t gpu_cpy_stop;
 
-    float gpu_cpyTime;
-    float gpu_cpyTotal;
+    float gpu_cpyTime = 0.f;
+    float gpu_cpyTotal = 0.f;
 
-    float gpu_kernTime;
-    float cpu_kernTime;
-    float cpu_stageTotal;
-    float gpu_stageTotal;
+    float gpu_kernTime = 0.f;
+    float cpu_kernTime = 0.f;
+    float cpu_stageTotal = 0.f;
+    float gpu_stageTotal = 0.f;
    
-    float cpu_msecTotal;
-    float gpu_msecTotal;
+    float cpu_msecTotal = 0.f;
+    float gpu_msecTotal = 0.f;
 
     //CUDA Events 
     error = cudaEventCreate(&cpu_start);
@@ -238,7 +238,6 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     /****************************************************
       Setting up the data for GPU Kernels -- HAAR
     ***************************************************/
-
     //HAAR RELATED
     uint16_t* dindex_x; uint16_t* dindex_y;
     uint16_t* dwidth;  uint16_t* dheight;
@@ -291,6 +290,15 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     /* iterate over the image pyramid */
     for( factor = 1; ; factor *= scaleFactor )
     {
+        //Initialization of time counters
+        cpu_stageTotal = 0.f;
+        gpu_stageTotal = 0.f;
+
+        cpu_kernTime = 0.f;
+        gpu_kernTime = 0.f;
+
+        gpu_cpyTime = 0.f;
+
         /* iteration counter */
         iter_counter++;
 
@@ -479,7 +487,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         //Allocate host bit vector
         bool* hbit_vector;
          
-        createBitVector(&hbit_vector, bitvec_width, bitvec_height);
+        createBitVectorPinned(&hbit_vector, bitvec_width, bitvec_height);
         //hbit_vector = (bool*) malloc(bitvec_width * bitvec_height * sizeof(bool));
          
         int check;
@@ -560,7 +568,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
         cudaFree(dbit_vector);
         
-        freeBitVector(hbit_vector);
+        freeBitVectorPinned(hbit_vector);
         //free(hbit_vector);
         
         nniiFree(devicesum1.data, devicesqsum1.data,
@@ -582,6 +590,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     printf("\n-- GPU Face Detection Done--> Number of faces: %d\n", faces.size());
     printf("\n-- Overall Timing: Total CPU Time: %f ms, Total GPU Time: %f ms\n", cpu_msecTotal, gpu_msecTotal);
 
+    //freeImage(img1);
     freeImagePinned(img1);
     freeSumImage(sum1);
     freeSumImage(sqsum1);
@@ -1072,6 +1081,171 @@ void nearestNeighborOnHost(MyImage *src, MyImage *dst)
     }
 }
 
+
+void readTextClassifierForGPUPinned()//(myCascade * cascade)
+{
+    /*number of stages of the cascade classifier*/
+    int stages;
+    /*total number of weak classifiers (one node each)*/
+    int total_nodes = 0;
+    int i, j, k;
+    char mystring [12];
+    int w_index = 0;
+    int tree_index = 0;
+    FILE *finfo = fopen("info.txt", "r");
+
+    /**************************************************
+     * how many stages are in the cascaded filter? 
+     * the first line of info.txt is the number of stages 
+     * (in the 5kk73 example, there are 25 stages)
+     **************************************************/
+    if ( fgets (mystring , 12 , finfo) != NULL )
+    {
+        stages = atoi(mystring);
+    }
+    i = 0;
+
+    cudaMallocHost((void**)&hstages_array, sizeof(int) * stages);
+    //hstages_array = (int *)malloc(sizeof(int)*stages);
+
+    /**************************************************
+     * how many filters in each stage? 
+     * They are specified in info.txt,
+     * starting from second line.
+     * (in the 5kk73 example, from line 2 to line 26)
+     *************************************************/
+    while ( fgets (mystring , 12 , finfo) != NULL )
+    {
+        hstages_array[i] = atoi(mystring);
+        total_nodes += hstages_array[i];
+        i++;
+    }
+    fclose(finfo);
+
+    /* TODO: use matrices where appropriate */
+    /***********************************************
+     * Allocate a lot of array structures
+     * Note that, to increase parallelism,
+     * some arrays need to be splitted or duplicated
+     **********************************************/
+    //rectangles_array = (int *)malloc(sizeof(int)*total_nodes*12);
+    //scaled_rectangles_array = (int **)malloc(sizeof(int*)*total_nodes*12);
+   
+    cudaMallocHost((void**)&hindex_x, sizeof(uint16_t)*total_nodes*3);
+    cudaMallocHost((void**)&hindex_y, sizeof(uint16_t)*total_nodes*3);
+    cudaMallocHost((void**)&hwidth, sizeof(uint16_t)*total_nodes*3);
+    cudaMallocHost((void**)&hheight, sizeof(uint16_t)*total_nodes*3);
+    cudaMallocHost((void**)&hweights_array, sizeof(int16_t)*total_nodes*3);
+    cudaMallocHost((void**)&halpha1_array, sizeof(int16_t)*total_nodes);
+    cudaMallocHost((void**)&halpha2_array, sizeof(int16_t)*total_nodes);
+    cudaMallocHost((void**)&htree_thresh_array, sizeof(int16_t)*total_nodes);
+    cudaMallocHost((void**)&hstages_thresh_array, sizeof(int16_t)*stages);
+
+    //hindex_x = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
+    //hindex_y = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
+    //hwidth = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
+    //hheight = (uint16_t *)malloc(sizeof(uint16_t)*total_nodes*3);
+    //hweights_array = (int16_t *)malloc(sizeof(int16_t)*total_nodes*3);
+    //halpha1_array = (int16_t*)malloc(sizeof(int16_t)*total_nodes);
+    //halpha2_array = (int16_t*)malloc(sizeof(int16_t)*total_nodes);
+    //htree_thresh_array = (int16_t*)malloc(sizeof(int16_t)*total_nodes);
+    //hstages_thresh_array = (int16_t*)malloc(sizeof(int16_t)*stages);
+    
+    FILE *fp = fopen("class.txt", "r");
+
+    /******************************************
+     * Read the filter parameters in class.txt
+     *
+     * Each stage of the cascaded filter has:
+     * 18 parameter per filter x tilter per stage
+     * + 1 threshold per stage
+     *
+     * For example, in 5kk73, 
+     * the first stage has 9 filters,
+     * the first stage is specified using
+     * 18 * 9 + 1 = 163 parameters
+     * They are line 1 to 163 of class.txt
+     *
+     * The 18 parameters for each filter are:
+     * 1 to 4: coordinates of rectangle 1
+     * 5: weight of rectangle 1
+     * 6 to 9: coordinates of rectangle 2
+     * 10: weight of rectangle 2
+     * 11 to 14: coordinates of rectangle 3
+     * 15: weight of rectangle 3
+     * 16: threshold of the filter
+     * 17: alpha 1 of the filter
+     * 18: alpha 2 of the filter
+     ******************************************/
+
+    /* loop over n of stages */
+    for (i = 0; i < stages; i++)
+    {    /* loop over n of trees */
+        for (j = 0; j < hstages_array[i]; j++)
+        {	/* loop over n of rectangular features */
+            for(k = 0; k < 3; k++)
+            {	/* loop over the n of vertices */
+                //for (l = 0; l <4; l++)
+                //{
+                if (fgets (mystring , 12 , fp) != NULL)
+                    hindex_x[w_index] = atoi(mystring);
+                else
+                    break;
+                if (fgets (mystring , 12 , fp) != NULL)
+                    hindex_y[w_index] = atoi(mystring);
+                else
+                    break;
+                if (fgets (mystring , 12 , fp) != NULL)
+                    hwidth[w_index] = atoi(mystring);
+                else
+                    break;
+                if (fgets (mystring , 12 , fp) != NULL)
+                    hheight[w_index] = atoi(mystring);
+                else
+                    break;
+                //r_index++;
+                //} /* end of l loop */
+
+                if (fgets (mystring , 12 , fp) != NULL)
+                {
+                    hweights_array[w_index] = atoi(mystring);
+                    /* Shift value to avoid overflow in the haar evaluation */
+                    /*TODO: make more general */
+                    /*weights_array[w_index]>>=8; */
+                }
+                else
+                    break;
+                w_index++;
+            } /* end of k loop */
+
+            if (fgets (mystring , 12 , fp) != NULL)
+                htree_thresh_array[tree_index]= atoi(mystring);
+            else
+                break;
+            if (fgets (mystring , 12 , fp) != NULL)
+                halpha1_array[tree_index]= atoi(mystring);
+            else
+                break;
+            if (fgets (mystring , 12 , fp) != NULL)
+                halpha2_array[tree_index]= atoi(mystring);
+            else
+                break;
+            tree_index++;
+
+            if (j == hstages_array[i]-1)
+            {
+                if (fgets (mystring , 12 , fp) != NULL)
+                    hstages_thresh_array[i] = atoi(mystring);
+                else
+                    break;
+            }
+        } /* end of j loop */
+    } /* end of i loop */
+    fclose(fp);
+}
+
+
+
 void readTextClassifierForGPU()//(myCascade * cascade)
 {
     /*number of stages of the cascade classifier*/
@@ -1382,5 +1556,22 @@ void releaseTextClassifierGPU()
     free(hstages_thresh_array);
     free(bit_vector);
 }
+
+void releaseTextClassifierGPUPinned()
+{
+    cudaFreeHost(hstages_array);
+    cudaFreeHost(hindex_x);
+    cudaFreeHost(hindex_y);
+    cudaFreeHost(hweights_array);
+    cudaFreeHost(htree_thresh_array);
+    cudaFreeHost(halpha1_array);
+    cudaFreeHost(halpha2_array);
+    cudaFreeHost(hstages_thresh_array);
+    cudaFreeHost(bit_vector);
+}
+
+
+
+
 
 /* End of file. */
