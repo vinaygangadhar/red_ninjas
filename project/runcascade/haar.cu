@@ -227,6 +227,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     /* initial scaling factor */
     factor = 1;
 
+    float gpu_all_stages = 0.0f;
     /* iterate over the image pyramid */
     for( factor = 1; ; factor *= scaleFactor )
     {
@@ -361,12 +362,14 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
           Starting timer for Runcascade Kernels comparison
           -------------------------------------------------------------------*/
         // Calculate GPU time
-   /*     cudaEvent_t startEvent_gpu, stopEvent_gpu;
+        cudaEvent_t startEvent_gpu, stopEvent_gpu;
         cudaEventCreate(&startEvent_gpu);
         cudaEventCreate(&stopEvent_gpu);
 
+        float elapsedTime_gpu, gpu_total_time = 0.0f;
+        
         // Starting the timer
-        cudaEventRecord(startEvent_gpu, 0);*/
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x, dindex_y, dwidth, dheight, 
                 dweights_array, dtree_thresh_array, dalpha1_array, dalpha2_array, 
@@ -374,23 +377,21 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 NUMSTG_KERN_0, img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 0\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 1 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
 
         cudaDeviceSynchronize();
         checkError();
 
         int haar_prev_stage = HAAR_KERN_0;
         int num_prev_stage = NUMSTG_KERN_0;
-
-        // Calculate GPU time
-        cudaEvent_t startEvent_gpu, stopEvent_gpu;
-        cudaEventCreate(&startEvent_gpu);
-        cudaEventCreate(&stopEvent_gpu);
 
         // Starting the timer
         cudaEventRecord(startEvent_gpu, 0);
@@ -403,13 +404,6 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 1\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
@@ -417,16 +411,17 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         cudaEventSynchronize(stopEvent_gpu);
         // Stopping the timer
 
-        float elapsedTime_gpu;
         cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 2 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
         /*--------------------------------------------------------------------------------------------*/
-
-        printf("Event:Time for GPU to complete execution: %f ms\n", elapsedTime_gpu);
-
-        printf("GPU data: Factor = %f: Number of faces = %d\n----------------------------------------\n", factor, faces.size());
 
         haar_prev_stage += HAAR_KERN_1;
         num_prev_stage += NUMSTG_KERN_1;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -436,18 +431,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 2\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 3 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_2;
         num_prev_stage += NUMSTG_KERN_2;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -457,18 +458,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 3\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 4 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_3;
         num_prev_stage += NUMSTG_KERN_3;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -478,18 +485,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 4\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 5 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_4;
         num_prev_stage += NUMSTG_KERN_4;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -499,18 +512,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 5\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 6 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_5;
         num_prev_stage += NUMSTG_KERN_5;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -520,18 +539,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 6\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 7 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_6;
         num_prev_stage += NUMSTG_KERN_6;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -541,18 +566,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 7\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 8 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_7;
         num_prev_stage += NUMSTG_KERN_7;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -562,18 +593,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 8\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 9 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_8;
         num_prev_stage += NUMSTG_KERN_8;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -583,18 +620,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 9\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 10 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_9;
         num_prev_stage += NUMSTG_KERN_9;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -604,18 +647,24 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
                 img1->width, img1->height, dbit_vector); 
         checkError();
 
-        /*
-           cudaMemcpy(hbit_vector, dbit_vector, bitvec_width*bitvec_height*sizeof(bool), cudaMemcpyDeviceToHost);
-           checkError();
-           printf("Done with Kernel 10\n-----------------------------------------------------------\n");
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
-
         cudaDeviceSynchronize();
         checkError();
 
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 11 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        /*--------------------------------------------------------------------------------------------*/
+
         haar_prev_stage += HAAR_KERN_10;
         num_prev_stage += NUMSTG_KERN_10;
+        
+        // Starting the timer
+        cudaEventRecord(startEvent_gpu, 0);
 
         haar_stage_kernel0<<<numBlocks, numThreads>>>(dindex_x+3*haar_prev_stage, dindex_y+3*haar_prev_stage, 
                 dwidth+3*haar_prev_stage, dheight+3*haar_prev_stage, dweights_array+3*haar_prev_stage, 
@@ -630,10 +679,18 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         cudaDeviceSynchronize();
         checkError();
 
-        /*
-           printf("Factor %f: Done with all the Kernels\n-----------------------------------------------------------\n", factor);
-           compare_bits(bit_vector, hbit_vector, bitvec_width*bitvec_height);
-         */
+        cudaEventRecord(stopEvent_gpu, 0);
+        cudaEventSynchronize(stopEvent_gpu);
+        // Stopping the timer
+
+        cudaEventElapsedTime(&elapsedTime_gpu, startEvent_gpu, stopEvent_gpu);
+
+        printf("\tCC: Kernel 12 Complete--> Exclusive Time: %f ms\n", elapsedTime_gpu);
+        gpu_total_time += elapsedTime_gpu;
+        gpu_all_stages += gpu_total_time;
+        /***********************************************************************************/
+        printf("\tCascade Classifier on GPU Complete--> Combined Exclusive Time: %f ms\n\n", gpu_total_time);
+        printf("--------------------------------------------------------------------------------------------------\n\n");
 
         int x, y;
         for(y=0; y<bitvec_height; y++) {
@@ -665,6 +722,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
     } /* end of the factor loop, finish all scales in pyramid*/
 
+    printf("Face detection of all iterations on GPU Complete--> Combined Exclusive Time: %f ms\n\n", gpu_all_stages);
     cudaFree(dindex_x);
     cudaFree(dindex_y);
     cudaFree(dwidth);
