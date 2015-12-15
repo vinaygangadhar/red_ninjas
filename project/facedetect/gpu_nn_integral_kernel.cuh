@@ -10,7 +10,7 @@ __global__ void rowscan_nn_kernel(unsigned char* src, int32_t* sum, int32_t* sqs
                                    int src_w, int src_h, int dst_w, int dst_h,                  
                                    int x_ratio, int y_ratio, int tb_elems)                      
 {                                                                                                 
-   volatile __shared__ int32_t row[SHARED];                                                         
+  extern volatile __shared__ int32_t row[];                                                         
                                                                                                   
    //Nearest Neighbor Kernel                                                                    
    int tId = threadIdx.x;                                                                       
@@ -102,7 +102,7 @@ __global__ void rowscan_nn_kernel(unsigned char* src, int32_t* sum, int32_t* sqs
 __global__ void rowscan_only_kernel(int32_t* sum, int32_t* sqsum,                     
                                    int dst_w, int tb_elems)                      
 {                                                                                                 
-   volatile __shared__ int32_t row_only[SHARED];                                                         
+  extern volatile __shared__ int32_t row_only[];                                                         
                                                                                                   
    //Nearest Neighbor Kernel                                                                    
    int tId = threadIdx.x;                                                                       

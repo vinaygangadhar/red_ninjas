@@ -5,6 +5,6 @@ set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_20,code=sm_20 -use_
 
 #set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_20,code=sm_20 -g -G -use_fast_math --maxrregcount=20)
 
-cuda_add_executable(facedetect-base5 stdio-wrapper.h image.h haar.h cuda_util.h gpu_nn_integral.cuh gpu_nn_integral_kernel.cuh gpu_transpose_kernel.cuh haar_stage.cuh haar_stage_kernel.cuh optim.cuh main.cpp image.c rectangles.cpp stdio-wrapper.c haar.cu)
+cuda_add_executable(facedetect-optim stdio-wrapper.h image.h haar.h cuda_util.h gpu_nn_integral.cuh gpu_nn_integral_kernel.cuh gpu_transpose_kernel.cuh haar_stage.cuh haar_stage_kernel.cuh optim.cuh main.cpp image.c rectangles.cpp stdio-wrapper.c haar.cu)
 
 

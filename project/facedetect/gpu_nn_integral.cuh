@@ -158,7 +158,7 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
      cudaFuncSetCacheConfig(rowscan_nn_kernel, cudaFuncCachePreferShared); 
 
      cudaEventRecord(gpu_exc_start, NULL);
-     rowscan_nn_kernel<<<blocksPerGrid_rs, (threadsPerBlock_rs / 2)>>>(
+     rowscan_nn_kernel<<<blocksPerGrid_rs, (threadsPerBlock_rs / 2), sizeof(int) * (threadsPerBlock_rs + 1) * 2>>>(
                                                                         deviceimg,
                                                                         d_sum, d_sqsum, 
                                                                         src_w, src_h, dst_w, dst_h,
@@ -231,7 +231,7 @@ float nn_integralImageOnDevice(MyImage *src, unsigned char* deviceimg,
      cudaFuncSetCacheConfig(rowscan_only_kernel, cudaFuncCachePreferShared); 
      
      cudaEventRecord(gpu_exc_start, NULL);
-     rowscan_only_kernel<<<blocksPerGrid_cs, (threadsPerBlock_cs / 2)>>>(transpose_dsum, 
+     rowscan_only_kernel<<<blocksPerGrid_cs, (threadsPerBlock_cs / 2), sizeof(int) * (threadsPerBlock_cs + 1) * 2>>>(transpose_dsum, 
                                                                   transpose_dsqsum, 
                                                                   dst_h, threadsPerBlock_cs);
      

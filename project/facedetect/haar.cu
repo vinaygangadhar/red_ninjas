@@ -131,6 +131,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     cudaEvent_t gpu_cpy_stop;
 
     float gpu_cpyTime = 0.f;
+    float gpu_stagecpyTime = 0.f;
     float gpu_cpyTotal = 0.f;
 
     float gpu_kernTime = 0.f;
@@ -280,6 +281,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     gpu_cpyTotal += gpu_cpyTime;
     printf("\tClassifier Info Copy Time: %f ms\n", gpu_cpyTime);
 
+    printf("\n\tTotal Intial Copy time: %f ms\n", gpu_cpyTotal);
     /****************************************************
       Setting up DONE 
     ***************************************************/
@@ -298,7 +300,8 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         gpu_kernTime = 0.f;
 
         gpu_cpyTime = 0.f;
-
+        gpu_stagecpyTime = 0.f;
+        
         /* iteration counter */
         iter_counter++;
 
@@ -515,6 +518,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
         cudaEventElapsedTime(&gpu_cpyTime, gpu_cpy_start, gpu_cpy_stop);
 
         gpu_stageTotal += gpu_cpyTime;
+        gpu_stagecpyTime = gpu_cpyTime;
         printf("\n\tCC: To Device BitVector Copy Time: %f ms", gpu_cpyTime);
         
         //Call the Classifier on GPU Now
@@ -542,9 +546,10 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
 
         cudaEventElapsedTime(&gpu_cpyTime, gpu_cpy_start, gpu_cpy_stop);
         gpu_stageTotal += gpu_cpyTime;
-
+        gpu_stagecpyTime += gpu_cpyTime;
         printf("\tCC: To Host BitVector Copy Time: %f ms\n", gpu_cpyTime);
-        
+        printf("\n\tStage Copy time: %f ms\n", gpu_stagecpyTime);
+    
         //Recgnize the rectangles and push to Faces Structure
         int x, y;
         for(y = 0;  y < bitvec_height; y++) {
@@ -588,7 +593,7 @@ std::vector<MyRect> detectObjects( MyImage* _img, MySize minSize, MySize maxSize
     }
 
     printf("\n-- GPU Face Detection Done--> Number of faces: %d\n", faces.size());
-    printf("\n-- Overall Timing: Total CPU Time: %f ms, Total GPU Time: %f ms\n", cpu_msecTotal, gpu_msecTotal);
+    printf("\n-- Overall Timing: Total CPU Time: %f ms, Total GPU Time: %f ms\n", cpu_msecTotal, gpu_msecTotal + gpu_cpyTotal);
 
     //freeImage(img1);
     freeImagePinned(img1);

@@ -2,43 +2,55 @@
 
 TOP=/home/vinayg/red_ninjas/project
 FD=$TOP/facedetect
-BIN=$TOP/facedetect-bin
+BIN=$TOP/bin/facedetect-optim
 
-rm -rf $b1 $b2 $b3 $b4 $b5
 
-b1=base1-shmem
-b2=base2-pinned
-b3=base3-fastmath
-b4=base4-womaxreg
-b5=base5-diverge
+b1=1024
+b2=512
+b3=256
+b4=128
+b5=64
+b6=32
+b7=25
 
-###base 1
-echo $'\n'
-echo "\$\$ Executing Facedetect with base 1  \$\$"
-cd $TOP/facedetect
-$BIN/facedetect-$b1 group.pgm img.log > $b1.stat
 
-###base 2
-echo $'\n'
-echo "\$\$ Executing Facedetect with base 2  \$\$"
-cd $TOP/facedetect
-$BIN/facedetect-$b2 group.pgm img.log > $b2.stat
+rm -rf $b1.stat $b2.stat $b3.stat $b4.stat $b5.stat $b6.stat $b7.stat
 
-###base 3
-echo $'\n'
-echo "\$\$ Executing Facedetect with base 3  \$\$"
-cd $TOP/facedetect
-$BIN/facedetect-$b3 group.pgm img.log > $b3.stat
+##
+#####base 1
+##echo $'\n'
+##echo "\$\$ Executing Facedetect with 1024x1024  \$\$"
+##$BIN $b1\_ks.pgm img.log > $b1.stat
+##
+#####base 2
+##echo $'\n'
+##echo "\$\$ Executing Facedetect with 512x512  \$\$"
+##$BIN $b2\_ks.pgm img.log > $b2.stat
+##
+#####base 3
+##echo $'\n'
+##echo "\$\$ Executing Facedetect with 256x256  \$\$"
+##$BIN $b3\_ks.pgm img.log > $b3.stat
+##
+#####base 4
+##echo $'\n'
+##echo "\$\$ Executing Facedetect with 128x128  \$\$"
+##$BIN $b4\_ks.pgm img.log > $b4.stat
+##
+#####base 5
+##echo $'\n'
+##echo "\$\$ Executing Facedetect with 64x64  \$\$"
+##$BIN $b5\_ks.pgm img.log > $b5.stat
+##
+#####base 5
+##echo $'\n'
+##echo "\$\$ Executing Facedetect with 32x32  \$\$"
+##$BIN $b6\_ks.pgm img.log > $b6.stat
+##
+##
+#####base 5
+##echo $'\n'
+##echo "\$\$ Executing Facedetect with 25x25  \$\$"
+##$BIN $b7\_ks.pgm img.log > $b7.stat
 
-###base 4
-echo $'\n'
-echo "\$\$ Executing Facedetect with base 4  \$\$"
-cd $TOP/facedetect
-$BIN/facedetect-$b4 group.pgm img.log > $b4.stat
-
-###base 5
-echo $'\n'
-echo "\$\$ Executing Facedetect with base 5 \$\$"
-cd $TOP/facedetect
-$BIN/facedetect-$b5 group.pgm img.log > $b5.stat
 
