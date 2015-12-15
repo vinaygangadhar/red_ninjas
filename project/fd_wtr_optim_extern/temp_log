@@ -1,0 +1,1096 @@
+
+-- Entering main function --
+
+Reading image file: 640.pgm
+-- Image Loaded- Width: 640, Height: 480
+-- Loading cascade classifier
+
+-- Cascade Classifier Info: 
+ 	Stages: 25
+ 	Total Filters: 2913
+ 	Window Size: Width: 24, Height: 24
+
+-- Detecting faces
+
+	Iteration:= 1
+ 	Downsampling-->  New Image Size:   Width: 640, Height: 480
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 11.939616 ms
+
+	NN and II on GPU Started
+	Src size: 640 x 480
+	Dst size: 640 x 480
+	NN: Rowscan Done on GPU-->: Exclusive Time: 82.535904 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 11.221184 ms
+	II: RowScan Only on GPU Done--> Exclusive Time: 54.179264 ms
+	II:Matrix Transpose2 Done on GPU- Exclusive Time: 10.683936 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 158.620285 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 172.157349 ms
+
+	Cascade Classifier on GPU Started
+numblocks.x: 20, numblocks.y: 15 | numthreads.x: 32, numthreads.y: 32
+blockIdx.x: 4 blockIdx.y: 1 above syncthreads
+blockIdx.x: 5 blockIdx.y: 1 above syncthreads
+blockIdx.x: 6 blockIdx.y: 1 above syncthreads
+blockIdx.x: 1 blockIdx.y: 1 above syncthreads
+blockIdx.x: 3 blockIdx.y: 1 above syncthreads
+blockIdx.x: 2 blockIdx.y: 1 above syncthreads
+blockIdx.x: 5 blockIdx.y: 0 above syncthreads
+blockIdx.x: 7 blockIdx.y: 1 above syncthreads
+blockIdx.x: 6 blockIdx.y: 0 above syncthreads
+blockIdx.x: 2 blockIdx.y: 0 above syncthreads
+blockIdx.x: 3 blockIdx.y: 0 above syncthreads
+blockIdx.x: 0 blockIdx.y: 1 above syncthreads
+blockIdx.x: 4 blockIdx.y: 0 above syncthreads
+blockIdx.x: 1 blockIdx.y: 0 above syncthreads
+blockIdx.x: 0 blockIdx.y: 0 above syncthreads
+blockIdx.x: 1 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 0 above last if 
+blockIdx.x: 1 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 0 above last if 
+blockIdx.x: 1 blockIdx.y: 1 above last if 
+blockIdx.x: 5 blockIdx.y: 0 above last if 
+blockIdx.x: 2 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 0 above last if 
+blockIdx.x: 0 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 1 above last if 
+blockIdx.x: 3 blockIdx.y: 0 above last if 
+blockIdx.x: 1 blockIdx.y: 0 above last if 
+blockIdx.x: 4 blockIdx.y: 0 above last if 
+blockIdx.x: 2 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 1 above last if 
+blockIdx.x: 7 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 1 above last if 
+blockIdx.x: 1 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 0 above last if 
+blockIdx.x: 0 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 0 above last if 
+blockIdx.x: 1 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 0 above last if 
+blockIdx.x: 7 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 0 above last if 
+blockIdx.x: 1 blockIdx.y: 1 above last if 
+blockIdx.x: 5 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 1 above last if 
+blockIdx.x: 3 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 1 above last if 
+blockIdx.x: 1 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 0 above last if 
+blockIdx.x: 0 blockIdx.y: 0 above last if 
+blockIdx.x: 2 blockIdx.y: 0 above last if 
+blockIdx.x: 6 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 0 above last if 
+blockIdx.x: 4 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 1 above last if 
+blockIdx.x: 3 blockIdx.y: 1 above last if 
+blockIdx.x: 7 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 1 above last if 
+blockIdx.x: 1 blockIdx.y: 0 above last if 
+blockIdx.x: 1 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 0 above last if 
+blockIdx.x: 6 blockIdx.y: 0 above last if 
+blockIdx.x: 2 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 0 above last if 
+blockIdx.x: 0 blockIdx.y: 1 above last if 
+blockIdx.x: 3 blockIdx.y: 1 above last if 
+blockIdx.x: 7 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 0 above last if 
+blockIdx.x: 6 blockIdx.y: 1 above last if 
+blockIdx.x: 5 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 1 above last if 
+blockIdx.x: 1 blockIdx.y: 0 above last if 
+blockIdx.x: 4 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 1 above last if 
+blockIdx.x: 3 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 0 above last if 
+blockIdx.x: 4 blockIdx.y: 0 above last if 
+blockIdx.x: 6 blockIdx.y: 0 above last if 
+blockIdx.x: 4 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 1 above last if 
+blockIdx.x: 3 blockIdx.y: 0 above last if 
+blockIdx.x: 1 blockIdx.y: 0 above last if 
+blockIdx.x: 1 blockIdx.y: 1 above last if 
+blockIdx.x: 7 blockIdx.y: 1 above last if 
+blockIdx.x: 3 blockIdx.y: 1 above last if 
+blockIdx.x: 5 blockIdx.y: 0 above last if 
+blockIdx.x: 0 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 0 above last if 
+blockIdx.x: 6 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 0 above last if 
+blockIdx.x: 0 blockIdx.y: 1 above last if 
+blockIdx.x: 7 blockIdx.y: 1 above last if 
+blockIdx.x: 1 blockIdx.y: 1 above last if 
+blockIdx.x: 6 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 0 above last if 
+blockIdx.x: 6 blockIdx.y: 1 above last if 
+blockIdx.x: 5 blockIdx.y: 1 above last if 
+blockIdx.x: 2 blockIdx.y: 0 above last if 
+blockIdx.x: 2 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 0 above last if 
+blockIdx.x: 6 blockIdx.y: 0 above last if 
+blockIdx.x: 4 blockIdx.y: 1 above last if 
+blockIdx.x: 4 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 0 above last if 
+blockIdx.x: 7 blockIdx.y: 1 above last if 
+blockIdx.x: 1 blockIdx.y: 1 above last if 
+blockIdx.x: 0 blockIdx.y: 0 above last if 
+blockIdx.x: 5 blockIdx.y: 0 above last if 
+blockIdx.x: 7 blockIdx.y: 0 above syncthreads
+blockIdx.x: 2 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above syncthreads
+blockIdx.x: 2 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 1 above syncthreads
+blockIdx.x: 8 blockIdx.y: 0 above syncthreads
+blockIdx.x: 13 blockIdx.y: 1 above syncthreads
+blockIdx.x: 8 blockIdx.y: 1 above syncthreads
+blockIdx.x: 10 blockIdx.y: 0 above syncthreads
+blockIdx.x: 9 blockIdx.y: 1 above syncthreads
+blockIdx.x: 11 blockIdx.y: 0 above syncthreads
+blockIdx.x: 13 blockIdx.y: 0 above syncthreads
+blockIdx.x: 7 blockIdx.y: 0 above last if 
+blockIdx.x: 7 blockIdx.y: 1 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above syncthreads
+blockIdx.x: 12 blockIdx.y: 0 above syncthreads
+blockIdx.x: 1 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above syncthreads
+blockIdx.x: 13 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 1 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above last if 
+blockIdx.x: 3 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above syncthreads
+blockIdx.x: 10 blockIdx.y: 0 above last if 
+blockIdx.x: 7 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 1 above last if 
+blockIdx.x: 9 blockIdx.y: 1 above last if 
+blockIdx.x: 13 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above last if 
+blockIdx.x: 11 blockIdx.y: 1 above last if 
+blockIdx.x: 10 blockIdx.y: 0 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above last if 
+blockIdx.x: 8 blockIdx.y: 0 above last if 
+blockIdx.x: 11 blockIdx.y: 1 above last if 
+blockIdx.x: 9 blockIdx.y: 1 above last if 
+blockIdx.x: 8 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above syncthreads
+blockIdx.x: 7 blockIdx.y: 0 above last if 
+blockIdx.x: 10 blockIdx.y: 0 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above last if 
+blockIdx.x: 11 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above last if 
+blockIdx.x: 12 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 1 above last if 
+blockIdx.x: 8 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above last if 
+blockIdx.x: 11 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 1 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above last if 
+blockIdx.x: 10 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 0 above last if 
+blockIdx.x: 7 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 0 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above last if 
+blockIdx.x: 12 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above last if 
+blockIdx.x: 11 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above last if 
+blockIdx.x: 8 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above last if 
+blockIdx.x: 12 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above last if 
+blockIdx.x: 9 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 1 above last if 
+blockIdx.x: 13 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 0 above last if 
+blockIdx.x: 11 blockIdx.y: 0 above last if 
+blockIdx.x: 7 blockIdx.y: 0 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above last if 
+blockIdx.x: 10 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 1 above last if 
+blockIdx.x: 13 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 1 above last if 
+blockIdx.x: 13 blockIdx.y: 1 above last if 
+blockIdx.x: 12 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 0 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 1 above last if 
+blockIdx.x: 7 blockIdx.y: 0 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above last if 
+blockIdx.x: 9 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 0 above last if 
+blockIdx.x: 10 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 1 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above last if 
+blockIdx.x: 8 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above last if 
+blockIdx.x: 7 blockIdx.y: 0 above last if 
+blockIdx.x: 13 blockIdx.y: 0 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 0 above last if 
+blockIdx.x: 14 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 0 above last if 
+blockIdx.x: 10 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 0 above last if 
+blockIdx.x: 11 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above last if 
+blockIdx.x: 9 blockIdx.y: 1 above last if 
+blockIdx.x: 10 blockIdx.y: 1 above last if 
+blockIdx.x: 13 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 1 above last if 
+blockIdx.x: 7 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 1 above last if 
+blockIdx.x: 11 blockIdx.y: 0 above last if 
+blockIdx.x: 12 blockIdx.y: 0 above last if 
+blockIdx.x: 8 blockIdx.y: 0 above last if 
+blockIdx.x: 14 blockIdx.y: 1 above last if 
+blockIdx.x: 10 blockIdx.y: 0 above last if 
+blockIdx.x: 9 blockIdx.y: 1 above last if 
+blockIdx.x: 15 blockIdx.y: 1 above syncthreads
+blockIdx.x: 11 blockIdx.y: 1 above last if 
+blockIdx.x: 8 blockIdx.y: 1 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above syncthreads
+blockIdx.x: 15 blockIdx.y: 1 above last if 
+blockIdx.x: 15 blockIdx.y: 0 above syncthreads
+blockIdx.x: 17 blockIdx.y: 0 above syncthreads
+blockIdx.x: 15 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above syncthreads
+blockIdx.x: 16 blockIdx.y: 0 above syncthreads
+blockIdx.x: 16 blockIdx.y: 1 above syncthreads
+blockIdx.x: 19 blockIdx.y: 2 above syncthreads
+blockIdx.x: 19 blockIdx.y: 1 above syncthreads
+blockIdx.x: 18 blockIdx.y: 2 above syncthreads
+blockIdx.x: 19 blockIdx.y: 2 above last if 
+blockIdx.x: 19 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 3 above syncthreads
+blockIdx.x: 19 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 0 above last if 
+blockIdx.x: 15 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 1 above last if 
+blockIdx.x: 16 blockIdx.y: 0 above last if 
+blockIdx.x: 16 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 2 above last if 
+blockIdx.x: 19 blockIdx.y: 0 above syncthreads
+blockIdx.x: 19 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above syncthreads
+blockIdx.x: 15 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 0 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above syncthreads
+blockIdx.x: 19 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 1 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 0 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above last if 
+blockIdx.x: 16 blockIdx.y: 0 above last if 
+blockIdx.x: 18 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 2 above last if 
+blockIdx.x: 19 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 3 above last if 
+blockIdx.x: 19 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 2 above last if 
+blockIdx.x: 19 blockIdx.y: 3 above syncthreads
+blockIdx.x: 15 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above syncthreads
+blockIdx.x: 19 blockIdx.y: 1 above last if 
+blockIdx.x: 15 blockIdx.y: 2 above syncthreads
+blockIdx.x: 19 blockIdx.y: 3 above last if 
+blockIdx.x: 15 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 0 above last if 
+blockIdx.x: 17 blockIdx.y: 0 above last if 
+blockIdx.x: 16 blockIdx.y: 0 above last if 
+blockIdx.x: 16 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 3 above last if 
+blockIdx.x: 18 blockIdx.y: 2 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 3 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 0 above last if 
+blockIdx.x: 19 blockIdx.y: 3 above last if 
+blockIdx.x: 14 blockIdx.y: 2 above syncthreads
+blockIdx.x: 18 blockIdx.y: 3 above last if 
+blockIdx.x: 19 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 0 above last if 
+blockIdx.x: 16 blockIdx.y: 0 above last if 
+blockIdx.x: 16 blockIdx.y: 1 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above last if 
+blockIdx.x: 15 blockIdx.y: 0 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above last if 
+blockIdx.x: 19 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above last if 
+blockIdx.x: 19 blockIdx.y: 3 above last if 
+blockIdx.x: 14 blockIdx.y: 3 above syncthreads
+blockIdx.x: 14 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above last if 
+blockIdx.x: 18 blockIdx.y: 2 above last if 
+blockIdx.x: 18 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 0 above last if 
+blockIdx.x: 14 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 0 above last if 
+blockIdx.x: 15 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above last if 
+blockIdx.x: 16 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 0 above last if 
+blockIdx.x: 15 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above last if 
+blockIdx.x: 14 blockIdx.y: 3 above last if 
+blockIdx.x: 14 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 0 above last if 
+blockIdx.x: 18 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above last if 
+blockIdx.x: 18 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 0 above last if 
+blockIdx.x: 15 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above last if 
+blockIdx.x: 15 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 0 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 0 above last if 
+blockIdx.x: 15 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 0 above last if 
+blockIdx.x: 16 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 3 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above last if 
+blockIdx.x: 18 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 0 above last if 
+blockIdx.x: 16 blockIdx.y: 0 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above last if 
+blockIdx.x: 15 blockIdx.y: 0 above last if 
+blockIdx.x: 16 blockIdx.y: 1 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 3 above last if 
+blockIdx.x: 15 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above last if 
+blockIdx.x: 18 blockIdx.y: 2 above last if 
+blockIdx.x: 14 blockIdx.y: 2 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above last if 
+blockIdx.x: 14 blockIdx.y: 3 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above last if 
+blockIdx.x: 18 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 0 above last if 
+blockIdx.x: 17 blockIdx.y: 1 above last if 
+blockIdx.x: 17 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 1 above last if 
+blockIdx.x: 14 blockIdx.y: 2 above last if 
+blockIdx.x: 14 blockIdx.y: 3 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above last if 
+blockIdx.x: 18 blockIdx.y: 2 above last if 
+blockIdx.x: 18 blockIdx.y: 0 above last if 
+blockIdx.x: 18 blockIdx.y: 3 above last if 
+blockIdx.x: 15 blockIdx.y: 2 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above last if 
+blockIdx.x: 17 blockIdx.y: 3 above last if 
+blockIdx.x: 14 blockIdx.y: 3 above last if 
+blockIdx.x: 13 blockIdx.y: 2 above syncthreads
+blockIdx.x: 14 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 2 above syncthreads
+blockIdx.x: 18 blockIdx.y: 2 above last if 
+blockIdx.x: 13 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 2 above syncthreads
+blockIdx.x: 15 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 3 above syncthreads
+blockIdx.x: 13 blockIdx.y: 2 above last if 
+blockIdx.x: 10 blockIdx.y: 2 above syncthreads
+blockIdx.x: 11 blockIdx.y: 3 above syncthreads
+blockIdx.x: 14 blockIdx.y: 3 above last if 
+blockIdx.x: 18 blockIdx.y: 1 above last if 
+blockIdx.x: 12 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above syncthreads
+blockIdx.x: 11 blockIdx.y: 2 above last if 
+blockIdx.x: 13 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 3 above last if 
+blockIdx.x: 13 blockIdx.y: 3 above syncthreads
+blockIdx.x: 16 blockIdx.y: 3 above syncthreads
+blockIdx.x: 12 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 3 above syncthreads
+blockIdx.x: 10 blockIdx.y: 3 above syncthreads
+blockIdx.x: 10 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 3 above syncthreads
+blockIdx.x: 12 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above last if 
+blockIdx.x: 13 blockIdx.y: 3 above last if 
+blockIdx.x: 13 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 3 above last if 
+blockIdx.x: 12 blockIdx.y: 2 above last if 
+blockIdx.x: 10 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above syncthreads
+blockIdx.x: 15 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above syncthreads
+blockIdx.x: 13 blockIdx.y: 3 above last if 
+blockIdx.x: 11 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 3 above last if 
+blockIdx.x: 12 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above last if 
+blockIdx.x: 13 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 3 above last if 
+blockIdx.x: 12 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 3 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above syncthreads
+blockIdx.x: 13 blockIdx.y: 3 above last if 
+blockIdx.x: 13 blockIdx.y: 2 above last if 
+blockIdx.x: 15 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 3 above last if 
+blockIdx.x: 12 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 2 above last if 
+blockIdx.x: 10 blockIdx.y: 3 above last if 
+blockIdx.x: 11 blockIdx.y: 3 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above last if 
+blockIdx.x: 13 blockIdx.y: 3 above last if 
+blockIdx.x: 12 blockIdx.y: 3 above last if 
+blockIdx.x: 15 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 3 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above last if 
+blockIdx.x: 13 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 3 above last if 
+blockIdx.x: 11 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above last if 
+blockIdx.x: 10 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 3 above last if 
+blockIdx.x: 13 blockIdx.y: 2 above last if 
+blockIdx.x: 13 blockIdx.y: 3 above last if 
+blockIdx.x: 9 blockIdx.y: 3 above last if 
+blockIdx.x: 15 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 3 above last if 
+blockIdx.x: 10 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 3 above last if 
+blockIdx.x: 16 blockIdx.y: 2 above last if 
+blockIdx.x: 12 blockIdx.y: 3 above last if 
+blockIdx.x: 9 blockIdx.y: 3 above last if 
+blockIdx.x: 15 blockIdx.y: 3 above last if 
+blockIdx.x: 11 blockIdx.y: 2 above last if 
+blockIdx.x: 13 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 3 above last if 
+blockIdx.x: 12 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above last if 
+blockIdx.x: 10 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 2 above last if 
+blockIdx.x: 11 blockIdx.y: 3 above last if 
+blockIdx.x: 9 blockIdx.y: 3 above last if 
+blockIdx.x: 15 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above syncthreads
+blockIdx.x: 13 blockIdx.y: 3 above last if 
+blockIdx.x: 6 blockIdx.y: 2 above last if 
+blockIdx.x: 16 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above syncthreads
+blockIdx.x: 5 blockIdx.y: 2 above syncthreads
+blockIdx.x: 10 blockIdx.y: 2 above last if 
+blockIdx.x: 3 blockIdx.y: 2 above syncthreads
+blockIdx.x: 4 blockIdx.y: 2 above syncthreads
+blockIdx.x: 11 blockIdx.y: 3 above last if 
+blockIdx.x: 4 blockIdx.y: 3 above syncthreads
+blockIdx.x: 9 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above syncthreads
+blockIdx.x: 5 blockIdx.y: 2 above last if 
+blockIdx.x: 13 blockIdx.y: 3 above last if 
+blockIdx.x: 6 blockIdx.y: 3 above syncthreads
+blockIdx.x: 4 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 2 above last if 
+blockIdx.x: 4 blockIdx.y: 2 above last if 
+blockIdx.x: 4 blockIdx.y: 3 above last if 
+blockIdx.x: 7 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above last if 
+blockIdx.x: 3 blockIdx.y: 2 above last if 
+blockIdx.x: 4 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above last if 
+blockIdx.x: 8 blockIdx.y: 2 above syncthreads
+blockIdx.x: 2 blockIdx.y: 2 above syncthreads
+blockIdx.x: 8 blockIdx.y: 3 above syncthreads
+blockIdx.x: 6 blockIdx.y: 3 above last if 
+blockIdx.x: 4 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above syncthreads
+blockIdx.x: 4 blockIdx.y: 3 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above syncthreads
+blockIdx.x: 3 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 2 above last if 
+blockIdx.x: 8 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 2 above last if 
+blockIdx.x: 0 blockIdx.y: 3 above syncthreads
+blockIdx.x: 4 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above last if 
+blockIdx.x: 8 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above last if 
+blockIdx.x: 4 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 2 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above syncthreads
+blockIdx.x: 8 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above last if 
+blockIdx.x: 0 blockIdx.y: 3 above last if 
+blockIdx.x: 8 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 2 above last if 
+blockIdx.x: 0 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above last if 
+blockIdx.x: 4 blockIdx.y: 2 above last if 
+blockIdx.x: 4 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 3 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above last if 
+blockIdx.x: 8 blockIdx.y: 2 above last if 
+blockIdx.x: 8 blockIdx.y: 3 above last if 
+blockIdx.x: 0 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 2 above last if 
+blockIdx.x: 3 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above last if 
+blockIdx.x: 0 blockIdx.y: 3 above last if 
+blockIdx.x: 4 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above last if 
+blockIdx.x: 8 blockIdx.y: 3 above last if 
+blockIdx.x: 8 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above last if 
+blockIdx.x: 4 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above last if 
+blockIdx.x: 0 blockIdx.y: 3 above last if 
+blockIdx.x: 4 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 2 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above last if 
+blockIdx.x: 8 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above last if 
+blockIdx.x: 0 blockIdx.y: 3 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above last if 
+blockIdx.x: 8 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 2 above last if 
+blockIdx.x: 4 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above last if 
+blockIdx.x: 8 blockIdx.y: 2 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above last if 
+blockIdx.x: 0 blockIdx.y: 3 above last if 
+blockIdx.x: 4 blockIdx.y: 2 above last if 
+blockIdx.x: 8 blockIdx.y: 3 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above last if 
+blockIdx.x: 3 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above last if 
+blockIdx.x: 5 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above last if 
+blockIdx.x: 9 blockIdx.y: 2 above last if 
+blockIdx.x: 8 blockIdx.y: 3 above last if 
+blockIdx.x: 8 blockIdx.y: 2 above last if 
+blockIdx.x: 1 blockIdx.y: 4 above syncthreads
+blockIdx.x: 0 blockIdx.y: 3 above last if 
+blockIdx.x: 4 blockIdx.y: 2 above last if 
+blockIdx.x: 3 blockIdx.y: 3 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above syncthreads
+blockIdx.x: 2 blockIdx.y: 5 above syncthreads
+blockIdx.x: 1 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above syncthreads
+blockIdx.x: 4 blockIdx.y: 4 above syncthreads
+blockIdx.x: 3 blockIdx.y: 5 above syncthreads
+blockIdx.x: 1 blockIdx.y: 4 above last if 
+blockIdx.x: 2 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 4 above syncthreads
+blockIdx.x: 8 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 3 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above syncthreads
+blockIdx.x: 4 blockIdx.y: 4 above last if 
+blockIdx.x: 2 blockIdx.y: 5 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above last if 
+blockIdx.x: 8 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above syncthreads
+blockIdx.x: 3 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 5 above syncthreads
+blockIdx.x: 1 blockIdx.y: 5 above syncthreads
+blockIdx.x: 1 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above syncthreads
+blockIdx.x: 1 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 5 above last if 
+blockIdx.x: 4 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above last if 
+blockIdx.x: 1 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 5 above syncthreads
+blockIdx.x: 3 blockIdx.y: 5 above last if 
+blockIdx.x: 1 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above syncthreads
+blockIdx.x: 6 blockIdx.y: 4 above syncthreads
+blockIdx.x: 0 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above last if 
+blockIdx.x: 0 blockIdx.y: 5 above last if 
+blockIdx.x: 1 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 5 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above last if 
+blockIdx.x: 7 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 4 above last if 
+blockIdx.x: 1 blockIdx.y: 5 above last if 
+blockIdx.x: 3 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above last if 
+blockIdx.x: 7 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 4 above last if 
+blockIdx.x: 1 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 4 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 4 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above last if 
+blockIdx.x: 7 blockIdx.y: 5 above last if 
+blockIdx.x: 1 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above last if 
+blockIdx.x: 0 blockIdx.y: 4 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 5 above last if 
+blockIdx.x: 1 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 4 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 5 above last if 
+blockIdx.x: 1 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above last if 
+blockIdx.x: 2 blockIdx.y: 5 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above last if 
+blockIdx.x: 7 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 4 above last if 
+blockIdx.x: 1 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 5 above last if 
+blockIdx.x: 4 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above last if 
+blockIdx.x: 1 blockIdx.y: 5 above last if 
+blockIdx.x: 3 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 4 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above last if 
+blockIdx.x: 7 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 5 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above last if 
+blockIdx.x: 6 blockIdx.y: 4 above last if 
+blockIdx.x: 1 blockIdx.y: 5 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above last if 
+blockIdx.x: 4 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above last if 
+blockIdx.x: 0 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above last if 
+blockIdx.x: 4 blockIdx.y: 5 above last if 
+blockIdx.x: 7 blockIdx.y: 5 above last if 
+blockIdx.x: 3 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 2 above last if 
+blockIdx.x: 6 blockIdx.y: 4 above last if 
+blockIdx.x: 3 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 5 above last if 
+blockIdx.x: 1 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 5 above syncthreads
+blockIdx.x: 9 blockIdx.y: 4 above syncthreads
+blockIdx.x: 0 blockIdx.y: 5 above last if 
+blockIdx.x: 5 blockIdx.y: 5 above last if 
+blockIdx.x: 2 blockIdx.y: 4 above last if 
+blockIdx.x: 10 blockIdx.y: 4 above syncthreads
+blockIdx.x: 9 blockIdx.y: 5 above last if 
+blockIdx.x: 9 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 5 above syncthreads
+blockIdx.x: 7 blockIdx.y: 5 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above syncthreads
+blockIdx.x: 11 blockIdx.y: 4 above syncthreads
+blockIdx.x: 9 blockIdx.y: 4 above last if 
+blockIdx.x: 5 blockIdx.y: 4 above last if 
+blockIdx.x: 12 blockIdx.y: 4 above syncthreads
+blockIdx.x: 9 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 4 above last if 
+blockIdx.x: 10 blockIdx.y: 5 above last if 
+blockIdx.x: 9 blockIdx.y: 4 above last if 
+blockIdx.x: 7 blockIdx.y: 4 above syncthreads
+blockIdx.x: 1 blockIdx.y: 5 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above last if 
+blockIdx.x: 6 blockIdx.y: 4 above last if 
+blockIdx.x: 0 blockIdx.y: 5 above last if 
+blockIdx.x: 11 blockIdx.y: 4 above last if 
+blockIdx.x: 10 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 5 above last if 
+blockIdx.x: 9 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 4 above last if 
+blockIdx.x: 7 blockIdx.y: 4 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above syncthreads
+blockIdx.x: 6 blockIdx.y: 5 above syncthreads
+blockIdx.x: 10 blockIdx.y: 5 above last if 
+blockIdx.x: 11 blockIdx.y: 4 above last if 
+blockIdx.x: 7 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above last if 
+blockIdx.x: 7 blockIdx.y: 4 above last if 
+blockIdx.x: 8 blockIdx.y: 5 above syncthreads
+blockIdx.x: 12 blockIdx.y: 5 above syncthreads
+blockIdx.x: 10 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above syncthreads
+blockIdx.x: 12 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 5 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above syncthreads
+blockIdx.x: 10 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 4 above last if 
+blockIdx.x: 7 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above last if 
+blockIdx.x: 12 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 4 above syncthreads
+blockIdx.x: 6 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 5 above last if 
+blockIdx.x: 11 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 4 above last if 
+blockIdx.x: 12 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 5 above last if 
+blockIdx.x: 9 blockIdx.y: 4 above last if 
+blockIdx.x: 10 blockIdx.y: 4 above last if 
+blockIdx.x: 7 blockIdx.y: 4 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above last if 
+blockIdx.x: 6 blockIdx.y: 5 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 4 above last if 
+blockIdx.x: 8 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above last if 
+blockIdx.x: 13 blockIdx.y: 4 above last if 
+blockIdx.x: 9 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 4 above last if 
+blockIdx.x: 12 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 5 above last if 
+blockIdx.x: 9 blockIdx.y: 4 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above last if 
+blockIdx.x: 13 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above last if 
+blockIdx.x: 7 blockIdx.y: 4 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 4 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 4 above last if 
+blockIdx.x: 13 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above last if 
+blockIdx.x: 6 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 4 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 5 above last if 
+blockIdx.x: 7 blockIdx.y: 4 above last if 
+blockIdx.x: 12 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 4 above last if 
+blockIdx.x: 12 blockIdx.y: 4 above last if 
+blockIdx.x: 10 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 4 above last if 
+blockIdx.x: 11 blockIdx.y: 5 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above last if 
+blockIdx.x: 8 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above last if 
+blockIdx.x: 10 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 5 above last if 
+blockIdx.x: 16 blockIdx.y: 5 above syncthreads
+blockIdx.x: 7 blockIdx.y: 4 above last if 
+blockIdx.x: 6 blockIdx.y: 5 above last if 
+blockIdx.x: 17 blockIdx.y: 5 above syncthreads
+blockIdx.x: 13 blockIdx.y: 4 above last if 
+blockIdx.x: 14 blockIdx.y: 5 above last if 
+blockIdx.x: 17 blockIdx.y: 4 above syncthreads
+blockIdx.x: 16 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above last if 
+blockIdx.x: 16 blockIdx.y: 5 above last if 
+blockIdx.x: 12 blockIdx.y: 4 above last if 
+blockIdx.x: 17 blockIdx.y: 4 above last if 
+blockIdx.x: 18 blockIdx.y: 4 above syncthreads
+blockIdx.x: 8 blockIdx.y: 5 above last if 
+blockIdx.x: 17 blockIdx.y: 5 above last if 
+blockIdx.x: 18 blockIdx.y: 5 above syncthreads
+blockIdx.x: 17 blockIdx.y: 4 above last if 
+blockIdx.x: 12 blockIdx.y: 5 above last if 
+blockIdx.x: 16 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 5 above syncthreads
+blockIdx.x: 19 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 5 above last if 
+blockIdx.x: 7 blockIdx.y: 4 above last if 
+blockIdx.x: 15 blockIdx.y: 5 above syncthreads
+blockIdx.x: 17 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above syncthreads
+blockIdx.x: 17 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above last if 
+blockIdx.x: 16 blockIdx.y: 5 above last if 
+blockIdx.x: 13 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above last if 
+blockIdx.x: 18 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 5 above last if 
+blockIdx.x: 17 blockIdx.y: 4 above last if 
+blockIdx.x: 8 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above last if 
+blockIdx.x: 18 blockIdx.y: 5 above last if 
+blockIdx.x: 15 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 7 above syncthreads
+blockIdx.x: 18 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 7 above last if 
+blockIdx.x: 19 blockIdx.y: 7 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 7 above last if 
+blockIdx.x: 15 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 7 above last if 
+blockIdx.x: 14 blockIdx.y: 4 above syncthreads
+blockIdx.x: 18 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 4 above last if 
+blockIdx.x: 15 blockIdx.y: 4 above syncthreads
+blockIdx.x: 16 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 6 above syncthreads
+blockIdx.x: 19 blockIdx.y: 7 above last if 
+blockIdx.x: 19 blockIdx.y: 6 above last if 
+blockIdx.x: 17 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 6 above last if 
+blockIdx.x: 17 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 7 above last if 
+blockIdx.x: 19 blockIdx.y: 6 above last if 
+blockIdx.x: 13 blockIdx.y: 4 above last if 
+blockIdx.x: 18 blockIdx.y: 4 above last if 
+blockIdx.x: 15 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 6 above last if 
+blockIdx.x: 19 blockIdx.y: 7 above last if 
+blockIdx.x: 19 blockIdx.y: 6 above last if 
+blockIdx.x: 14 blockIdx.y: 4 above last if 
+blockIdx.x: 19 blockIdx.y: 7 above last if 
+blockIdx.x: 19 blockIdx.y: 6 above last if 
+blockIdx.x: 18 blockIdx.y: 6 above syncthreads
+blockIdx.x: 18 blockIdx.y: 7 above syncthreads
+blockIdx.x: 18 blockIdx.y: 5 above last if 
+blockIdx.x: 16 blockIdx.y: 4 above syncthreads
+blockIdx.x: 15 blockIdx.y: 5 above last if 
+blockIdx.x: 19 blockIdx.y: 6 above last if 
+blockIdx.x: 15 blockIdx.y: 4 above last if 
+blockIdx.x: 16 blockIdx.y: 5 above last if 
+blockIdx.x: 18 blockIdx.y: 4 above last if 
+blockIdx.x: 17 blockIdx.y: 4 above last if 
+blockIdx.x: 14 blockIdx.y: 4 above last if 
+blockIdx.x: 17 blockIdx.y: 7 above syncthreads
+blockIdx.x: 16 blockIdx.y: 7 above syncthreads
+blockIdx.x: 19 blockIdx.y: 6 above last if 
+blockIdx.x: 14 blockIdx.y: 7 above syncthreads
+	CC: Kernel 1 Complete--> Exclusive Time: 0.000000 ms
+========= CUDA-MEMCHECK
+========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings) 

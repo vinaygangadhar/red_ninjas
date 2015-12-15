@@ -1,0 +1,842 @@
+
+-- Entering main function --
+
+Reading image file: group.pgm
+-- Image Loaded- Width: 1024, Height: 1024
+-- Loading cascade classifier
+
+-- Cascade Classifier Info: 
+ 	Stages: 25
+ 	Total Filters: 2913
+ 	Window Size: Width: 24, Height: 24
+
+-- Detecting faces
+
+	Host to Device Src Image Copy Time: 0.578080 ms
+	Classifier Info Copy Time: 0.143040 ms
+
+	Iteration:= 1
+ 	Downsampling-->  New Image Size:   Width: 1024, Height: 1024
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 6.907200 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 1024 x 1024
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.912512 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.151872 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 1.242624 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.152896 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 2.459904 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 337.698456 ms
+
+	CC: To Device BitVector Copy Time: 0.222976 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 45.367359 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 2.152480 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.721504 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.555392 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.492096 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.521120 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.372160 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.381312 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.338240 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.363712 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.252096 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.248832 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 51.766308 ms
+	CC: To Host BitVector Copy Time: 0.337248 ms
+
+	Stage Complete--> CPU Time: 344.605652 ms, GPU Time: 54.786438 ms
+	GPU detection--> Scaling Factor: 1.000000, Number of faces: 0
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 2
+ 	Downsampling-->  New Image Size:   Width: 853, Height: 853
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 2.444832 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 853 x 853
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.742368 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.129344 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 1.035232 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.127424 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 2.034368 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 168.331268 ms
+
+	CC: To Device BitVector Copy Time: 0.158784 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 29.937824 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 1.461472 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.460384 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.379616 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.374528 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.395520 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.221312 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.172736 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.168352 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.177024 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.171872 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.171392 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 34.092030 ms
+	CC: To Host BitVector Copy Time: 0.234784 ms
+
+	Stage Complete--> CPU Time: 170.776108 ms, GPU Time: 36.519966 ms
+	GPU detection--> Scaling Factor: 1.200000, Number of faces: 0
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 3
+ 	Downsampling-->  New Image Size:   Width: 711, Height: 711
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 1.680448 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 711 x 711
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.621888 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.095936 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.856928 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.090816 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 1.665568 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 116.297119 ms
+
+	CC: To Device BitVector Copy Time: 0.114432 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 20.959808 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 1.090016 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.440800 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.320800 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.321856 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.350784 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.250816 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.255168 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.238368 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.258688 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.126016 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.125472 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 24.738592 ms
+	CC: To Host BitVector Copy Time: 0.165248 ms
+
+	Stage Complete--> CPU Time: 117.977570 ms, GPU Time: 26.683842 ms
+	GPU detection--> Scaling Factor: 1.440000, Number of faces: 0
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 4
+ 	Downsampling-->  New Image Size:   Width: 592, Height: 592
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 1.208768 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 592 x 592
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.533728 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.062592 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.711488 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.060416 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 1.368224 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 80.986336 ms
+
+	CC: To Device BitVector Copy Time: 0.083264 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 14.217888 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 1.038016 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.266720 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.266272 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.089792 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.095840 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.088608 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.089600 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.086080 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.091392 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.088992 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.088384 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 16.507586 ms
+	CC: To Host BitVector Copy Time: 0.117504 ms
+
+	Stage Complete--> CPU Time: 82.195107 ms, GPU Time: 18.076578 ms
+	GPU detection--> Scaling Factor: 1.728000, Number of faces: 0
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 5
+ 	Downsampling-->  New Image Size:   Width: 493, Height: 493
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.808416 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 493 x 493
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.184960 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.053344 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.228288 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.051680 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.518272 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 54.452896 ms
+
+	CC: To Device BitVector Copy Time: 0.060800 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 9.693920 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.640480 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.253024 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.264096 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.271040 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.276640 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.066688 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.066624 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.063104 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.066336 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.065152 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.065216 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 11.792319 ms
+	CC: To Host BitVector Copy Time: 0.085568 ms
+
+	Stage Complete--> CPU Time: 55.261311 ms, GPU Time: 12.456960 ms
+	GPU detection--> Scaling Factor: 2.073600, Number of faces: 0
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 6
+ 	Downsampling-->  New Image Size:   Width: 411, Height: 411
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.573408 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 411 x 411
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.154912 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.041664 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.185600 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.039904 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.422080 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 38.921505 ms
+
+	CC: To Device BitVector Copy Time: 0.045792 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 7.163808 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.616096 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.210752 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.232224 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.248512 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.260800 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.165728 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.169184 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.154528 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.169248 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.178336 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.168832 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 9.738048 ms
+	CC: To Host BitVector Copy Time: 0.063072 ms
+
+	Stage Complete--> CPU Time: 39.494911 ms, GPU Time: 10.268991 ms
+	GPU detection--> Scaling Factor: 2.488320, Number of faces: 10
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 7
+ 	Downsampling-->  New Image Size:   Width: 342, Height: 342
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.392960 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 342 x 342
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.131264 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.034720 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.159200 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.033024 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.358208 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 29.593088 ms
+
+	CC: To Device BitVector Copy Time: 0.036928 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 4.645344 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.437248 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.228672 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.225248 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.235328 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.257568 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.166048 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.169440 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.155808 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.167488 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.176864 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.166944 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 7.032000 ms
+	CC: To Host BitVector Copy Time: 0.046592 ms
+
+	Stage Complete--> CPU Time: 29.986048 ms, GPU Time: 7.473728 ms
+	GPU detection--> Scaling Factor: 2.985985, Number of faces: 23
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 8
+ 	Downsampling-->  New Image Size:   Width: 285, Height: 285
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.281472 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 285 x 285
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.122720 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.027968 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.135392 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.026624 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.312704 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 19.241505 ms
+
+	CC: To Device BitVector Copy Time: 0.030496 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 3.476256 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.412224 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.202624 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.221984 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.239136 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.256256 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.163520 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.167008 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.153120 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.167808 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.175584 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.166496 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 5.802016 ms
+	CC: To Host BitVector Copy Time: 0.037152 ms
+
+	Stage Complete--> CPU Time: 19.522976 ms, GPU Time: 6.182368 ms
+	GPU detection--> Scaling Factor: 3.583182, Number of faces: 36
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 9
+ 	Downsampling-->  New Image Size:   Width: 238, Height: 238
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.191776 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 238 x 238
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.056032 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.023872 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.050048 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.021984 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.151936 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 12.938272 ms
+
+	CC: To Device BitVector Copy Time: 0.023872 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 2.401120 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.406048 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.196800 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.216288 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.228864 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.249504 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.157856 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.161184 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.147232 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.160800 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.169248 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.162496 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 4.657440 ms
+	CC: To Host BitVector Copy Time: 0.032800 ms
+
+	Stage Complete--> CPU Time: 13.130049 ms, GPU Time: 4.866048 ms
+	GPU detection--> Scaling Factor: 4.299818, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 10
+ 	Downsampling-->  New Image Size:   Width: 198, Height: 198
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.134368 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 198 x 198
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.054368 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.020768 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.049536 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.020448 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.145120 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 8.336128 ms
+
+	CC: To Device BitVector Copy Time: 0.020480 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 1.914176 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.217184 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.187456 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.208608 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.226176 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.024960 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.024448 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.023808 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.023456 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.024160 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.023936 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.023648 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 2.922016 ms
+	CC: To Host BitVector Copy Time: 0.024064 ms
+
+	Stage Complete--> CPU Time: 8.470496 ms, GPU Time: 3.111680 ms
+	GPU detection--> Scaling Factor: 5.159782, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 11
+ 	Downsampling-->  New Image Size:   Width: 165, Height: 165
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.095904 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 165 x 165
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.052640 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.019744 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.047872 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.018176 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.138432 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 5.420320 ms
+
+	CC: To Device BitVector Copy Time: 0.018880 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 1.324416 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.211296 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.189024 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.210976 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.020416 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.020992 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.020320 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.020512 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.020288 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.020768 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.021472 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.020512 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 2.100992 ms
+	CC: To Host BitVector Copy Time: 0.029152 ms
+
+	Stage Complete--> CPU Time: 5.516224 ms, GPU Time: 2.287456 ms
+	GPU detection--> Scaling Factor: 6.191739, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 12
+ 	Downsampling-->  New Image Size:   Width: 137, Height: 137
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.067392 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 137 x 137
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.050240 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.017536 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.045664 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.017696 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.131136 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 3.562976 ms
+
+	CC: To Device BitVector Copy Time: 0.022240 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.784512 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.217536 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.020576 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.019744 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.020352 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.020288 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.019584 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.019840 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.019360 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.020320 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.019712 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.046752 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 1.228576 ms
+	CC: To Host BitVector Copy Time: 0.019424 ms
+
+	Stage Complete--> CPU Time: 3.630368 ms, GPU Time: 1.401376 ms
+	GPU detection--> Scaling Factor: 7.430087, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 13
+ 	Downsampling-->  New Image Size:   Width: 114, Height: 114
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.048384 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 114 x 114
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.028736 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.017248 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.024416 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.015872 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.086272 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 2.299680 ms
+
+	CC: To Device BitVector Copy Time: 0.017056 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.671520 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.220448 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.021408 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.017344 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.020064 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.017024 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016512 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.016480 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.016704 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.016480 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.016512 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.016480 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 1.066976 ms
+	CC: To Host BitVector Copy Time: 0.017408 ms
+
+	Stage Complete--> CPU Time: 2.348064 ms, GPU Time: 1.187712 ms
+	GPU detection--> Scaling Factor: 8.916104, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 14
+ 	Downsampling-->  New Image Size:   Width: 95, Height: 95
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.036992 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 95 x 95
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.028224 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.016256 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.023168 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.015712 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.083360 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 1.583136 ms
+
+	CC: To Device BitVector Copy Time: 0.015808 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.670592 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.208896 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.185984 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.017056 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.016768 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.017184 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016416 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.016576 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.016512 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.016896 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.016480 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.016096 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 1.215456 ms
+	CC: To Host BitVector Copy Time: 0.016544 ms
+
+	Stage Complete--> CPU Time: 1.620128 ms, GPU Time: 1.331168 ms
+	GPU detection--> Scaling Factor: 10.699326, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 15
+ 	Downsampling-->  New Image Size:   Width: 79, Height: 79
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.027776 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 79 x 79
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.027968 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.015392 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.022816 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.014816 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.080992 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 1.184800 ms
+
+	CC: To Device BitVector Copy Time: 0.017728 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.668704 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.208800 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.185184 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.016768 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.016480 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.016576 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016832 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.016384 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.016896 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.017088 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.016640 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.016672 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 1.213024 ms
+	CC: To Host BitVector Copy Time: 0.015808 ms
+
+	Stage Complete--> CPU Time: 1.212576 ms, GPU Time: 1.327552 ms
+	GPU detection--> Scaling Factor: 12.839191, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 16
+ 	Downsampling-->  New Image Size:   Width: 66, Height: 66
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.020224 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 66 x 66
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.027040 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.015232 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.022368 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.014688 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.079328 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 0.716352 ms
+
+	CC: To Device BitVector Copy Time: 0.017216 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.667840 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.207936 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.185920 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.206400 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.016736 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.017088 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016320 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.016064 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.016384 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.016512 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.016896 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.016128 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 1.400224 ms
+	CC: To Host BitVector Copy Time: 0.015488 ms
+
+	Stage Complete--> CPU Time: 0.736576 ms, GPU Time: 1.512256 ms
+	GPU detection--> Scaling Factor: 15.407030, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 17
+ 	Downsampling-->  New Image Size:   Width: 55, Height: 55
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.014848 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 55 x 55
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.024352 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.015616 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.019296 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.015232 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.074496 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 0.379744 ms
+
+	CC: To Device BitVector Copy Time: 0.015552 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.664736 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.207360 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.017312 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.016480 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.016672 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.016384 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016288 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.016448 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.016320 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.016640 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.016352 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.016256 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 1.037248 ms
+	CC: To Host BitVector Copy Time: 0.014432 ms
+
+	Stage Complete--> CPU Time: 0.394592 ms, GPU Time: 1.141728 ms
+	GPU detection--> Scaling Factor: 18.488438, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 18
+ 	Downsampling-->  New Image Size:   Width: 46, Height: 46
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.011648 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 46 x 46
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.023968 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.014592 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.019008 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.014048 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.071616 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 0.229376 ms
+
+	CC: To Device BitVector Copy Time: 0.016192 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.465312 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.017408 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.016480 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.016480 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.016640 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.016832 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016224 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.016128 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.016512 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.016384 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.016448 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.016000 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 0.646848 ms
+	CC: To Host BitVector Copy Time: 0.014880 ms
+
+	Stage Complete--> CPU Time: 0.241024 ms, GPU Time: 0.749536 ms
+	GPU detection--> Scaling Factor: 22.186127, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 19
+ 	Downsampling-->  New Image Size:   Width: 38, Height: 38
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.009184 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 38 x 38
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.023392 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.014912 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.019168 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.013984 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.071456 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 0.128512 ms
+
+	CC: To Device BitVector Copy Time: 0.016480 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.329984 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.016384 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.021248 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.017056 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.016320 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.016960 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016576 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.020960 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.020832 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.016704 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.018048 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.016608 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 0.527680 ms
+	CC: To Host BitVector Copy Time: 0.015008 ms
+
+	Stage Complete--> CPU Time: 0.137696 ms, GPU Time: 0.630624 ms
+	GPU detection--> Scaling Factor: 26.623354, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 20
+ 	Downsampling-->  New Image Size:   Width: 32, Height: 32
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.006240 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 32 x 32
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.022176 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.014432 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.016864 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.013920 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.067392 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 0.096192 ms
+
+	CC: To Device BitVector Copy Time: 0.015104 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.259072 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.016864 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.016800 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.016288 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.016928 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.016704 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016448 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.017664 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.016832 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.016448 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.016160 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.016192 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 0.442400 ms
+	CC: To Host BitVector Copy Time: 0.014432 ms
+
+	Stage Complete--> CPU Time: 0.102432 ms, GPU Time: 0.539328 ms
+	GPU detection--> Scaling Factor: 31.948027, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+	Iteration:= 21
+ 	Downsampling-->  New Image Size:   Width: 26, Height: 26
+	NN and II on CPU Started
+	NN and II on CPU complete--> Execution time: 0.005184 ms
+
+	NN and II on GPU Started
+	Src size: 1024 x 1024
+	Dst size: 26 x 26
+	NN: Rowscan Done on GPU-->: Exclusive Time: 0.021888 ms
+	II: Matrix Transpose1 Done on GPU--> Exclusive Time: 0.014496 ms
+	II: RowScan Only Done on GPU--> Exclusive Time: 0.017120 ms
+	II: Matrix Transpose2 Done on GPU- Exclusive Time: 0.013760 ms
+	NN and II on GPU complete--> Combined Exclusive Time: 0.067264 ms
+
+	Cascade Classifier on CPU Started
+	Cascade Classifier on CPU Complete--> Execution time: 0.068288 ms
+
+	CC: To Device BitVector Copy Time: 0.015328 ms
+	Cascade Classifier on GPU Started
+	CC: Kernel 0 Complete--> Exclusive Time: 0.245024 ms
+	CC: Kernel 1 Complete--> Exclusive Time: 0.016384 ms
+	CC: Kernel 2 Complete--> Exclusive Time: 0.016544 ms
+	CC: Kernel 3 Complete--> Exclusive Time: 0.016320 ms
+	CC: Kernel 4 Complete--> Exclusive Time: 0.016160 ms
+	CC: Kernel 5 Complete--> Exclusive Time: 0.016480 ms
+	CC: Kernel 6 Complete--> Exclusive Time: 0.016160 ms
+	CC: Kernel 7 Complete--> Exclusive Time: 0.016192 ms
+	CC: Kernel 8 Complete--> Exclusive Time: 0.015936 ms
+	CC: Kernel 9 Complete--> Exclusive Time: 0.015968 ms
+	CC: Kernel 10 Complete--> Exclusive Time: 0.016640 ms
+	CC: Kernel 11 Complete--> Exclusive Time: 0.023136 ms
+	Cascade Classifier on GPU Complete--> Combined Exclusive Time: 0.430944 ms
+	CC: To Host BitVector Copy Time: 0.014272 ms
+
+	Stage Complete--> CPU Time: 0.073472 ms, GPU Time: 0.527808 ms
+	GPU detection--> Scaling Factor: 38.337635, Number of faces: 46
+
+	--------------------------------------------------------------------------------------------
+
+-- GPU Face Detection Done--> Number of faces: 5
+
+-- Overall Timing: Total CPU Time: 897.433472 ms, Total GPU Time: 193.063141 ms
+
+-- Saving output --
+-- Image saved --
