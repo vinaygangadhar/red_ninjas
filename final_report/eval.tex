@@ -1,0 +1,25 @@
+\section{Evaluation framework}\label{sec:eval}
+
+\fixme{Vinay holds the lock}
+
+For this project, we evaluate the performance of GPGPU im-
+plementation with that of a CPU. We are not considering the
+classifier training and are directly taking a CPU version of
+trained classifier. Haar features, number of features in each
+stage are already determined. We aim to compare the exe-
+cution time for face detection in an image on CPU and on
+GPU. As mentioned in Section 3, we parallelize three different
+portions in the algorithm. We will analyze the contribution of
+each of the three sections parallelized for performance impli-
+cations and try to characterize the bottlenecks associated with
+each sections of the algorithm. Since sufficient parallelism
+can be extracted in this image processing application, we hope
+to get better performance on GPU.
+For profiling and bottleneck analysis, we aim to use
+NVIDIA Visual Profiler~\cite{rosen2013visual} and then take corresponding de-
+cisions for performance boost. For evaluating against CPU,
+we plan to use the Euler supported multi-core processor node.
+We use CUDA events~\cite{wilt2013cuda} for timing analysis of GPGPU and
+CPU execution. We also plan to report the memory bandwidth
+usage for execution on both platforms.
+

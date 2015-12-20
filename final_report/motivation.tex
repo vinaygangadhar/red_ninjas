@@ -1,0 +1,20 @@
+\section{Introduction}\label{sec: intro}
+
+
+In this project, we intend to implement face detection algorithm based on the Viola Jones classifier \fixme{ref} on GPU. 
+As a starting point, we take the GNU licensed C++ program that has the 
+algorithm implemented to detect faces in images \fixme{ref}. 
+There are various portions in the algorithm that can be parallelized and hence can leverage the hardware of GPU efficiently. 
+Section 1 explains Viola Jones algorithm briefly. Section 2 explains the portions we are going to parallelize and offload to the GPU.
+
+
+Viola Jones Face Detection Algorithm
+The algorithm has four stages:
+Haar feature selection: The Viola Jones classifier method is based on Haar-like features. 
+The features consist of white and black rectangles as shown in Fig 1. 
+These features can be thought of as pixel intensity evaluation sets. 
+For each feature, we subtract black region’s pixel value sum from white region’s pixel value sum. 
+If this sum is greater than some threshold, it is decided that the region has this feature. 
+This is the characteristic value of a feature. We have the Haar features
+to be used for face detection
+

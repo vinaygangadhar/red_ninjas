@@ -1,0 +1,32 @@
+\begin{abstract}
+   
+\vspace{0.1in}
+
+Applications with large amount of data level parallelism
+can benefit from General Purpose based Graphics Processing
+Units (GPGPUs) because of better energy efficiency and per-
+formance compared to a CPU. Due to GPGPUs’ impressive
+computing throughput and memory bandwidth, many applica-
+tions with enough parallelism can take advantage of accelera-
+tion using GPGPU. Computer vision algorithms are one such
+workload domain which can better utilize the large number
+of cores in GPU, and hence meet their real-time requirements
+of the applications. One such application is Face Detection
+which has real-time constraint on its execution. Sequential
+processing of image windows with classifiers on CPU is dif-
+ficult to meet the real-time requirements. In this project, we
+implement the Face Detection acceleration algorithm based
+on Viola-Jones cascade classifier the GPGPU CUDA platform.
+We are considering different portions of the algorithm that can
+be parallelized and expect to achieve better speedup compared.
+We feed an image as input to the GPU, and after processing set
+of features and classifying the face using a cascade classifier,
+a rectangle is drawn on the image when face is detected. We
+finally compare the execution of the same algorithm executed
+on the CPU and analyze the gains from the GPU.
+
+
+
+
+
+\end{abstract}
