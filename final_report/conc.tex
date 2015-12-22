@@ -1,3 +1,8 @@
-\section{Conclusion}i\label{sec:conc}
+\section{Conclusion}\label{sec:conc}
 
-\fixme{Vinay holds the lock}
+Face detection was a good candidate for parallelism and our project aimed to 
+implement it on GPU. We found out that face detection algorithm has goo amount of data and
+thread level parallelism and implemented three portions of the algorithm. Over the course, we found bottlenecks associated with each of the kernel
+and added optimizations for them. We compare our GPU implementation performance with that of single threaded CPU version.
+We achieve an overall speedup of 5.35x compared to CPU with all the optimizations added. We believe that with more robust version of the algorithm 
+and more optimizations we can still achieve a better speedup. 

@@ -1,10 +1,13 @@
 \section{Viola Jones Face Detection Algorithm}\label{sec:viola}
 
+Before we proceed into the actual details of the implementation, we discuss the background of viola-Jones Object detection 
+framework in this section. Human faces share some similar properties. 
+These properties are mapped mathematically to the HAAR features, which are explained in detail below.
+
+
 The algorithm has four stages as described below:
-
 \begin{itemize}
-
-\item \textbf{Haar feature selection:}
+\item \textbf{Haar feature selection}
 The Viola Jones classifier method is based on Haar-like features. The features consist of 
 white and black rectangles as shown in Figure~\ref{fig:haar}. These features can be thought of as pixel intensity evaluation sets. 
 For each feature, we subtract black region’s pixel value sum from white region’s pixel value sum. 
@@ -18,7 +21,7 @@ This is the characteristic value of a feature. We have the Haar features to be u
   \label{fig:haar}
 \end{figure}
 
-\item \textbf{Integral Image:}
+\item \textbf{Integral Image}
 The calculation of characteristic value of a feature is an important step in 
 face detection. It has to be calculated for every possible pixel region in the given image. 
 In order to efficiently determine the value, integral image of the given image is used. 
@@ -40,6 +43,7 @@ Integral Sum is given by:
 Now, the sum of any given region with corner integral pixels A, B, C, D is
 \emph{Sum = D + A - B - C} as shown in Figure~\ref{fig:sum}.
 
+\vspace{0.1in}
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.5\linewidth]{figs/sum.png}
@@ -58,15 +62,25 @@ integral image involves just 2 additions and 2 subtractions instead of 6 additio
 \end{figure}
 
 \vspace{0.1in}
-\item \textbf{Adaboost Algorithm:} Adaboost or Adaptive Boosting is a machine learning algorithm 
+\item \textbf{Adaboost Algorithm} Adaboost or Adaptive Boosting is a machine learning algorithm 
 where the output of weak classifiers is combined into a weighted sum that represents the output 
 of a boosted (strong) classifier. This algorithm is used to combine features that cover facial 
 characteristics to form a weak classifier. It then creates a string classifier using a group 
 of weak classifiers. It further concatenates the strong classifiers to a cascade classifier.
 
+
+\begin{figure*}[h]
+  \centering
+  \includegraphics[width=0.75\linewidth]{figs/flow_crop.pdf}
+  \caption{Face detection implementation flow }
+  \label{fig:flow}
+\end{figure*}
+
+
+
 \vspace{0.1in}
-\item \textbf{Cascade Classifier:} A sub-window in the image that passes through the entire cascade 
-classifier is detected as human face (Figure~\ref{fig:cascade}). In this project, we use 25 stages in cascade classifier.
+\item \textbf{Cascade Classifier} A sub-window in the image that passes through the entire cascade 
+classifier is detected as human face (Figure~\ref{fig:cascade}). In this project, we used 25 stages in cascade classifier.
 
 \begin{figure}[h]
   \centering
@@ -76,3 +90,6 @@ classifier is detected as human face (Figure~\ref{fig:cascade}). In this project
 \end{figure}
 
 \end{itemize}
+
+
+

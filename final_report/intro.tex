@@ -25,22 +25,29 @@ parallel computing substrate is a good candidate to gain performance benefits.
 With recent advances in NVIDIA CUDA programming model for scientific application 
 acceleration~\cite{buck2007gpu}, we aim to use GPGPU execution model for accelerating face detection algorithm.
 
-In this project, we intend to implement face detection algorithm 
+In this project, we have implemented the  face detection algorithm 
 based on the Viola Jones classifier on GPU. 
 As a starting point, we take the GNU licensed C++ program that has the 
-algorithm implemented to detect faces in images. 
-There are various portions in the algorithm that 
-can be parallelized and hence can leverage the execution of GPU resources efficiently. 
-We plan to implement all three phases of the face detection -- integral image calculation,
-scanning window stage and classifying the output from each classifying stage. 
-As a course project we want to limit to the implementation of these 3 stages mentioned above, 
+algorithm implemented to detect faces in images. We also take the already trained 
+classifier network which includes different HAAR classifier features trained based on thousands of images. 
+We have identified the different  portions of the algorithm that 
+can be parallelized and leverage the execution with abundant GPU resources efficiently. 
+We have implemented all the three phases of the face detection -- nearest neighbor, integral image calculation and
+scanning window stage along with classifying the output from each classifying stage. 
+As a course project we limited the implementation to these 3 stages mentioned above, 
 and not focus on the training of classifier itself. We take some insights and principles
 based on previous implementations of face detection on GPGPUs, FPGA done here~\cite{kong2010gpu, sun2013acceleration, cho2009fpga}.
-The focus of this project is
-to gain performance benefits out of face detection acceleration and characterize
-the bottlenecks if there are any. 
+The main focus of this project was to gain performance benefits out of face detection acceleration and characterize
+the bottlenecks if there are any. Based on those principles, we found many bottlenecks in the GPU implementation and add
+optimizations to address these bottlenecks. We evaluate our GPU implementation performance with respect to single threaded CPU performance 
+and we achieve a speedup upto 5.35x including the GPU inclusive time of copying.
 
-Section \ref{sec:viola} explains the Viola Jones algorithm briefly. 
-Section \ref{sec:impl} explains the our implementation of face dectection.
+We present the overview of our paper here:
+Section \ref{sec:viola} explains the Viola Jones algorithm briefly and Section \ref{sec:impl} explains the our implementation of face detection.
+Section \ref{sec:nnii} and Section{sec:haar} explain the three parallel versions of the algorithm we have implemented. Section\ref{sec:optim} details
+the bottlenecks we came across in these kernels and explain the optimizations added and the benefits we get out of it. Section \ref{sec:eval} presents our evaluation framework
+and Section \ref{sec:results} explains the detailed results including the performance and utilization factors. 
+We finally end with conclusion in 
+Section \ref{sec:conc}.
 
 

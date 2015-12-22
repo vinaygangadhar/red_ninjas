@@ -1,23 +1,26 @@
 \section{Optimizations}\label{sec:optim}
 
+In this section, we discuss the various optimizations done across all the steps mentioned in section~\ref{sec:impl}. Firstly, we explain the optimizations in Nearest Neighbor, Integral Image calculation and then we move on to those done in Scan Window Processing.
+
 \subsection{Optimizations in Nearest neighbor and Integral Image calculation}\label{sec:nn_optim}
 
 \begin{itemize}
 
-\item \textbf{Coalescence Of Global Memory Writes:}
+\item \textbf{Coalescence of Global Memory Writes}
 To coalesce the reads \& writes to global memory the image matrix transpose was 
 implemented in a tiled fashion in kernels 2 and 4 from Section~\ref{sec:impl nn II}. 
 Figures~\ref{fig:naive} and ~\ref{fig:optim} show the naive 
 and optimized implementation of the matrix transpose respectively from a memory 
 access point of view. As the shared memory access are discrete\textit{(each word from a bank)}
-and global memory accesses are coalesced(cacheline) by nature, we implemented the 
-transpose as shown in figure 7. Once the data tile is brought into the shared memory, 
+and global memory accesses are coalesced(cache-line) by nature, we implemented the 
+transpose as shown in figure~\ref{fig:optim}. Once the data tile is brought into the shared memory, 
 it was read column wise from it and then written row wise into global memory. 
-Effectively, SM[Ty][Tx] is changed to SM[Tx][Ty]. 
+Effectively, \textit{SM[Ty][Tx]} is changed to \textit{SM[Tx][Ty]}. 
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{figs/nn_naive_crop.pdf}
+  \vspace{0.1in}
   \caption{Naive Implementation of Matrix Transpose }
   \label{fig:naive}
 \end{figure}
@@ -34,15 +37,15 @@ row wise(Figure~\ref{fig:naive}) to column wise(Figure~\ref{fig:optim}), we need
 aren’t any shared memory bank conflicts.
 
 \vspace{0.1in}
-\item \textbf{Elimination Of shared memory bank conflicts:}
+\item \textbf{Elimination of Shared Memory Bank Conflicts}
 SM bank conflicts occur when two or more threads in the same warp try to access the same memory bank. 
 Let’s analyze the thread mapping to shared memory banks for this situation. Here in our implementation, 
-we use a BLOCKSIZE of  16. Each (Tx, Ty) map to (Tx * 16 + Ty) \% 32  bank of an SM. (Tx, Ty) for (0, 0) \& (2, 0) 
-\textit{(have global thread indices of 0 and 2 respectively, so belong to the same warp)} map to bank 0. 
+we use a BLOCKSIZE of  16. Each \textit{(Tx, Ty)} map to \textit{(Tx * 16 + Ty) \% 32}  bank of an SM. \textit{(Tx, Ty) } for \textit{(0, 0) } \& \textit{(2, 0)
+(have global thread indices of 0 and 2 respectively, so belong to the same warp)} map to bank 0. 
 So, we have a 2-way bank conflict introduced with the change in access pattern to SM. However, 
-it is eliminated by making the (Tx * 16 + Ty) not a multiple of 32. 
-Shared memory [BLOCKSIZE] [BLOCKSIZE + 1] was used to tackle this problem. 
-Increasing the row width by 1 makes each mapping offset by 1 bank position.
+it is eliminated by making the \textit{(Tx * 16 + Ty)} not a multiple of 32. 
+\textit{Shared memory [BLOCKSIZE] [BLOCKSIZE + 1]} was used to tackle this problem. 
+Increasing the row width by 1 makes each mapping offset by one bank position.
 
 
 \vspace{0.1in}
@@ -52,16 +55,16 @@ though in practice it can be avoided. Instead, we can make it as extern,
 determine the size during runtime and pass it in kernel launch. Let’s analyze the 
 RowScan kernel configuration to brief this situation.  
 
-Kernel configuration: (w, h – width \& height of downscaled Image)
+Kernel configuration\textit{(w, h – width \& height of downscaled Image)}:
 \begin{itemize}
-    \item Threads per block = smallestpower2(w): Constraint from RowScan algorithm
-    \item Blocks = h
-    \item shared memory of 2 * (width of image + 1) (factor 2: One for integral sum \& other for square Integral sum).
+    \item Threads per block \begin{math}\rightarrow\end{math} \textit{smallestpower2(w)} - Constraint from RowScan algorithm
+    \item Blocks \begin{math}\rightarrow\end{math} h
+    \item shared memory size \begin{math}\rightarrow\end{math} \textit{2 * (width of image + 1) (factor 2: One for integral sum \& other for square Integral sum)}.
 \end{itemize}
-At downscale of 256 X 256 image size (from source of 1024 X 1024 pixels), we launch a 1 dimensional 
-grid of 256 blocks with 256 Threads Per Block (TPB). For this configuration, 6 blocks can be alive, 
-giving a 100\% occupancy (1536 threads). Hardcoding the shared memory to that of max case 
-of 1024 TPB (8kB SM)  decreases it to 5 blocks giving 84\% occupancy only. 
+At downscale of 256 X 256 image size \textit{(from source of 1024 X 1024 pixels)}, we launch a 1 dimensional 
+grid of 256 blocks with 256 Threads Per Block\textit{(TPB)}. For this configuration, 6 blocks can be alive, 
+giving a 100\% occupancy\textit{(1536 threads)}. Hardcoding the shared memory to that of max case 
+of 1024 TPB \textit{(8kB SM)} decreases it to 5 blocks giving 84\% occupancy only. 
 
 \end{itemize}
 
@@ -69,7 +72,7 @@ of 1024 TPB (8kB SM)  decreases it to 5 blocks giving 84\% occupancy only.
 \subsection{Optimizations for Scan Window Processing}\label{sec:haar_optim}
 \begin{itemize}
 
-\item \textbf{Using Shared Memory:}
+\item \textbf{Using Shared Memory}
 Information about the classifiers as mentioned in Section
 \ref{sec:haar} are common to all the scan windows. Hence the first optimization 
 is to bring the data related to classifiers. But since there are 2913 classifiers 
@@ -84,14 +87,14 @@ improved transfer speeds. CUDA provides \emph{cudaMallocHost} API that can be us
 usual \emph{malloc} to achieve this.
 
 \vspace{0.1in}
-\item \textbf{Using Fast Math:}
+\item \textbf{Using Fast Math}
 Our algorithm makes use of calculating standard deviation which is the square 
 root of variance. If we make use of \emph{-use\_fast\_math} flag while compiling using \emph{nvcc}, 
 we explicitly instruct GPU to use its Special Functional Unit to calculate square root. This provides 
 lesser precision but at a greater speed. 
 
 \vspace{0.1in}
-\item \textbf{Not using restriction on maximum registers per thread:}
+\item \textbf{Not using restriction on maximum registers per thread}
 In our baseline implementation, we had 
 restricted maximum register count per thread to 20 to increase occupancy. But scanning window 
 kernel requires 28 registers. Because of the restriction there was spilling of registers that 
@@ -99,7 +102,7 @@ increased the execution time. Hence we removed the imposition and observed decre
 time even though occupancy decreased. This showed occupancy is not always a measure of performance.
 
 \vspace{0.1in}
-\item \textbf{Using block divergence:}
+\item \textbf{Using block divergence}
 In the baseline implementation, each thread continued execution up to 25 stages 
 even if the scan window failed any previous stage. Rejecting a thread as early as possible leads to thread 
 divergence that leads to under-utilization as in Figure~\ref{fig:tdiv}. But if all the threads in a block 
@@ -117,7 +120,7 @@ have face. Using this optimization, we have made the common case faster. Hence a
   \label{fig:tdiv}
 \end{figure}
 
-
+\vspace{-0.1in}
 \begin{figure}[h]
   \centering 
   \includegraphics[width=\linewidth]{figs/block_div.png}

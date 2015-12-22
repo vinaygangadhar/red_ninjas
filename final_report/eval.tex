@@ -6,7 +6,7 @@
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|l|}
 \hline
 \textit{\textbf{Stage}}      & 1  & 2  & 3  & 4  & 5   & 6   & 7   & 8   & 9   & 10  & 11  & 12  & 13  & 14  & 15  & 16  & 17  & 18  & 19  & 20  & 21  & 22  & 23  & 24  & 25   \\ \hline 
-\textit{\textbf{Classfiers}} & 9  & 16 & 27 & 32 & 52  & 53  & 62  & 72  & 83  & 91  & 99  & 115 & 127 & 135 & 136 & 137 & 159 & 155 & 169 & 196 & 197 & 181 & 199 & 211 & 200  \\ \hline
+\textit{\textbf{Classifiers}} & 9  & 16 & 27 & 32 & 52  & 53  & 62  & 72  & 83  & 91  & 99  & 115 & 127 & 135 & 136 & 137 & 159 & 155 & 169 & 196 & 197 & 181 & 199 & 211 & 200  \\ \hline
 \textit{\textbf{Rectangles}} & 18 & 48 & 81 & 96 & 156 & 159 & 186 & 216 & 249 & 273 & 297 & 345 & 381 & 405 & 408 & 411 & 477 & 465 & 507 & 588 & 591 & 543 & 597 & 633 & 600  \\ \hline
 \end{tabular}
 }
@@ -23,7 +23,7 @@
         \textbf{Kernel}                   & \multicolumn{2}{l|}{\textbf{Registers}}    & \textbf{Shared memory (KB)} & \textbf{Constant Memory (Bytes)} & \multicolumn{2}{l|}{\textbf{Occupancy (\%)}} \\ \hline
         \textbf{}                         & \textbf{With Maxreg} & \textbf{w/o Maxreg} & \textbf{}                   & \textbf{}                        & \textbf{With Maxreg}  & \textbf{w/o Maxreg}  \\ \hline
         \textbf{NN + RowScan}             & 18                   & 18                  & 8.2                         & 88                               & 100                   & 100                  \\ \hline
-        \textbf{Transpoce 1}              & 12                   & 12                  & 2.1                         & 60                               & 100                   & 100                  \\ \hline
+        \textbf{Transpose 1}              & 12                   & 12                  & 2.1                         & 60                               & 100                   & 100                  \\ \hline
         \textbf{RowScan Only}             & 17                   & 18                  & 8.2                         & 72                               & 100                   & 66.67                \\ \hline
         \textbf{Transpose 2}              & 12                   & 12                  & 2.1                         & 60                               & 100                   & 100                  \\ \hline
         \textbf{HAAR Cascade Classifiers} & 20                   & 28                  & 19.5                        & 156                              & 66.67                 & 66.67                \\ \hline
@@ -38,19 +38,14 @@
 
 
 For this project, we evaluate the performance and resource utilization 
-of face detecion algorithm on GPGPU implementation with that of a CPU. 
+of face detection algorithm on GPGPU implementation with that of a CPU. 
 We are not considering the
 cascade classifier training part and are directly taking a CPU version of
-previosuly trained classifier. Offline training of the classifier network
+previously trained classifier. Offline training of the classifier network
 for different images on GPU will be implemented as part of our future work.
 For now, the trained cascade classifier consists of 
 number of stages needed for face detection, HAAR features needed in each
-stage, the rectangles of each feeature, threshold values for each stage and classifier.
-Table~\ref{table:features} gives an overview and information of the total number os stages
-used, number of filers/classifiers in each stage and rectangle features used in each stage.
-Apart form that, each rectangle has a weight associated with it, each classifier has a threshold value and each stage
-also has a threshold value. These threshold values are used at each step of scan window processing
-and would determine whether the face is present in the downsampled image. 
+stage, the rectangles of each feature, threshold values for each stage and classifier.
 
 \begin{table}[h]
     \centering
@@ -107,23 +102,35 @@ and would determine whether the face is present in the downsampled image.
     \label{table:cpu}
 \end{table}
 
+\vspace{0.3in}
+Table~\ref{table:features} gives an overview and information of the total number of stages
+used, number of filers/classifiers in each stage and rectangle features used in each stage.
+Apart form that, each rectangle has a weight associated with it, each classifier has a threshold value and each stage
+also has a threshold value. These threshold values are used at each step of scan window processing
+and would determine whether the face is present in the downsampled image. 
+
+
+
 \paragraph{}
-We compared the GPU exclsuive time (kernel time),
-inclsuive time (kernel + CPU to GPU copy time) with the CPU execution time 
+We compared the GPU exclusive time (kernel time),
+inclusive time (kernel + CPU to GPU copy time) with the CPU execution time 
 for face detection in an image.
 As mentioned in Section~\ref{sec:impl}, we have parallelized three different
 portions in the algorithm and in Section~\ref{sec:results} we analyze the results of each of this kernel.
 We evaluated our face detection implementation on an NVIDIA GTX 480 GPU card with 15 SMs and 1.5GB global memory.
 Table~\ref{table:device} gives the architecture details of the device on which we evaluated the kernels. For comparison with CPU, 
-we used 16 core Intel Xeon CPU, but since the Viola Jones code was a single threaded code, the comparision is only with
-1 core of CPU. Table~\ref{table:cpu} gives the architecture details of the CPU used for comaprison. 
+we used 16 core Intel Xeon CPU, but since the Viola Jones code was a single threaded code, the comparison is only with
+1 core of CPU. Table~\ref{table:cpu} gives the architecture details of the CPU used for comparison. 
 We also use all the optimizations applied for the kernels (Section~\ref{sec:optim}) and show the
 results for these optimizations. 
 
+We considered different image sizes during our evaluation and our kernels can fit and detect
+the largest  image of size 1024 x 1024. For all our further performance analysis, we use this the image size of 1024 x 1024 
+and it involves 21 iterations of downsampling until it reaches the minimum size of 25 x 25.
+
 For profiling and bottleneck analysis, we used
-NVIDIA Visual Profiler~\cite{rosen2013visual} and then take corresponding de-
-cisions for performance boost. CUDA profilers also helped us to gain an understadning 
-of the kernel occupancy and thier shared memory usage.
+NVIDIA Visual Profiler~\cite{rosen2013visual} and then take corresponding decisions for performance boost. CUDA profilers also helped us to gain an understanding 
+of the kernel occupancy and their shared memory usage.
 We use CUDA events~\cite{wilt2013cuda} for timing analysis of GPGPU (both exclusive and inclusive) and
 CPU execution.  
 
