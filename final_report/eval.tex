@@ -1,25 +1,130 @@
 \section{Evaluation framework}\label{sec:eval}
 
-\fixme{Vinay holds the lock}
+\begin{table*}[th]
+\centering
+\scalebox{0.65}{
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|l|}
+\hline
+\textit{\textbf{Stage}}      & 1  & 2  & 3  & 4  & 5   & 6   & 7   & 8   & 9   & 10  & 11  & 12  & 13  & 14  & 15  & 16  & 17  & 18  & 19  & 20  & 21  & 22  & 23  & 24  & 25   \\ \hline 
+\textit{\textbf{Classfiers}} & 9  & 16 & 27 & 32 & 52  & 53  & 62  & 72  & 83  & 91  & 99  & 115 & 127 & 135 & 136 & 137 & 159 & 155 & 169 & 196 & 197 & 181 & 199 & 211 & 200  \\ \hline
+\textit{\textbf{Rectangles}} & 18 & 48 & 81 & 96 & 156 & 159 & 186 & 216 & 249 & 273 & 297 & 345 & 381 & 405 & 408 & 411 & 477 & 465 & 507 & 588 & 591 & 543 & 597 & 633 & 600  \\ \hline
+\end{tabular}
+}
+\vspace{0.05in}
+\caption{HAAR cascade classifier and its features}
+\label{table:features}
+\end{table*}
 
-For this project, we evaluate the performance of GPGPU im-
-plementation with that of a CPU. We are not considering the
-classifier training and are directly taking a CPU version of
-trained classifier. Haar features, number of features in each
-stage are already determined. We aim to compare the exe-
-cution time for face detection in an image on CPU and on
-GPU. As mentioned in Section 3, we parallelize three different
-portions in the algorithm. We will analyze the contribution of
-each of the three sections parallelized for performance impli-
-cations and try to characterize the bottlenecks associated with
-each sections of the algorithm. Since sufficient parallelism
-can be extracted in this image processing application, we hope
-to get better performance on GPU.
-For profiling and bottleneck analysis, we aim to use
+\begin{table*}[h]
+    \centering
+    \scalebox{0.75}{
+    \begin{tabular}{|l|l|l|l|l|l|l|}
+        \hline
+        \textbf{Kernel}                   & \multicolumn{2}{l|}{\textbf{Registers}}    & \textbf{Shared memory (KB)} & \textbf{Constant Memory (Bytes)} & \multicolumn{2}{l|}{\textbf{Occupancy (\%)}} \\ \hline
+        \textbf{}                         & \textbf{With Maxreg} & \textbf{w/o Maxreg} & \textbf{}                   & \textbf{}                        & \textbf{With Maxreg}  & \textbf{w/o Maxreg}  \\ \hline
+        \textbf{NN + RowScan}             & 18                   & 18                  & 8.2                         & 88                               & 100                   & 100                  \\ \hline
+        \textbf{Transpoce 1}              & 12                   & 12                  & 2.1                         & 60                               & 100                   & 100                  \\ \hline
+        \textbf{RowScan Only}             & 17                   & 18                  & 8.2                         & 72                               & 100                   & 66.67                \\ \hline
+        \textbf{Transpose 2}              & 12                   & 12                  & 2.1                         & 60                               & 100                   & 100                  \\ \hline
+        \textbf{HAAR Cascade Classifiers} & 20                   & 28                  & 19.5                        & 156                              & 66.67                 & 66.67                \\ \hline
+    \end{tabular}
+    }
+    \vspace{0.05in}
+    \caption{Registers, Shared Memory, Constant Memory and Occupancy for all the kernels}
+    \label{table:util}
+\end{table*}
+
+
+
+
+For this project, we evaluate the performance and resource utilization 
+of face detecion algorithm on GPGPU implementation with that of a CPU. 
+We are not considering the
+cascade classifier training part and are directly taking a CPU version of
+previosuly trained classifier. Offline training of the classifier network
+for different images on GPU will be implemented as part of our future work.
+For now, the trained cascade classifier consists of 
+number of stages needed for face detection, HAAR features needed in each
+stage, the rectangles of each feeature, threshold values for each stage and classifier.
+Table~\ref{table:features} gives an overview and information of the total number os stages
+used, number of filers/classifiers in each stage and rectangle features used in each stage.
+Apart form that, each rectangle has a weight associated with it, each classifier has a threshold value and each stage
+also has a threshold value. These threshold values are used at each step of scan window processing
+and would determine whether the face is present in the downsampled image. 
+
+\begin{table}[h]
+    \centering
+    \scalebox{0.85}{
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{CUDA runtime version}         & 7000                  \\ \hline
+        \textbf{CUDA driver version}          & 7050                  \\ \hline
+        \textbf{}                             &                       \\ \hline
+        \textbf{Device Name}                  & GeForce GTX 480       \\ \hline
+        \textbf{Compute Capability}           & 2.0                   \\ \hline
+        \textbf{Global Memory (MB}            & 1535                  \\ \hline
+        \textbf{Total Const Memory (KB}       & 64                    \\ \hline
+        \textbf{Shared Memory per Block (KB)} & 48                    \\ \hline
+        \textbf{Shared Memory per SM (KB)}    & 48                    \\ \hline
+        \textbf{L2 Cache Size (KB)}           & 768                   \\ \hline
+        \textbf{Registers per Block}          & 32768                 \\ \hline
+        \textbf{Registers per SM}             & 32768                 \\ \hline
+        \textbf{SM Count}                     & 15                    \\ \hline
+        \textbf{max threads per SM}           & 1536                  \\ \hline
+        \textbf{Max threads per block}        & 1024                  \\ \hline
+        \textbf{Max thread dims}              & (1024, 1024, 64)      \\ \hline
+        \textbf{Max grid size}                & (65535, 65535, 65535) \\ \hline
+        \textbf{Num copy engines}             & 1                     \\ \hline
+    \end{tabular}
+    }
+    \vspace{0.05in}
+    \caption{Arch. details of the GPU card used}
+    \label{table:device}
+\end{table}
+
+\vspace{-0.1in}
+\begin{table}[h]
+    \centering
+    \scalebox{0.85}{
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Architecture}        & x86\_64                            \\ \hline
+        \textbf{CPU(s)}              & 16                                 \\ \hline
+        \textbf{On-line CPU(s) list} & 0-15                               \\ \hline
+        \textbf{Thread(s) per core}  & 2                                  \\ \hline
+        \textbf{Core(s) per socket}  & 4                                  \\ \hline
+        \textbf{Socket(s)}           & 2                                  \\ \hline
+        \textbf{Model name:}         & Intel Xeon(R) CPU E5520 @ 2.27 GHz \\ \hline
+        \textbf{CPU MHz}             & 1600                               \\ \hline
+        \textbf{L1d cache (KB)}      & 32                                 \\ \hline
+        \textbf{L1i cache (32KB)}    & 32                                 \\ \hline
+        \textbf{L2 cache (KB)}       & 256                                \\ \hline
+        \textbf{L3 cache (MB)}       & 8                                  \\ \hline
+    \end{tabular}
+    }
+    \vspace{0.05in}
+    \caption{Arch. details of the CPU used}
+    \label{table:cpu}
+\end{table}
+
+\paragraph{}
+We compared the GPU exclsuive time (kernel time),
+inclsuive time (kernel + CPU to GPU copy time) with the CPU execution time 
+for face detection in an image.
+As mentioned in Section~\ref{sec:impl}, we have parallelized three different
+portions in the algorithm and in Section~\ref{sec:results} we analyze the results of each of this kernel.
+We evaluated our face detection implementation on an NVIDIA GTX 480 GPU card with 15 SMs and 1.5GB global memory.
+Table~\ref{table:device} gives the architecture details of the device on which we evaluated the kernels. For comparison with CPU, 
+we used 16 core Intel Xeon CPU, but since the Viola Jones code was a single threaded code, the comparision is only with
+1 core of CPU. Table~\ref{table:cpu} gives the architecture details of the CPU used for comaprison. 
+We also use all the optimizations applied for the kernels (Section~\ref{sec:optim}) and show the
+results for these optimizations. 
+
+For profiling and bottleneck analysis, we used
 NVIDIA Visual Profiler~\cite{rosen2013visual} and then take corresponding de-
-cisions for performance boost. For evaluating against CPU,
-we plan to use the Euler supported multi-core processor node.
-We use CUDA events~\cite{wilt2013cuda} for timing analysis of GPGPU and
-CPU execution. We also plan to report the memory bandwidth
-usage for execution on both platforms.
+cisions for performance boost. CUDA profilers also helped us to gain an understadning 
+of the kernel occupancy and thier shared memory usage.
+We use CUDA events~\cite{wilt2013cuda} for timing analysis of GPGPU (both exclusive and inclusive) and
+CPU execution.  
+
 
